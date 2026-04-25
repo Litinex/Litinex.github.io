@@ -92,6 +92,7 @@
         aria-label="${initialOpen ? `收起音乐播放器：${playerName}` : `打开音乐播放器：${playerName}`}"
         title="${initialOpen ? "收起音乐播放器" : "打开音乐播放器"}"
       >
+        <span class="music-dock-hint" aria-hidden="true">音乐</span>
         <span class="music-dock-vinyl" aria-hidden="true"></span>
         <span class="sr-only music-dock-sr">${initialOpen ? `收起音乐播放器：${playerName}` : `打开音乐播放器：${playerName}`}</span>
       </button>
