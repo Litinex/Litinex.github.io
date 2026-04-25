@@ -646,6 +646,60 @@ html[data-theme="dark"] .article-body code {
   margin-bottom: 20px;
 }
 
+.article-pagination {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.article-pagination-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 132px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow);
+  transition: transform 0.22s ease, border-color 0.22s ease, background-color 0.22s ease;
+}
+
+.article-pagination-card strong {
+  font-size: 1.08rem;
+  line-height: 1.55;
+}
+
+.article-pagination-label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.76rem;
+  color: var(--accent-deep);
+}
+
+.article-pagination-card-prev {
+  text-align: left;
+}
+
+.article-pagination-card-next {
+  text-align: right;
+}
+
+.article-pagination a:hover {
+  transform: translateY(-3px);
+  border-color: rgba(184, 92, 56, 0.28);
+}
+
+.article-pagination .is-disabled {
+  opacity: 0.68;
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .article-pagination-card {
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .code-editor {
   margin: 28px 0;
   border: 1px solid var(--line);
@@ -796,6 +850,14 @@ html[data-theme="dark"] .code-editor-language {
   .hero h1,
   .article-header h1 {
     max-width: none;
+  }
+
+  .article-pagination {
+    grid-template-columns: 1fr;
+  }
+
+  .article-pagination-card-next {
+    text-align: left;
   }
 
   .hero-visual img {
