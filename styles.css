@@ -632,6 +632,15 @@ html[data-theme="dark"] .article-body code {
   color: #f0d9aa;
 }
 
+.article-body .code-editor code {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
 .article-back {
   display: inline-flex;
   color: var(--accent);
@@ -847,6 +856,10 @@ html[data-theme="dark"] .article-pagination a:hover {
   font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
   font-size: 0.95rem;
   line-height: 1.9;
+}
+
+.code-editor-content {
+  display: block;
 }
 
 .code-editor-code span {

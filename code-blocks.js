@@ -69,6 +69,20 @@
     }
   }
 
+  function normalizeCodeText(text) {
+    const lines = text.replace(/\r\n/g, "\n").split("\n");
+
+    while (lines.length && !lines[0].trim()) {
+      lines.shift();
+    }
+
+    while (lines.length && !lines[lines.length - 1].trim()) {
+      lines.pop();
+    }
+
+    return lines.join("\n");
+  }
+
   function lineMarkup(text) {
     return text
       .split("\n")
@@ -82,7 +96,7 @@
     }
 
     const preElement = codeElement.parentElement;
-    const rawText = codeElement.textContent.replace(/\r\n/g, "\n").replace(/\n$/, "");
+    const rawText = normalizeCodeText(codeElement.textContent);
     const language = resolveLanguage(codeElement, rawText);
     const wrapper = document.createElement("figure");
     const lines = rawText ? rawText.split("\n") : [""];
@@ -104,7 +118,7 @@
         <div class="code-editor-lines" aria-hidden="true">
           ${lines.map((_, index) => `<span>${index + 1}</span>`).join("")}
         </div>
-        <pre class="code-editor-code"><code>${lineMarkup(rawText)}</code></pre>
+        <pre class="code-editor-code"><code class="code-editor-content">${lineMarkup(rawText)}</code></pre>
       </div>
     `;
 
