@@ -26,10 +26,13 @@
 
     buttons.forEach((button) => {
       const label = button.querySelector(".theme-toggle-label");
+      const nextAction = theme === "dark" ? "切换到明亮模式" : "切换到暗黑模式";
       button.setAttribute("aria-pressed", String(theme === "dark"));
+      button.setAttribute("aria-label", nextAction);
+      button.setAttribute("title", nextAction);
 
       if (label) {
-        label.textContent = theme === "dark" ? "明亮模式" : "暗黑模式";
+        label.textContent = nextAction;
       }
     });
   }
