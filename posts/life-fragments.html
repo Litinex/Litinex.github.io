@@ -19,7 +19,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <script>
+    (() => {
+      const storageKey = "preferred-theme";
+      try {
+        const storedTheme = localStorage.getItem(storageKey);
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const theme = storedTheme || systemTheme;
+        document.documentElement.dataset.theme = theme;
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute("content", theme === "dark" ? "#11161f" : "#b85c38");
+        }
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="../styles.css">
+  <script src="../theme.js" defer></script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -43,7 +61,13 @@
 </head>
 <body class="article-page">
   <main class="article-shell">
-    <a class="article-back" href="../index.html">返回首页</a>
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换主题" aria-pressed="false">
+        <span class="theme-toggle-dot" aria-hidden="true"></span>
+        <span class="theme-toggle-label">暗黑模式</span>
+      </button>
+    </div>
     <header class="article-header">
       <p class="meta">2026.04.10 · 日常</p>
       <h1>把散乱的生活片段整理成可阅读的博客内容</h1>
