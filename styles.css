@@ -130,9 +130,9 @@ a {
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-  gap: 32px;
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
+  gap: clamp(24px, 3vw, 44px);
+  align-items: start;
   margin-top: 28px;
   padding: 28px;
   border-radius: var(--radius-lg);
@@ -197,13 +197,15 @@ a {
   margin: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 16px;
+  justify-content: flex-start;
+  align-self: start;
+  gap: 14px;
+  padding-top: clamp(38px, 5vw, 72px);
 }
 
 .hero-visual img {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 5 / 6;
   object-fit: cover;
   object-position: center;
   display: block;
@@ -438,6 +440,10 @@ a {
 
   .hero-visual img {
     aspect-ratio: 16 / 11;
+  }
+
+  .hero-visual {
+    padding-top: 0;
   }
 }
 
