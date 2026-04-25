@@ -64,6 +64,7 @@
     )}&auto=${config.autoPlay ? 1 : 0}&height=${panelHeight}`;
     const detailUrl = `https://music.163.com/#/${routeMap[musicType]}?id=${encodeURIComponent(musicId)}`;
     const shell = document.createElement("aside");
+    const playerName = config.title || "Music";
     const initialOpen = (() => {
       try {
         const saved = localStorage.getItem(storageKey);
@@ -88,27 +89,22 @@
         data-music-toggle
         aria-expanded="${String(initialOpen)}"
         aria-controls="music-panel"
+        aria-label="${initialOpen ? `收起音乐播放器：${playerName}` : `打开音乐播放器：${playerName}`}"
+        title="${initialOpen ? "收起音乐播放器" : "打开音乐播放器"}"
       >
-        <span class="music-dock-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 17a2.5 2.5 0 1 1-2.5-2.5A2.5 2.5 0 0 1 9 17Zm0 0V6.7l9-2.2v9.9a2.5 2.5 0 1 1-2.5-2.5A2.5 2.5 0 0 1 18 14V4.5"></path>
-          </svg>
-        </span>
-        <span class="music-dock-copy">
-          <strong>${config.title || "Music"}</strong>
-          <span>${config.subtitle || "NetEase Cloud Music"}</span>
-        </span>
+        <span class="music-dock-vinyl" aria-hidden="true"></span>
+        <span class="sr-only music-dock-sr">${initialOpen ? `收起音乐播放器：${playerName}` : `打开音乐播放器：${playerName}`}</span>
       </button>
       <section class="music-panel${initialOpen ? " is-open" : ""}" id="music-panel" data-music-panel>
         <div class="music-panel-head">
           <div>
             <p class="music-panel-kicker">Now Playing</p>
-            <h2>${config.title || "Music"}</h2>
+            <h2>${playerName}</h2>
           </div>
           <a href="${detailUrl}" target="_blank" rel="noreferrer">Open in NetEase</a>
         </div>
         <iframe
-          title="${config.title || "NetEase Cloud Music"}"
+          title="${playerName}"
           src="${source}"
           loading="lazy"
           allow="autoplay"
@@ -126,14 +122,28 @@
 
     const toggle = shell.querySelector("[data-music-toggle]");
     const panel = shell.querySelector("[data-music-panel]");
+    const srLabel = shell.querySelector(".music-dock-sr");
 
     if (!toggle || !panel) {
       return;
     }
 
+    function syncToggle(isOpen) {
+      const text = `${isOpen ? "收起" : "打开"}音乐播放器：${playerName}`;
+      toggle.setAttribute("aria-expanded", String(isOpen));
+      toggle.setAttribute("aria-label", text);
+      toggle.setAttribute("title", isOpen ? "收起音乐播放器" : "打开音乐播放器");
+
+      if (srLabel) {
+        srLabel.textContent = text;
+      }
+    }
+
+    syncToggle(initialOpen);
+
     toggle.addEventListener("click", () => {
       const isOpen = panel.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", String(isOpen));
+      syncToggle(isOpen);
 
       try {
         localStorage.setItem(storageKey, isOpen ? "open" : "closed");
