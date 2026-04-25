@@ -632,6 +632,123 @@ html[data-theme="dark"] .article-page {
   margin-bottom: 20px;
 }
 
+.code-editor {
+  margin: 28px 0;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(255, 250, 244, 0.92), rgba(248, 241, 230, 0.88));
+}
+
+.code-editor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(31, 40, 51, 0.08);
+  background: rgba(255, 255, 255, 0.36);
+}
+
+.code-editor-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.code-editor-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.code-editor-dot-red {
+  background: #ef8f76;
+}
+
+.code-editor-dot-yellow {
+  background: #e9c46a;
+}
+
+.code-editor-dot-green {
+  background: #7fb18a;
+}
+
+.code-editor-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.code-editor-language {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(184, 92, 56, 0.1);
+  color: var(--accent-deep);
+  font-weight: 700;
+}
+
+.code-editor-body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  overflow-x: auto;
+  background: linear-gradient(180deg, #0e151f, #111926);
+}
+
+.code-editor-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  padding: 18px 12px 18px 16px;
+  background: rgba(6, 10, 15, 0.34);
+  color: #70839a;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.9;
+  user-select: none;
+}
+
+.code-editor-lines span,
+.code-editor-code span {
+  display: block;
+  min-height: 1.9em;
+}
+
+.code-editor-code {
+  margin: 0;
+  padding: 18px 20px;
+  color: #eaf2fb;
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 0.95rem;
+  line-height: 1.9;
+}
+
+.code-editor-code span {
+  white-space: pre;
+}
+
+html[data-theme="dark"] .code-editor {
+  background: linear-gradient(180deg, rgba(18, 24, 33, 0.96), rgba(13, 18, 25, 0.92));
+}
+
+html[data-theme="dark"] .code-editor-bar {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+html[data-theme="dark"] .code-editor-language {
+  background: rgba(240, 217, 170, 0.08);
+  color: #f0d9aa;
+}
+
 @keyframes rise {
   from {
     opacity: 0;
