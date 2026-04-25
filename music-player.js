@@ -1,0 +1,151 @@
+(() => {
+  const config = window.siteMusicConfig || {};
+  const typeMap = {
+    playlist: 0,
+    album: 1,
+    song: 2,
+  };
+  const routeMap = {
+    playlist: "playlist",
+    album: "album",
+    song: "song",
+  };
+
+  function normalizeType(type) {
+    return routeMap[type] ? type : "playlist";
+  }
+
+  function resolveMusicTarget() {
+    const directId = String(config.id || "").trim();
+
+    if (directId) {
+      return {
+        type: normalizeType(config.type),
+        id: directId,
+      };
+    }
+
+    const shareUrl = String(config.shareUrl || "").trim();
+
+    if (!shareUrl) {
+      return null;
+    }
+
+    const normalized = shareUrl.replace(/%23/g, "#");
+    const match =
+      normalized.match(/(?:#\/|\/)(playlist|album|song)\?[^#]*?id=(\d+)/i) ||
+      normalized.match(/[?&]id=(\d+)/i);
+
+    if (!match) {
+      return null;
+    }
+
+    return {
+      type: normalizeType(match[1] ? match[1].toLowerCase() : config.type),
+      id: match[2],
+    };
+  }
+
+  function createPlayer() {
+    const target = resolveMusicTarget();
+
+    if (config.provider !== "netease" || !target) {
+      return;
+    }
+
+    const musicType = target.type;
+    const musicId = target.id;
+    const outerType = typeMap[musicType];
+    const panelHeight = musicType === "song" ? 118 : 430;
+    const iframeHeight = musicType === "song" ? 86 : 450;
+    const storageKey = "music-player-open";
+    const source = `https://music.163.com/outchain/player?type=${outerType}&id=${encodeURIComponent(
+      musicId
+    )}&auto=${config.autoPlay ? 1 : 0}&height=${panelHeight}`;
+    const detailUrl = `https://music.163.com/#/${routeMap[musicType]}?id=${encodeURIComponent(musicId)}`;
+    const shell = document.createElement("aside");
+    const initialOpen = (() => {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved === "open") {
+          return true;
+        }
+        if (saved === "closed") {
+          return false;
+        }
+      } catch (error) {
+        // Ignore storage failures and fall back to config.
+      }
+
+      return Boolean(config.startOpen);
+    })();
+
+    shell.className = "music-dock";
+    shell.innerHTML = `
+      <button
+        class="music-dock-toggle"
+        type="button"
+        data-music-toggle
+        aria-expanded="${String(initialOpen)}"
+        aria-controls="music-panel"
+      >
+        <span class="music-dock-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 17a2.5 2.5 0 1 1-2.5-2.5A2.5 2.5 0 0 1 9 17Zm0 0V6.7l9-2.2v9.9a2.5 2.5 0 1 1-2.5-2.5A2.5 2.5 0 0 1 18 14V4.5"></path>
+          </svg>
+        </span>
+        <span class="music-dock-copy">
+          <strong>${config.title || "Music"}</strong>
+          <span>${config.subtitle || "NetEase Cloud Music"}</span>
+        </span>
+      </button>
+      <section class="music-panel${initialOpen ? " is-open" : ""}" id="music-panel" data-music-panel>
+        <div class="music-panel-head">
+          <div>
+            <p class="music-panel-kicker">Now Playing</p>
+            <h2>${config.title || "Music"}</h2>
+          </div>
+          <a href="${detailUrl}" target="_blank" rel="noreferrer">Open in NetEase</a>
+        </div>
+        <iframe
+          title="${config.title || "NetEase Cloud Music"}"
+          src="${source}"
+          loading="lazy"
+          allow="autoplay"
+          referrerpolicy="strict-origin-when-cross-origin"
+          frameborder="0"
+          marginwidth="0"
+          marginheight="0"
+          width="100%"
+          height="${iframeHeight}"
+        ></iframe>
+      </section>
+    `;
+
+    document.body.appendChild(shell);
+
+    const toggle = shell.querySelector("[data-music-toggle]");
+    const panel = shell.querySelector("[data-music-panel]");
+
+    if (!toggle || !panel) {
+      return;
+    }
+
+    toggle.addEventListener("click", () => {
+      const isOpen = panel.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(isOpen));
+
+      try {
+        localStorage.setItem(storageKey, isOpen ? "open" : "closed");
+      } catch (error) {
+        // Ignore storage failures and keep the current session functional.
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", createPlayer, { once: true });
+  } else {
+    createPlayer();
+  }
+})();
