@@ -182,7 +182,7 @@ a {
 .hero-copy {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   min-width: 0;
 }
 
@@ -200,7 +200,7 @@ a {
   justify-content: flex-start;
   align-self: start;
   gap: 14px;
-  padding-top: clamp(38px, 5vw, 72px);
+  padding-top: 0;
 }
 
 .hero-visual img {
