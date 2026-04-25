@@ -97,6 +97,30 @@ a {
   animation: rise 0.8s ease both;
 }
 
+body,
+.site-header,
+.site-footer,
+.site-brand small,
+.site-nav a,
+.theme-toggle,
+.hero,
+.section,
+.post-card,
+.notes-panel,
+.about-card,
+.article-shell,
+.page-hero,
+.notes-list div,
+.hero-visual figcaption,
+.button-secondary,
+.article-back {
+  transition:
+    color 0.32s ease,
+    background-color 0.32s ease,
+    border-color 0.32s ease,
+    box-shadow 0.32s ease;
+}
+
 .site-header {
   display: flex;
   justify-content: space-between;
@@ -184,35 +208,24 @@ a {
   box-shadow: 0 12px 24px rgba(31, 40, 51, 0.12);
 }
 
-.theme-toggle-icons {
-  position: relative;
+.theme-toggle-glyph {
   width: 20px;
   height: 20px;
-  display: block;
-}
-
-.theme-icon {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 1.1rem;
-  line-height: 1;
-  transform-origin: center;
-  transition: opacity 0.35s ease, transform 0.45s ease, color 0.35s ease, filter 0.35s ease;
-}
-
-.theme-icon-sun {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #d7824f;
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
-  filter: drop-shadow(0 0 10px rgba(215, 130, 79, 0.28));
+  filter: drop-shadow(0 0 10px rgba(215, 130, 79, 0.22));
 }
 
-.theme-icon-moon {
-  color: #4a5966;
-  opacity: 0;
-  transform: rotate(-70deg) scale(0.45);
+.theme-toggle-glyph svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 html[data-theme="dark"] .theme-toggle {
@@ -224,15 +237,8 @@ html[data-theme="dark"] .theme-toggle:hover {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
 }
 
-html[data-theme="dark"] .theme-icon-sun {
-  opacity: 0;
-  transform: rotate(80deg) scale(0.45);
-}
-
-html[data-theme="dark"] .theme-icon-moon {
+html[data-theme="dark"] .theme-toggle-glyph {
   color: #f0d9aa;
-  opacity: 1;
-  transform: rotate(0deg) scale(1);
   filter: drop-shadow(0 0 12px rgba(124, 167, 255, 0.2));
 }
 
@@ -605,6 +611,28 @@ html[data-theme="dark"] .article-page {
 
   .hero-visual {
     padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .site-header,
+  .site-footer,
+  .site-brand small,
+  .site-nav a,
+  .theme-toggle,
+  .hero,
+  .section,
+  .post-card,
+  .notes-panel,
+  .about-card,
+  .article-shell,
+  .page-hero,
+  .notes-list div,
+  .hero-visual figcaption,
+  .button-secondary,
+  .article-back {
+    transition: none;
   }
 }
 
