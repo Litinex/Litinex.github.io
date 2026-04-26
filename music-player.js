@@ -1,10 +1,112 @@
 (() => {
   const playlist = [
     {
-      neteaseSongId: "",
-      title: "未配置歌曲",
-      artist: "请在 music-player.js 填入网易云歌曲信息",
-      cover: "",
+      neteaseSongId: "1357960253",
+      title: "藍二乗",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/AVhYLte6khAcd3wOO65avw==/109951170245162530.jpg",
+    },
+    {
+      neteaseSongId: "487527984",
+      title: "雲と幽霊",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/rD6Ul3DVakQkD8_VeL-aRw==/19162288649094546.jpg",
+    },
+    {
+      neteaseSongId: "487527983",
+      title: "靴の花火",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/rD6Ul3DVakQkD8_VeL-aRw==/19162288649094546.jpg",
+    },
+    {
+      neteaseSongId: "2734279861",
+      title: "修羅",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/R85bgBy55sUQnWq8NDlgaQ==/109951171812887175.jpg",
+    },
+    {
+      neteaseSongId: "487527980",
+      title: "言って。",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/rD6Ul3DVakQkD8_VeL-aRw==/19162288649094546.jpg",
+    },
+    {
+      neteaseSongId: "1357953768",
+      title: "だから僕は音楽を辞めた",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/AVhYLte6khAcd3wOO65avw==/109951170245162530.jpg",
+    },
+    {
+      neteaseSongId: "2036445126",
+      title: "都落ち",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/aC8zzUP4nr1sGx5qfr5cVw==/109951168523411427.jpg",
+    },
+    {
+      neteaseSongId: "1357628744",
+      title: "パレード",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/AVhYLte6khAcd3wOO65avw==/109951170245162530.jpg",
+    },
+    {
+      neteaseSongId: "1870469768",
+      title: "老人と海",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/5aHcGADR5i6biE5TSqf_aQ==/109951166295171725.jpg",
+    },
+    {
+      neteaseSongId: "1466519473",
+      title: "花人局",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/033ZocR9XnX1MdcXCWW_iQ==/109951165180340452.jpg",
+    },
+    {
+      neteaseSongId: "1485319473",
+      title: "風を食む",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/Jh-7TNNm9BhJZejuRx6_EQ==/109951165373693055.jpg",
+    },
+    {
+      neteaseSongId: "1810759765",
+      title: "春泥棒",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/kBtj7HlFDuokeO4iyHTXaA==/109951165616927101.jpg",
+    },
+    {
+      neteaseSongId: "1850977722",
+      title: "又三郎",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/b2M2BZbgwsk1n_UUAxxfSg==/109951166074391935.jpg",
+    },
+    {
+      neteaseSongId: "1457709580",
+      title: "思想犯",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/OWvCQnwUzt-LOcWSCYqW9Q==/109951165084906395.jpg",
+    },
+    {
+      neteaseSongId: "557579321",
+      title: "ただ君に晴れ",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/FHi1cWVObsNewrw-Jf2w3g==/109951163289889776.jpg",
+    },
+    {
+      neteaseSongId: "1428153831",
+      title: "夜行",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/rX3QUba-6_CacELe4bqL2g==/109951164767615222.jpg",
+    },
+    {
+      neteaseSongId: "1442466883",
+      title: "花に亡霊",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/_Os98d4NSKf-vLo_93QoEg==/109951164927614269.jpg",
+    },
+    {
+      neteaseSongId: "1815109509",
+      title: "嘘月",
+      artist: "ヨルシカ",
+      cover: "https://p1.music.126.net/Ok0xk_CpJW21lAUG9UiMww==/109951165666599650.jpg",
     },
   ];
 
@@ -84,6 +186,7 @@
   }
 
   let currentIndex = initialIndex;
+  let consecutiveFailures = 0;
 
   function currentTrack() {
     return tracks[currentIndex] || null;
@@ -115,7 +218,7 @@
     discButton.setAttribute("aria-label", `${audio.paused ? "播放" : "暂停"}：${title} - ${artist}`);
   }
 
-  function loadTrack(index, { autoplay = false } = {}) {
+  function loadTrack(index, { autoplay = false, statusText = "" } = {}) {
     currentIndex = Math.min(Math.max(index || 0, 0), Math.max(tracks.length - 1, 0));
     const track = currentTrack();
     const src = resolveTrackSource(track);
@@ -132,7 +235,7 @@
       return;
     }
 
-    setStatus("就绪");
+    setStatus(safeText(statusText) || "就绪");
 
     if (autoplay) {
       audio
@@ -144,9 +247,27 @@
     }
   }
 
+  function handlePlaybackFailure(message) {
+    setPressed(false);
+
+    if (!settings.loop || tracks.length <= 1) {
+      setStatus(safeText(message));
+      return;
+    }
+
+    consecutiveFailures += 1;
+    if (consecutiveFailures >= tracks.length) {
+      setStatus("多首歌曲不可播放，已停止自动切歌");
+      return;
+    }
+
+    const nextIndex = (currentIndex + 1) % tracks.length;
+    loadTrack(nextIndex, { autoplay: true, statusText: safeText(message) || "已切到下一首" });
+  }
+
   function togglePlay() {
     if (!audio.src) {
-      setStatus("请先在 music-player.js 填入网易云歌曲 ID");
+      setStatus("没有可播放的音源，请检查歌单配置");
       return;
     }
 
@@ -155,7 +276,7 @@
         .play()
         .then(() => {})
         .catch(() => {
-          setStatus("播放失败：可能是歌曲不可用或被限制");
+          handlePlaybackFailure("播放失败：可能是歌曲不可用或被限制，已尝试切到下一首");
         });
       return;
     }
@@ -169,6 +290,7 @@
   });
 
   audio.addEventListener("play", () => {
+    consecutiveFailures = 0;
     setPressed(true);
     updateMetadata(currentTrack());
     setStatus("正在播放");
@@ -201,8 +323,7 @@
   });
 
   audio.addEventListener("error", () => {
-    setPressed(false);
-    setStatus("加载失败：请检查歌曲 ID 或网络情况");
+    handlePlaybackFailure("加载失败：已尝试切到下一首");
   });
 
   loadTrack(currentIndex, { autoplay: false });
