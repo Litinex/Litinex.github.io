@@ -163,6 +163,16 @@
         <div class="music-title"></div>
         <div class="music-artist"></div>
         <div class="music-status"></div>
+        <div class="music-controls" role="group" aria-label="切歌控制">
+          <button class="music-skip music-prev" type="button" aria-label="上一首">
+            <span class="music-skip-icon" aria-hidden="true">⏮</span>
+            上一首
+          </button>
+          <button class="music-skip music-next" type="button" aria-label="下一首">
+            <span class="music-skip-icon" aria-hidden="true">⏭</span>
+            下一首
+          </button>
+        </div>
       </div>
     </div>
   `;
@@ -179,8 +189,10 @@
   const titleEl = root.querySelector(".music-title");
   const artistEl = root.querySelector(".music-artist");
   const statusEl = root.querySelector(".music-status");
+  const prevButton = root.querySelector(".music-prev");
+  const nextButton = root.querySelector(".music-next");
 
-  if (!discButton || !art || !titleEl || !artistEl || !statusEl) {
+  if (!discButton || !art || !titleEl || !artistEl || !statusEl || !prevButton || !nextButton) {
     root.remove();
     return;
   }
@@ -199,6 +211,23 @@
   function setPressed(isPressed) {
     discButton.setAttribute("aria-pressed", String(Boolean(isPressed)));
     root.classList.toggle("is-playing", Boolean(isPressed));
+  }
+
+  function updateSkipButtons() {
+    if (tracks.length <= 1) {
+      prevButton.disabled = true;
+      nextButton.disabled = true;
+      return;
+    }
+
+    if (settings.loop) {
+      prevButton.disabled = false;
+      nextButton.disabled = false;
+      return;
+    }
+
+    prevButton.disabled = currentIndex <= 0;
+    nextButton.disabled = currentIndex >= tracks.length - 1;
   }
 
   function updateMetadata(track) {
@@ -223,6 +252,8 @@
     const track = currentTrack();
     const src = resolveTrackSource(track);
 
+    updateSkipButtons();
+
     audio.pause();
     audio.src = src;
     audio.currentTime = 0;
@@ -245,6 +276,31 @@
           setStatus("浏览器阻止了自动播放，请点击唱片开始播放");
         });
     }
+  }
+
+  function indexWithDelta(delta) {
+    const total = tracks.length;
+    if (total <= 0) {
+      return 0;
+    }
+
+    if (settings.loop) {
+      return (currentIndex + delta + total) % total;
+    }
+
+    return Math.min(Math.max(currentIndex + delta, 0), total - 1);
+  }
+
+  function skip(delta) {
+    if (tracks.length <= 1) {
+      setStatus("只有一首歌，无法切歌");
+      return;
+    }
+
+    consecutiveFailures = 0;
+    const wasPlaying = !audio.paused;
+    const nextIndex = indexWithDelta(delta);
+    loadTrack(nextIndex, { autoplay: wasPlaying, statusText: delta < 0 ? "已切到上一首" : "已切到下一首" });
   }
 
   function handlePlaybackFailure(message) {
@@ -287,6 +343,16 @@
   discButton.addEventListener("click", (event) => {
     event.preventDefault();
     togglePlay();
+  });
+
+  prevButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    skip(-1);
+  });
+
+  nextButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    skip(1);
   });
 
   audio.addEventListener("play", () => {
