@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>历史文章 | 叶子庄</title>
+  <meta name="description" content="按时间列出本站所有文章标题与链接。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#b85c38">
+  <link rel="canonical" href="https://yezizhuang.top/archive.html">
+  <meta property="og:title" content="历史文章 | 叶子庄">
+  <meta property="og:description" content="按时间列出本站所有文章标题与链接。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yezizhuang.top/archive.html">
+  <meta property="og:site_name" content="叶子庄">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <script>
+    (() => {
+      const storageKey = "preferred-theme";
+      try {
+        const storedTheme = localStorage.getItem(storageKey);
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const theme = storedTheme || systemTheme;
+        document.documentElement.dataset.theme = theme;
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute("content", theme === "dark" ? "#11161f" : "#b85c38");
+        }
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css?v=20260426-4">
+  <script src="theme.js?v=20260425-3" defer></script>
+  <script src="code-blocks.js?v=20260425-3" defer></script>
+  <script src="ambient-background.js?v=20260426-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "历史文章",
+      "description": "按时间列出本站所有文章标题与链接。",
+      "url": "https://yezizhuang.top/archive.html",
+      "inLanguage": "zh-CN",
+      "isPartOf": {
+        "@type": "Blog",
+        "name": "叶子庄",
+        "url": "https://yezizhuang.top/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="site-brand" href="index.html">
+        <span class="site-brand-mark"></span>
+        <span>
+          <strong>叶子庄</strong>
+          <small>Notes on code, life, and long walks</small>
+        </span>
+      </a>
+      <div class="header-actions">
+        <nav class="site-nav">
+          <a href="index.html">首页</a>
+          <a href="about.html">关于</a>
+          <a href="index.html#essays">文章</a>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换主题" aria-pressed="false">
+          <span class="theme-toggle-glyph" aria-hidden="true"></span>
+          <span class="theme-toggle-label sr-only">暗黑模式</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <section class="page-hero">
+        <p class="eyebrow">Archive</p>
+        <h1>历史文章</h1>
+        <p>这里按时间列出本站所有文章标题与链接。</p>
+      </section>
+
+      <section class="section" aria-label="文章列表">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">All Posts</p>
+            <h2>文章列表</h2>
+          </div>
+        </div>
+
+        <ul class="archive-list">
+          <li>
+            <a href="posts/first-post.html">人生苦短，我用Python</a>
+            <span class="archive-meta">2026.04.25 · Python 入门</span>
+          </li>
+          <li>
+            <a href="posts/notes-template.html">怎样写一篇未来自己也愿意重看的技术笔记</a>
+            <span class="archive-meta">2026.04.18 · 学习笔记</span>
+          </li>
+          <li>
+            <a href="posts/life-fragments.html">把散乱的生活片段整理成可阅读的博客内容</a>
+            <span class="archive-meta">2026.04.10 · 日常</span>
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 叶子庄 Built for long-form thinking.</p>
+      <a href="index.html">返回首页</a>
+    </footer>
+  </div>
+</body>
+</html>
