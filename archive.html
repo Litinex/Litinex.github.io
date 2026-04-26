@@ -37,11 +37,12 @@
       }
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260426-6">
+  <link rel="stylesheet" href="styles.css?v=20260426-7">
   <script src="theme.js?v=20260425-3" defer></script>
   <script src="code-blocks.js?v=20260426-1" defer></script>
   <script src="ambient-background.js?v=20260426-1" defer></script>
   <script src="music-player.js?v=20260426-3" defer></script>
+  <script src="archive-search.js?v=20260426-1" defer></script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -90,24 +91,51 @@
           </div>
         </div>
 
-        <ul class="archive-list">
-          <li>
-            <a href="posts/llm-nlp-era-summary.html">《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结</a>
-            <span class="archive-meta">2026.04.26 · 论文笔记</span>
-          </li>
-          <li>
-            <a href="posts/first-post.html">人生苦短，我用Python</a>
-            <span class="archive-meta">2026.04.25 · Python 入门</span>
-          </li>
-          <li>
-            <a href="posts/notes-template.html">怎样写一篇未来自己也愿意重看的技术笔记</a>
-            <span class="archive-meta">2026.04.18 · 学习笔记</span>
-          </li>
-          <li>
-            <a href="posts/life-fragments.html">把散乱的生活片段整理成可阅读的博客内容</a>
-            <span class="archive-meta">2026.04.10 · 日常</span>
-          </li>
-        </ul>
+        <div class="archive-layout">
+          <div class="archive-content">
+            <ul class="archive-list" data-archive-list>
+              <li>
+                <a href="posts/llm-nlp-era-summary.html">《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结</a>
+                <span class="archive-meta">2026.04.26 · 论文笔记</span>
+              </li>
+              <li>
+                <a href="posts/first-post.html">人生苦短，我用Python</a>
+                <span class="archive-meta">2026.04.25 · Python 入门</span>
+              </li>
+              <li>
+                <a href="posts/notes-template.html">怎样写一篇未来自己也愿意重看的技术笔记</a>
+                <span class="archive-meta">2026.04.18 · 学习笔记</span>
+              </li>
+              <li>
+                <a href="posts/life-fragments.html">把散乱的生活片段整理成可阅读的博客内容</a>
+                <span class="archive-meta">2026.04.10 · 日常</span>
+              </li>
+            </ul>
+            <p class="archive-empty" data-archive-empty hidden>没有找到匹配的文章。</p>
+          </div>
+
+          <aside class="archive-sidebar" aria-label="搜索文章">
+            <div class="archive-search">
+              <p class="section-kicker">Search</p>
+              <h3 class="archive-search-title">关键词搜索</h3>
+              <label class="sr-only" for="archive-search-input">搜索文章关键词</label>
+              <div class="archive-search-row">
+                <input
+                  id="archive-search-input"
+                  class="archive-search-input"
+                  type="search"
+                  inputmode="search"
+                  placeholder="输入关键词（标题 / 分类 / 日期）"
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-archive-search
+                >
+                <button class="archive-search-clear" type="button" data-archive-search-clear aria-label="清空搜索" hidden>×</button>
+              </div>
+              <p class="archive-search-count" data-archive-search-count></p>
+            </div>
+          </aside>
+        </div>
       </section>
     </main>
 
