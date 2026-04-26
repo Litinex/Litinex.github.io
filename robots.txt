@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://Litinex.github.io/sitemap.xml
+Sitemap: https://yezizhuang.abrdns.com/sitemap.xml
