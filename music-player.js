@@ -184,12 +184,20 @@
     setPressed(false);
     setStatus("播放结束");
 
-    if (settings.loop) {
-      audio.currentTime = 0;
-      audio.play().catch(() => {
-        setStatus("播放结束，点击唱片重新播放");
-      });
+    if (!settings.loop) {
+      return;
     }
+
+    if (tracks.length > 1) {
+      const nextIndex = (currentIndex + 1) % tracks.length;
+      loadTrack(nextIndex, { autoplay: true });
+      return;
+    }
+
+    audio.currentTime = 0;
+    audio.play().catch(() => {
+      setStatus("播放结束，点击唱片重新播放");
+    });
   });
 
   audio.addEventListener("error", () => {
