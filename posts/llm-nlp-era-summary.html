@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结 | 叶子庄</title>
+  <meta name="description" content="论文笔记：总结《大模型时代的自然语言处理: 挑战、机遇与发展文献》，梳理 LLM 对 NLP 任务的影响、共性挑战与未来发展方向。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#b85c38">
+  <link rel="canonical" href="https://yezizhuang.top/posts/llm-nlp-era-summary.html">
+  <meta property="og:title" content="《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结 | 叶子庄">
+  <meta property="og:description" content="论文笔记：总结《大模型时代的自然语言处理: 挑战、机遇与发展文献》，梳理 LLM 对 NLP 任务的影响、共性挑战与未来发展方向。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/llm-nlp-era-summary.html">
+  <meta property="og:site_name" content="叶子庄">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <script>
+    (() => {
+      const storageKey = "preferred-theme";
+      try {
+        const storedTheme = localStorage.getItem(storageKey);
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const theme = storedTheme || systemTheme;
+        document.documentElement.dataset.theme = theme;
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute("content", theme === "dark" ? "#11161f" : "#b85c38");
+        }
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../styles.css?v=20260426-4">
+  <script src="../theme.js?v=20260425-3" defer></script>
+  <script src="../code-blocks.js?v=20260425-3" defer></script>
+  <script src="../ambient-background.js?v=20260426-1" defer></script>
+  <script src="../music-player.js?v=20260426-2" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结",
+      "description": "论文笔记：总结《大模型时代的自然语言处理: 挑战、机遇与发展文献》，梳理 LLM 对 NLP 任务的影响、共性挑战与未来发展方向。",
+      "url": "https://yezizhuang.top/posts/llm-nlp-era-summary.html",
+      "datePublished": "2026-04-26",
+      "dateModified": "2026-04-26",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "叶子庄"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "叶子庄"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换主题" aria-pressed="false">
+        <span class="theme-toggle-glyph" aria-hidden="true"></span>
+        <span class="theme-toggle-label sr-only">暗黑模式</span>
+      </button>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.04.26 · 论文笔记</p>
+      <h1>《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结</h1>
+    </header>
+
+    <article class="article-body">
+      <p><strong>一、文章主要研究什么</strong></p>
+      <p>
+        这篇文章研究的是“大型语言模型（LLM）对自然语言处理（NLP）领域的影响”。文章并不是做某一个单独实验，也不是只研究一个具体任务，而是从综述和分析的角度，系统讨论 ChatGPT、GPT-4 等大模型出现之后，自然语言处理领域发生了哪些变化，传统研究范式受到了什么冲击，未来又可能朝哪些方向发展。
+      </p>
+      <p>文章重点关注两个层面：</p>
+      <ol>
+        <li>大模型对自然语言处理核心任务的影响。</li>
+        <li>大模型带来的共性问题、研究挑战与未来发展方向。</li>
+      </ol>
+
+      <p><strong>二、文章重点讲了什么</strong></p>
+      <p>
+        文章首先回顾了自然语言处理的发展历程，以及从语言模型、预训练模型到大模型的技术演化过程。作者认为，ChatGPT 和 GPT-4 的出现，使自然语言处理从过去依赖“针对具体任务单独建模、依赖大量标注数据”的监督学习范式，逐步转向“基于大模型统一完成多种任务”的新范式。
+      </p>
+      <p>在此基础上，文章重点分析了大模型对多个自然语言处理核心任务的影响，包括：</p>
+      <ol>
+        <li>文本分类</li>
+        <li>结构化预测任务，如词性标注、句法分析等</li>
+        <li>语义分析</li>
+        <li>知识图谱与信息抽取</li>
+        <li>情感计算</li>
+        <li>文本生成</li>
+        <li>自动文摘</li>
+        <li>机器翻译</li>
+        <li>对话系统</li>
+        <li>信息检索</li>
+        <li>自动问答</li>
+      </ol>
+      <p>作者指出，大模型的突出优势在于：</p>
+      <ol>
+        <li>具备强大的语言生成和理解能力。</li>
+        <li>在少样本、零样本场景下也能取得较好效果。</li>
+        <li>具有较强的迁移能力和领域泛化能力。</li>
+        <li>可以把很多原本彼此分散的 NLP 任务统一到生成式框架之下。</li>
+      </ol>
+
+      <p><strong>三、文章的核心观点</strong></p>
+      <p>
+        这篇文章最核心的观点是：大模型并不意味着自然语言处理没有研究价值了，恰恰相反，它正在推动自然语言处理进入新的发展阶段。
+      </p>
+      <p>
+        作者认为，大模型给传统 NLP 带来的不是简单替代，而是“范式转变”。以前很多任务要分别建模、分别训练、分别标注数据；而现在，大模型可能通过统一的生成式框架，结合提示学习、上下文学习、指令微调和人类反馈强化学习等方法，完成多种任务。
+      </p>
+      <p>
+        同时，文章也强调，大模型虽然能力强，但并没有彻底解决所有问题。自然语言处理未来仍然大有可为，尤其是在模型可靠性、信息准确性、可解释性、安全性和具体行业落地等方面，还有大量值得深入研究的问题。
+      </p>
+
+      <p><strong>四、各部分主要内容概括</strong></p>
+      <p><strong>1. 引言与背景部分</strong></p>
+      <p>
+        这一部分介绍了 ChatGPT、GPT-4 出现的背景，说明它们为何会对自然语言处理造成巨大冲击。作者还回顾了 NLP 从规则方法、机器学习方法到深度学习方法的发展过程，并介绍了预训练语言模型的发展脉络，如 ELMo、BERT、GPT-3 等，为后文讨论大模型奠定基础。
+      </p>
+      <p><strong>2. 核心任务部分</strong></p>
+      <p>
+        这是全文最主要的部分。文章围绕多个典型 NLP 任务逐一分析大模型的影响。作者认为，大模型会让很多任务的边界逐渐模糊。例如，以前文本分类、问答、摘要、翻译、对话等任务通常是分开研究的；而在大模型时代，很多任务都可以通过统一的语言生成方式来处理。
+      </p>
+      <p>
+        在自动问答方面，文章认为大模型依靠内部知识储备、上下文学习和思维链推理，已经在一些复杂问答任务上展现出明显优势。对于信息检索、对话系统、文本生成和自动摘要等任务，大模型也大幅提升了系统的自然性、通用性和交互能力。
+      </p>
+      <p>
+        但对于结构化预测这类底层任务，文章指出，大模型虽然在应用层面很强，但底层语言结构分析并没有完全失去价值。相反，这些基础任务仍可能在提升模型可控性、可解释性和稳定性方面发挥作用。
+      </p>
+      <p><strong>3. 共性问题部分</strong></p>
+      <p>文章专门讨论了大模型时代的几类关键共性问题：</p>
+      <ol>
+        <li>模型分析与可解释性</li>
+        <li>伦理问题与安全性</li>
+        <li>信息准确性</li>
+        <li>计算成本和能源消耗</li>
+        <li>数据资源与模型评价</li>
+      </ol>
+      <p>
+        作者认为，这是大模型真正大规模应用时必须面对的核心问题。其中，信息准确性尤其重要。文章明确指出，大模型常常会出现“看起来说得很流畅，但事实是错的”这一问题，也就是人们常说的“幻觉”现象。这会严重影响大模型在搜索、教育、医疗、法律等高风险场景中的使用。
+      </p>
+      <p>
+        此外，大模型训练和推理成本很高，能源消耗大，对高质量数据的依赖也很强，现有评价体系也还不够完善。因此，大模型时代不仅要追求能力更强，还要追求更安全、更可靠、更可评估。
+      </p>
+      <p><strong>4. 讨论与展望部分</strong></p>
+      <p>文章在后面进一步讨论了未来的重要发展方向，包括：</p>
+      <ol>
+        <li>继续提升大模型的内在能力，如扩大规模、改进学习方法、提升对齐效果。</li>
+        <li>强化用户建模与个性化，让模型更懂不同用户的长期偏好。</li>
+        <li>推动工具学习，让大模型调用搜索、计算器、知识库、外部服务等工具，以弥补其知识过时、推理不稳和幻觉等问题。</li>
+        <li>发展多模态与具身智能，让模型不仅处理文字，还能处理图像、语音、环境感知和现实世界交互。</li>
+        <li>拓展新应用场景，如智能搜索、虚拟教师、虚拟医生、智能科研助手、虚拟律师等。</li>
+      </ol>
+
+      <p><strong>五、文章研究的具体方面</strong></p>
+      <p>从研究内容上看，这篇文章主要属于以下几个方面：</p>
+      <ol>
+        <li>自然语言处理（NLP）</li>
+        <li>大型语言模型（LLM）</li>
+        <li>预训练模型与生成式人工智能</li>
+        <li>ChatGPT / GPT-4 对 NLP 任务范式的影响</li>
+        <li>大模型的可靠性、安全性、准确性与评价问题</li>
+        <li>大模型未来应用与通用人工智能发展趋势</li>
+      </ol>
+      <p>
+        如果从论文性质来看，它更偏向“领域综述”和“趋势分析”，而不是“提出一个新算法并做实验验证”的实证研究论文。
+      </p>
+
+      <p><strong>六、文章的主要贡献和价值</strong></p>
+      <p>这篇文章的价值主要体现在以下几个方面：</p>
+      <ol>
+        <li>对大模型时代的自然语言处理进行了系统梳理，覆盖面非常广。</li>
+        <li>不只谈模型能力，还讨论了可解释性、安全性、准确性、成本、评价等关键问题。</li>
+        <li>强调了大模型对传统 NLP 研究范式的改变，帮助读者从更宏观的角度理解领域发展。</li>
+        <li>对未来研究方向提出了较清晰的判断，如工具学习、多模态、个性化和具身智能等。</li>
+      </ol>
+
+      <p><strong>七、可以得出的结论</strong></p>
+      <p>
+        综合来看，这篇文章的结论是：大模型已经深刻改变了自然语言处理的发展路径。未来 NLP 不会消失，而是会在大模型基础上继续演进。研究重点将不再只是单任务性能提升，而会更多转向统一任务框架、模型对齐、信息准确性、安全性、可解释性、工具使用能力以及多模态和实际应用落地。
+      </p>
+
+      <p><strong>八、简短总结</strong></p>
+      <p>
+        这是一篇关于“大模型如何改变自然语言处理”的综述文章。文章系统分析了 ChatGPT、GPT-4 等大模型对文本分类、问答、翻译、摘要、对话、检索等核心任务的影响，指出大模型正在推动 NLP 从传统监督学习范式向统一生成式范式转变。同时，文章也强调了幻觉、信息准确性、安全性、成本和评价等关键问题，并展望了工具学习、多模态、个性化和具身智能等未来方向。
+      </p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-card article-pagination-card-prev" href="first-post.html">
+        <span class="article-pagination-topline">
+          <span class="article-pagination-arrow" aria-hidden="true">←</span>
+          <span class="article-pagination-label">上一篇文章</span>
+        </span>
+        <strong class="article-pagination-title">人生苦短，我用Python</strong>
+        <span class="article-pagination-date">2026.04.25</span>
+      </a>
+      <div class="article-pagination-card article-pagination-card-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-topline">
+          <span class="article-pagination-label">下一篇文章</span>
+          <span class="article-pagination-arrow" aria-hidden="true">→</span>
+        </span>
+        <strong class="article-pagination-title">已经是最新一篇</strong>
+        <span class="article-pagination-date">敬请期待</span>
+      </div>
+    </nav>
+  </main>
+</body>
+</html>
+
