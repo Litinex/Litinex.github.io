@@ -9,6 +9,52 @@
     code: "Code",
   };
 
+  async function copyToClipboard(text) {
+    const value = typeof text === "string" ? text : "";
+
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(value);
+        return true;
+      } catch (error) {
+        // Fall through to legacy copy.
+      }
+    }
+
+    const textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.top = "-9999px";
+    textarea.style.left = "-9999px";
+    textarea.style.opacity = "0";
+
+    const activeElement = document.activeElement;
+
+    try {
+      document.body.appendChild(textarea);
+      try {
+        textarea.focus({ preventScroll: true });
+      } catch (error) {
+        textarea.focus();
+      }
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      return Boolean(document.execCommand("copy"));
+    } catch (error) {
+      return false;
+    } finally {
+      textarea.remove();
+      if (activeElement && typeof activeElement.focus === "function") {
+        try {
+          activeElement.focus({ preventScroll: true });
+        } catch (error) {
+          activeElement.focus();
+        }
+      }
+    }
+  }
+
   function detectLanguage(text) {
     const source = text.trim();
 
@@ -113,6 +159,9 @@
           <span class="code-editor-filename">${fileLabel(language)}</span>
           <span class="code-editor-language">${languageNames[language] || languageNames.code}</span>
         </div>
+        <button class="code-editor-copy" type="button" data-code-copy aria-label="复制代码" title="复制代码">
+          <span class="code-editor-copy-label">复制</span>
+        </button>
       </div>
       <div class="code-editor-body">
         <div class="code-editor-lines" aria-hidden="true">
@@ -121,6 +170,43 @@
         <pre class="code-editor-code"><code class="code-editor-content">${lineMarkup(rawText)}</code></pre>
       </div>
     `;
+
+    const copyButton = wrapper.querySelector("[data-code-copy]");
+    if (copyButton) {
+      const copyLabel = copyButton.querySelector(".code-editor-copy-label");
+      const defaultLabel = copyLabel ? copyLabel.textContent : "";
+      let resetTimer = 0;
+
+      copyButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+
+        if (resetTimer) {
+          window.clearTimeout(resetTimer);
+          resetTimer = 0;
+        }
+
+        copyButton.disabled = true;
+        copyButton.classList.remove("is-copied", "is-error");
+
+        const success = await copyToClipboard(rawText);
+
+        copyButton.disabled = false;
+        copyButton.classList.toggle("is-copied", success);
+        copyButton.classList.toggle("is-error", !success);
+
+        if (copyLabel) {
+          copyLabel.textContent = success ? "已复制" : "复制失败";
+        }
+
+        resetTimer = window.setTimeout(() => {
+          copyButton.classList.remove("is-copied", "is-error");
+          if (copyLabel) {
+            copyLabel.textContent = defaultLabel || "复制";
+          }
+          resetTimer = 0;
+        }, 1600);
+      });
+    }
 
     preElement.replaceWith(wrapper);
   });
