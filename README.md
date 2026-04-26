@@ -41,7 +41,7 @@
 
 当前这些文件里用了占位地址：
 
-`https://yezizhuang.abrdns.com`
+`https://yezizhuang.top`
 
 你发布前要把它统一替换成你自己的真实 GitHub Pages 地址。
 
