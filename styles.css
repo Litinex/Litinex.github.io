@@ -529,6 +529,7 @@ html[data-theme="dark"] .hero-banner::after {
   top: 22px;
   left: 50%;
   transform: translateX(-50%);
+  animation: none;
   width: min(calc(100% - 32px), var(--max-width));
   z-index: 2;
   background: rgba(255, 255, 255, 0.58);
