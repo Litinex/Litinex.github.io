@@ -476,6 +476,24 @@ html[data-theme="dark"] .hero {
   color: var(--accent-deep);
 }
 
+.view-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.view-count-sep {
+  margin-left: 12px;
+  color: var(--muted);
+}
+
+.view-count-number {
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
 .hero h1,
 .section h2,
 .page-hero h1,
