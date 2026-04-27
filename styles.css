@@ -222,6 +222,7 @@ html[data-theme="dark"] .ambient-ripple {
 .site-header,
 .site-footer,
 .hero,
+.hero-banner,
 .section,
 .page-hero,
 .about-layout,
@@ -236,6 +237,7 @@ body,
 .site-nav a,
 .theme-toggle,
 .hero,
+.hero-banner,
 .section,
 .post-card,
 .notes-panel,
@@ -245,7 +247,8 @@ body,
 .notes-list div,
 .hero-visual figcaption,
 .button-secondary,
-.article-back {
+.article-back,
+.hero-scroll {
   transition:
     color 0.32s ease,
     background-color 0.32s ease,
@@ -464,6 +467,120 @@ html[data-theme="dark"] .theme-toggle-glyph {
 html[data-theme="dark"] .hero {
   background: linear-gradient(135deg, rgba(19, 25, 34, 0.96), rgba(13, 18, 25, 0.88));
   border-color: rgba(255, 255, 255, 0.08);
+}
+
+.hero-banner {
+  position: relative;
+  width: 100vw;
+  margin: 28px calc(50% - 50vw) 0;
+  min-height: clamp(460px, 78vh, 780px);
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: clamp(72px, 12vh, 140px) 0 86px;
+  overflow: hidden;
+  background: #0d1219;
+}
+
+.hero-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/hero-sky.jpg");
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.04);
+  filter: saturate(1.06) contrast(1.05);
+}
+
+.hero-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.72) 60%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0.82) 70%, rgba(0, 0, 0, 0.9) 100%);
+  pointer-events: none;
+}
+
+html[data-theme="dark"] .hero-banner::after {
+  background:
+    radial-gradient(circle at 50% 36%, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.78) 60%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.86) 70%, rgba(0, 0, 0, 0.92) 100%);
+}
+
+.hero-banner-inner {
+  position: relative;
+  z-index: 1;
+  width: min(calc(100% - 32px), 980px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-banner .eyebrow {
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.hero-banner h1 {
+  margin: 10px 0 18px;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-size: clamp(3.2rem, 7.5vw, 6.4rem);
+  max-width: 18ch;
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 18px 42px rgba(0, 0, 0, 0.4);
+}
+
+.hero-banner .hero-text {
+  max-width: 56ch;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 12px 26px rgba(0, 0, 0, 0.35);
+}
+
+.hero-banner .hero-actions {
+  justify-content: center;
+}
+
+.hero-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(15, 18, 25, 0.34);
+  color: rgba(255, 255, 255, 0.86);
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+}
+
+.hero-scroll:hover {
+  transform: translateX(-50%) translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(15, 18, 25, 0.42);
+}
+
+.hero-scroll:focus-visible {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.36);
+  box-shadow: 0 0 0 4px rgba(124, 167, 255, 0.2);
+}
+
+.hero-scroll-glyph {
+  width: 12px;
+  height: 12px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
 }
 
 .eyebrow,
@@ -1578,6 +1695,7 @@ html[data-theme="dark"] .code-editor-copy.is-error {
   }
 
   .hero h1,
+  .hero-banner h1,
   .article-header h1 {
     max-width: none;
   }
@@ -1623,6 +1741,7 @@ html[data-theme="dark"] .code-editor-copy.is-error {
   .site-nav a,
   .theme-toggle,
   .hero,
+  .hero-banner,
   .section,
   .post-card,
   .notes-panel,
@@ -1633,6 +1752,7 @@ html[data-theme="dark"] .code-editor-copy.is-error {
   .hero-visual figcaption,
   .button-secondary,
   .article-back,
+  .hero-scroll,
   .ambient-pointer,
   .ambient-ripple {
     transition: none;
@@ -1688,6 +1808,23 @@ html[data-theme="dark"] .code-editor-copy.is-error {
 
   .hero h1 {
     font-size: clamp(2.8rem, 13vw, 4.5rem);
+  }
+
+  .hero-banner {
+    margin-top: 18px;
+    padding: 86px 0 78px;
+  }
+
+  .hero-banner-inner {
+    width: min(calc(100% - 20px), 980px);
+  }
+
+  .hero-banner h1 {
+    font-size: clamp(2.7rem, 12vw, 4.8rem);
+  }
+
+  .hero-scroll {
+    bottom: 18px;
   }
 
   .section h2,

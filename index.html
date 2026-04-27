@@ -37,7 +37,7 @@
       }
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260427-1">
+  <link rel="stylesheet" href="styles.css?v=20260427-2">
   <script src="theme.js?v=20260425-3" defer></script>
   <script src="code-blocks.js?v=20260426-1" defer></script>
   <script src="ambient-background.js?v=20260426-1" defer></script>
@@ -82,8 +82,8 @@
     </header>
 
     <main>
-      <section class="hero">
-        <div class="hero-copy">
+      <section class="hero-banner" aria-label="首页封面">
+        <div class="hero-banner-inner">
           <p class="eyebrow">Personal Blog</p>
           <h1>把思考、作品与生活记录成一座长期更新的个人空间。</h1>
           <p class="hero-text">May all the beauty be blessed.</p>
@@ -91,10 +91,9 @@
             <a class="button button-primary" href="#essays">开始阅读</a>
           </div>
         </div>
-        <figure class="hero-visual">
-          <img src="assets/hero-sky.jpg" alt="穿过厚云的阳光与盛夏天空">
-          <figcaption>湛蓝的天空，洁白的云朵，遮不住的太阳。于是，盛夏开始了</figcaption>
-        </figure>
+        <a class="hero-scroll" href="#essays" aria-label="向下滚动到最新文章">
+          <span class="hero-scroll-glyph" aria-hidden="true"></span>
+        </a>
       </section>
 
       <section class="section">
