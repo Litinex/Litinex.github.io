@@ -9,6 +9,11 @@
     code: "Code",
   };
 
+  const runSupport = {
+    python: true,
+    javascript: true,
+  };
+
   const pythonBuiltins = new Set([
     "print",
     "len",
@@ -348,6 +353,120 @@
     return output;
   }
 
+  function getLineCount(text) {
+    if (!text) {
+      return 1;
+    }
+
+    return text.split("\n").length;
+  }
+
+  function updateLineNumbers(linesContainer, text) {
+    if (!linesContainer) return;
+    const count = getLineCount(text);
+    linesContainer.innerHTML = Array.from({ length: count }, (_, index) => `<span>${index + 1}</span>`).join("");
+  }
+
+  function debounce(fn, delayMs) {
+    let timer = 0;
+    return (...args) => {
+      if (timer) window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        timer = 0;
+        fn(...args);
+      }, delayMs);
+    };
+  }
+
+  function setBusy(button, busy, labelEl, labelText) {
+    if (!button) return;
+    button.disabled = Boolean(busy);
+    if (labelEl && typeof labelText === "string") {
+      labelEl.textContent = labelText;
+    }
+  }
+
+  // --- Runtime: Pyodide (lazy-loaded) ---
+  let pyodideReadyPromise = null;
+
+  function injectScript(src) {
+    return new Promise((resolve, reject) => {
+      const existing = Array.from(document.scripts).find((s) => s.src === src);
+      if (existing) {
+        if (existing.dataset && existing.dataset.loaded === "true") {
+          resolve();
+          return;
+        }
+        if (existing.dataset && existing.dataset.error === "true") {
+          reject(new Error(`Script 加载失败: ${src}`));
+          return;
+        }
+
+        existing.addEventListener("load", () => resolve(), { once: true });
+        existing.addEventListener("error", (e) => reject(e), { once: true });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = true;
+      script.addEventListener(
+        "load",
+        () => {
+          script.dataset.loaded = "true";
+          resolve();
+        },
+        { once: true },
+      );
+      script.addEventListener(
+        "error",
+        (e) => {
+          script.dataset.error = "true";
+          reject(e);
+        },
+        { once: true },
+      );
+      document.head.appendChild(script);
+    });
+  }
+
+  async function ensurePyodide(outputWriteLine) {
+    if (pyodideReadyPromise) {
+      return pyodideReadyPromise;
+    }
+
+    pyodideReadyPromise = (async () => {
+      const baseUrl = "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/";
+      await injectScript(`${baseUrl}pyodide.js`);
+
+      if (typeof globalThis.loadPyodide !== "function") {
+        throw new Error("Pyodide 加载失败：loadPyodide 不存在");
+      }
+
+      const pyodide = await globalThis.loadPyodide({ indexURL: baseUrl });
+
+      // Redirect stdout/stderr to our output panel.
+      try {
+        pyodide.setStdout({
+          batched: (msg) => {
+            if (typeof msg === "string") outputWriteLine(msg);
+          },
+        });
+        pyodide.setStderr({
+          batched: (msg) => {
+            if (typeof msg === "string") outputWriteLine(msg);
+          },
+        });
+      } catch (error) {
+        // If API changes, keep going with default stdout.
+      }
+
+      return pyodide;
+    })();
+
+    return pyodideReadyPromise;
+  }
+
   function highlightLine(line, language) {
     const safeLine = typeof line === "string" ? line : "";
 
@@ -398,15 +517,35 @@
           <span class="code-editor-filename">${fileLabel(language)}</span>
           <span class="code-editor-language">${languageNames[language] || languageNames.code}</span>
         </div>
-        <button class="code-editor-copy" type="button" data-code-copy aria-label="复制代码" title="复制代码">
-          <span class="code-editor-copy-label">复制</span>
-        </button>
+        <div class="code-editor-actions">
+          <button class="code-editor-action code-editor-edit" type="button" data-code-edit aria-label="编辑代码" title="编辑代码">
+            <span class="code-editor-action-label">编辑</span>
+          </button>
+          <button class="code-editor-action code-editor-run" type="button" data-code-run aria-label="运行代码" title="运行代码" ${runSupport[language] ? "" : "disabled"}>
+            <span class="code-editor-action-label">运行</span>
+          </button>
+          <button class="code-editor-action code-editor-copy" type="button" data-code-copy aria-label="复制代码" title="复制代码">
+            <span class="code-editor-copy-label">复制</span>
+          </button>
+        </div>
       </div>
       <div class="code-editor-body">
         <div class="code-editor-lines" aria-hidden="true">
           ${lines.map((_, index) => `<span>${index + 1}</span>`).join("")}
         </div>
-        <pre class="code-editor-code"><code class="code-editor-content">${lineMarkup(rawText, language)}</code></pre>
+        <div class="code-editor-main">
+          <pre class="code-editor-code" data-code-view><code class="code-editor-content">${lineMarkup(rawText, language)}</code></pre>
+          <textarea class="code-editor-input" data-code-input spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" hidden></textarea>
+        </div>
+      </div>
+      <div class="code-editor-output" data-code-output hidden>
+        <div class="code-editor-output-bar">
+          <span class="code-editor-output-title">输出</span>
+          <button class="code-editor-action code-editor-clear" type="button" data-code-clear aria-label="清空输出" title="清空输出">
+            <span class="code-editor-action-label">清空</span>
+          </button>
+        </div>
+        <pre class="code-editor-output-content" data-code-output-content></pre>
       </div>
     `;
 
@@ -444,6 +583,193 @@
           }
           resetTimer = 0;
         }, 1600);
+      });
+    }
+
+    const linesContainer = wrapper.querySelector(".code-editor-lines");
+    const viewCode = wrapper.querySelector(".code-editor-content");
+    const viewPre = wrapper.querySelector("[data-code-view]");
+    const input = wrapper.querySelector("[data-code-input]");
+    const editButton = wrapper.querySelector("[data-code-edit]");
+    const runButton = wrapper.querySelector("[data-code-run]");
+    const output = wrapper.querySelector("[data-code-output]");
+    const outputContent = wrapper.querySelector("[data-code-output-content]");
+    const clearButton = wrapper.querySelector("[data-code-clear]");
+
+    const state = {
+      text: rawText,
+      language,
+      editing: false,
+      running: false,
+    };
+
+    const writeOutputLine = (line) => {
+      if (!output || !outputContent) return;
+      output.hidden = false;
+      const msg = typeof line === "string" ? line : String(line);
+      outputContent.textContent += msg.endsWith("\n") ? msg : `${msg}\n`;
+      // Keep scrolled to bottom.
+      outputContent.scrollTop = outputContent.scrollHeight;
+    };
+
+    const clearOutput = () => {
+      if (!output || !outputContent) return;
+      outputContent.textContent = "";
+    };
+
+    if (clearButton) {
+      clearButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        clearOutput();
+      });
+    }
+
+    const renderView = () => {
+      if (!viewCode) return;
+      viewCode.innerHTML = lineMarkup(state.text, state.language);
+      updateLineNumbers(linesContainer, state.text);
+    };
+
+    const renderViewDebounced = debounce(renderView, 60);
+
+    const setEditing = (nextEditing) => {
+      const next = Boolean(nextEditing);
+      state.editing = next;
+      if (!input || !viewPre || !editButton) return;
+
+      const editLabel = editButton.querySelector(".code-editor-action-label");
+      if (next) {
+        input.hidden = false;
+        viewPre.hidden = true;
+        input.value = state.text;
+        updateLineNumbers(linesContainer, state.text);
+        if (editLabel) editLabel.textContent = "完成";
+        try {
+          input.focus({ preventScroll: true });
+        } catch (error) {
+          input.focus();
+        }
+        return;
+      }
+
+      state.text = normalizeCodeText(input.value);
+      input.hidden = true;
+      viewPre.hidden = false;
+      if (editLabel) editLabel.textContent = "编辑";
+      renderView();
+    };
+
+    if (editButton) {
+      editButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        setEditing(!state.editing);
+      });
+    }
+
+    if (input) {
+      input.value = state.text;
+      input.addEventListener("input", () => {
+        state.text = input.value.replace(/\r\n/g, "\n");
+        updateLineNumbers(linesContainer, state.text);
+        // Live update preview in background (when editing) for a nicer feel.
+        renderViewDebounced();
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Tab") {
+          event.preventDefault();
+          const start = input.selectionStart ?? 0;
+          const end = input.selectionEnd ?? 0;
+          const value = input.value;
+          input.value = value.slice(0, start) + "  " + value.slice(end);
+          input.selectionStart = start + 2;
+          input.selectionEnd = start + 2;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "enter") {
+          // Ctrl/Cmd + Enter runs.
+          runButton?.click();
+        }
+      });
+      // Keep horizontal scroll similar to pre for long lines.
+      input.addEventListener("scroll", () => {
+        if (!viewPre) return;
+        viewPre.scrollTop = input.scrollTop;
+        viewPre.scrollLeft = input.scrollLeft;
+      });
+    }
+
+    const runPython = async () => {
+      const buttonLabel = runButton?.querySelector(".code-editor-action-label");
+      clearOutput();
+      writeOutputLine("正在加载运行环境…（首次会较慢）");
+      try {
+        const pyodide = await ensurePyodide(writeOutputLine);
+        clearOutput();
+        await pyodide.runPythonAsync(state.text);
+      } catch (error) {
+        clearOutput();
+        writeOutputLine(String(error?.message || error));
+      } finally {
+        setBusy(runButton, false, buttonLabel, "运行");
+      }
+    };
+
+    const runJavaScript = async () => {
+      const buttonLabel = runButton?.querySelector(".code-editor-action-label");
+      clearOutput();
+
+      const originalLog = console.log;
+      const originalWarn = console.warn;
+      const originalError = console.error;
+
+      const capture = (...args) => writeOutputLine(args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" "));
+
+      console.log = (...args) => {
+        originalLog(...args);
+        capture(...args);
+      };
+      console.warn = (...args) => {
+        originalWarn(...args);
+        capture(...args);
+      };
+      console.error = (...args) => {
+        originalError(...args);
+        capture(...args);
+      };
+
+      try {
+        // eslint-disable-next-line no-new-func
+        const fn = new Function(state.text);
+        const result = fn();
+        if (result !== undefined) {
+          writeOutputLine(String(result));
+        }
+      } catch (error) {
+        writeOutputLine(String(error?.message || error));
+      } finally {
+        console.log = originalLog;
+        console.warn = originalWarn;
+        console.error = originalError;
+        setBusy(runButton, false, buttonLabel, "运行");
+      }
+    };
+
+    if (runButton) {
+      runButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        if (!runSupport[state.language]) return;
+
+        const buttonLabel = runButton.querySelector(".code-editor-action-label");
+        setBusy(runButton, true, buttonLabel, "运行中…");
+
+        if (state.language === "python") {
+          await runPython();
+          return;
+        }
+
+        if (state.language === "javascript") {
+          await runJavaScript();
+        }
       });
     }
 
