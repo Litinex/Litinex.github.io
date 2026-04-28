@@ -356,11 +356,11 @@ html[data-theme="dark"] .hero {
   isolation: isolate;
   width: 100vw;
   margin: 28px calc(50% - 50vw) 0;
-  min-height: clamp(460px, 78vh, 780px);
+  min-height: 100vh;
   display: grid;
   align-items: center;
   justify-items: center;
-  padding: clamp(108px, 16vh, 176px) 0 86px;
+  padding: 0;
   overflow: hidden;
   background: #0d1219;
 }
@@ -458,13 +458,10 @@ html:not([data-theme="dark"]) .site-header-hero .site-nav a:hover {
 }
 
 .hero-banner-inner {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
-  width: min(calc(100% - 32px), 980px);
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .hero-banner .eyebrow {
@@ -484,6 +481,13 @@ html:not([data-theme="dark"]) .site-header-hero .site-nav a:hover {
 }
 
 .hero-banner h1[data-hero-poem] {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(calc(100% - 32px), 1180px);
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 5rem);
   max-width: none;
   white-space: nowrap;
 }
@@ -495,7 +499,12 @@ html:not([data-theme="dark"]) .site-header-hero .site-nav a:hover {
 }
 
 .hero-banner .hero-actions {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + clamp(92px, 11vh, 140px));
+  transform: translateX(-50%);
   justify-content: center;
+  margin-top: 0;
 }
 
 .hero-scroll {
@@ -1760,18 +1769,6 @@ html[data-theme="dark"] .code-editor-copy.is-error {
 
   .hero h1 {
     font-size: clamp(2.8rem, 13vw, 4.5rem);
-  }
-
-  .hero-banner {
-    padding: 86px 0 78px;
-  }
-
-  .hero-banner-inner {
-    width: min(calc(100% - 20px), 980px);
-  }
-
-  .hero-banner h1 {
-    font-size: clamp(2.7rem, 12vw, 4.8rem);
   }
 
   .hero-scroll {
