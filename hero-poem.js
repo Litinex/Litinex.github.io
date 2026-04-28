@@ -2,6 +2,11 @@
   const target = document.querySelector("[data-hero-poem]");
   if (!target) return;
 
+  const setTitle = (poem) => {
+    const base = (document.title || "").split("|")[0].trim() || "风迁夏回";
+    document.title = `${base} | ${poem}`;
+  };
+
   const fallbackPoems = [
     "行到水穷处，坐看云起时。",
     "明月松间照，清泉石上流。",
@@ -43,10 +48,12 @@
       }
 
       target.textContent = content;
+      setTitle(content);
     } catch (error) {
       const fallback = pickFallback();
       if (fallback) {
         target.textContent = fallback;
+        setTitle(fallback);
       }
     } finally {
       window.clearTimeout(timer);
