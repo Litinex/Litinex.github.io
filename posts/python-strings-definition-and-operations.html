@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>字符串的定义以及操作 | 风迁夏回</title>
+  <meta name="description" content="Python 字符串的定义方式、类型判断与常见转义字符示例。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-strings-definition-and-operations.html">
+  <meta property="og:title" content="字符串的定义以及操作 | 风迁夏回">
+  <meta property="og:description" content="Python 字符串的定义方式、类型判断与常见转义字符示例。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-strings-definition-and-operations.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260428-18">
+  <script src="../code-blocks.js?v=20260428-2" defer></script>
+  <script src="../ambient-background.js?v=20260428-2" defer></script>
+  <script src="../music-player.js?v=20260426-3" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "字符串的定义以及操作",
+      "description": "Python 字符串的定义方式、类型判断与常见转义字符示例。",
+      "url": "https://yezizhuang.top/posts/python-strings-definition-and-operations.html",
+      "datePublished": "2026-04-28",
+      "dateModified": "2026-04-28",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.04.28 · Python 入门</p>
+      <h1>字符串的定义以及操作</h1>
+    </header>
+
+    <article class="article-body">
+      <pre><code>#常见数据类型
+print("Hello")
+print(type("Hello"))
+
+print(type(10))
+print(type(3.14))
+print(type(True))
+print(type(False))
+print(type(None))
+
+#如果想知道该数据是否属于指定类型，应用isinstance()来检查
+num = 5.0
+print(num)
+print(isinstance(num,int))
+#返回的是布尔值
+
+#字符串
+#定义字符串的三种方式
+s1 = "Hello"#双引号定义方式
+s2 = 'Python'#单引号定义方式
+s3 = """
+Hello:
+    1234567
+    2345678
+"""#三引号（多行字符串）
+print(s1)
+print(s2)
+print(s3)
+
+print(type(s1),type(s2),type(s3))
+
+#定义字符串(含转义字符)  \n换行  \t制表符
+msg = 'It\'s very good'
+print(msg)
+msg1 = "Hello 的意思就是\"您好\""
+msg1 = 'Hello 的意思就是"您好"'
+
+print("\t123\n\t345")#换行符，制表符相当于tab缩进
+
+#字符串的拼接 
+s1 = "人生苦短" "我用Python"       ",OK"
+print(s1)
+
+msg1 = "人生苦短"
+msg2 = "我用Python"
+print("龟叔说：" + msg1 + "," + msg2)
+
+#案例：根据自己的实际情况，输出个人的详细信息
+# str(int数字)将int类型的数字转换成字符串
+name = "涛哥"
+age = 18
+pro = "软件工程"
+hobby = "Python Java"
+print("大家好,我是" + name + ",今年" + str(age) + "岁，学习的专业是" + pro + ",爱好" + hobby)
+
+#字符串格式化：占位符%s
+name = "涛哥"
+age = 18
+pro = "软件工程"
+hobby = "Python Java"
+print("大家好,我是 %s ,今年 %s 岁，学习的专业是 %s ,爱好 %s" %(name,age,pro,hobby))
+
+#字符串格式化：f"内容{变量/表达式}"，f不能省
+name = "叶子庄"
+print(f"大家好，我是{name}，今年{age}岁")</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-literals-and-variables.html">
+        <span class="article-pagination-link-arrow" aria-hidden="true">←</span>
+        <span class="article-pagination-link-text">上一篇：Python中的字面量及自变量</span>
+      </a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-link-text">已经是最新一篇</span>
+        <span class="article-pagination-link-arrow" aria-hidden="true">→</span>
+      </span>
+    </nav>
+  </main>
+</body>
+</html>
