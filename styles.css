@@ -114,7 +114,9 @@ a {
 
 .ambient-orb,
 .ambient-pointer,
-.ambient-ripple {
+.ambient-ripple,
+.ambient-click,
+.ambient-press {
   position: absolute;
   border-radius: 999px;
 }
@@ -173,6 +175,37 @@ a {
   opacity: 0.58;
 }
 
+.ambient-click {
+  left: var(--click-x);
+  top: var(--click-y);
+  width: calc(160px + (var(--click-power, 0) * 340px));
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 0;
+  pointer-events: none;
+  animation: ambientClickBurst 920ms ease-out forwards;
+  border: 1px solid rgba(184, 92, 56, 0.16);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.32) 0, rgba(255, 255, 255, 0.08) 36%, rgba(255, 255, 255, 0) 68%);
+}
+
+.ambient-press {
+  left: var(--press-x, -9999px);
+  top: var(--press-y, -9999px);
+  width: calc(120px + (var(--press-power, 0) * 220px));
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(0.88);
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid rgba(184, 92, 56, 0.12);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.22) 0, rgba(255, 255, 255, 0) 66%);
+  transition: opacity 0.18s ease;
+}
+
+.ambient-press.is-active {
+  opacity: 0.62;
+  animation: ambientPressPulse 900ms ease-in-out infinite;
+}
+
 html[data-theme="dark"] .ambient-backdrop::before {
   background:
     radial-gradient(circle at 14% 16%, rgba(239, 181, 140, 0.12), transparent 22%),
@@ -205,6 +238,16 @@ html[data-theme="dark"] .ambient-pointer {
 html[data-theme="dark"] .ambient-ripple {
   border-color: rgba(240, 217, 170, 0.08);
   background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 66%);
+}
+
+html[data-theme="dark"] .ambient-click {
+  border-color: rgba(124, 167, 255, 0.18);
+  background: radial-gradient(circle, rgba(124, 167, 255, 0.22) 0, rgba(124, 167, 255, 0.08) 38%, rgba(16, 21, 29, 0) 72%);
+}
+
+html[data-theme="dark"] .ambient-press {
+  border-color: rgba(124, 167, 255, 0.12);
+  background: radial-gradient(circle, rgba(124, 167, 255, 0.16) 0, rgba(124, 167, 255, 0) 66%);
 }
 
 .site-shell,
@@ -1627,6 +1670,32 @@ html[data-theme="dark"] .code-editor-copy.is-error {
   }
   50% {
     transform: translate3d(2vw, -2vh, 0) scale(1.04);
+  }
+}
+
+@keyframes ambientClickBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  18% {
+    opacity: 0.72;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.22);
+  }
+}
+
+@keyframes ambientPressPulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(calc(0.86 + (var(--press-power, 0) * 0.18)));
+    opacity: calc(0.42 + (var(--press-power, 0) * 0.2));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(calc(0.96 + (var(--press-power, 0) * 0.26)));
+    opacity: calc(0.6 + (var(--press-power, 0) * 0.26));
   }
 }
 
