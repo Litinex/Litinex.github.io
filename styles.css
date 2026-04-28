@@ -1268,8 +1268,8 @@ html[data-theme="dark"] .article-page {
 }
 
 html[data-theme="dark"] .article-body code {
-  background: rgba(240, 217, 170, 0.1);
-  color: #f0d9aa;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .article-body .code-editor code {
@@ -1490,6 +1490,7 @@ html[data-theme="dark"] .article-body code {
   margin: 0;
   padding: 18px 20px;
   color: #eaf2fb;
+  background: transparent;
   font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
   font-size: 0.95rem;
   line-height: 1.9;
@@ -1497,6 +1498,8 @@ html[data-theme="dark"] .article-body code {
 
 .code-editor-content {
   display: block;
+  color: inherit;
+  background: transparent;
 }
 
 .code-editor-code span {
@@ -1513,8 +1516,8 @@ html[data-theme="dark"] .code-editor-bar {
 }
 
 html[data-theme="dark"] .code-editor-language {
-  background: rgba(240, 217, 170, 0.08);
-  color: #f0d9aa;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.86);
 }
 
 html[data-theme="dark"] .code-editor-copy {
@@ -1523,9 +1526,9 @@ html[data-theme="dark"] .code-editor-copy {
 }
 
 html[data-theme="dark"] .code-editor-copy:hover {
-  border-color: rgba(240, 217, 170, 0.24);
-  background: rgba(240, 217, 170, 0.08);
-  color: #f0d9aa;
+  border-color: rgba(124, 167, 255, 0.28);
+  background: rgba(124, 167, 255, 0.12);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 html[data-theme="dark"] .code-editor-copy:focus-visible {
@@ -1533,9 +1536,9 @@ html[data-theme="dark"] .code-editor-copy:focus-visible {
 }
 
 html[data-theme="dark"] .code-editor-copy.is-copied {
-  border-color: rgba(240, 217, 170, 0.28);
-  background: rgba(240, 217, 170, 0.1);
-  color: #f0d9aa;
+  border-color: rgba(127, 177, 138, 0.34);
+  background: rgba(127, 177, 138, 0.14);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 html[data-theme="dark"] .code-editor-copy.is-error {
