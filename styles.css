@@ -1528,9 +1528,9 @@ html[data-theme="dark"] .code-editor-body {
 }
 
 html[data-theme="dark"] .code-editor-lines {
-  background: #313335;
+  background: transparent;
   color: rgba(255, 255, 255, 0.36);
-  border-right-color: rgba(255, 255, 255, 0.08);
+  border-right-color: transparent;
 }
 
 html[data-theme="dark"] .code-editor-code {
