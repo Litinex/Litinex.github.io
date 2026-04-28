@@ -1281,6 +1281,13 @@ html[data-theme="dark"] .article-body code {
   font-size: inherit;
 }
 
+.article-body pre code {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+}
+
 .article-back {
   display: inline-flex;
   color: var(--accent);
