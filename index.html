@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/hero-sky-1920.jpg" imagesrcset="assets/hero-sky-1280.jpg 1280w, assets/hero-sky-1920.jpg 1920w, assets/hero-sky-2560.jpg 2560w" imagesizes="100vw">
-  <link rel="stylesheet" href="styles.css?v=20260428-15">
+  <link rel="stylesheet" href="styles.css?v=20260428-18">
   <script src="code-blocks.js?v=20260428-2" defer></script>
   <script src="ambient-background.js?v=20260428-2" defer></script>
   <script src="music-player.js?v=20260426-3" defer></script>
@@ -94,42 +94,50 @@
           <a class="text-link" href="archive.html">查看文章列表</a>
         </div>
 
-        <div class="post-grid">
-          <article class="post-card">
-            <p class="meta">2026.04.28 · Python 入门</p>
-            <h3>Python中的字面量及自变量</h3>
-            <p>
-              python是动态类型语言，一个变量可以存储不同类型的数据。
-            </p>
-            <a href="posts/python-literals-and-variables.html">阅读全文</a>
-          </article>
-
-          <article class="post-card featured">
+        <div class="essays-layout">
+          <article class="essay-feature">
             <p class="meta">2026.04.26 · 论文笔记</p>
-            <h3>《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结</h3>
+            <h3>
+              <a href="posts/llm-nlp-era-summary.html">《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结</a>
+            </h3>
             <p>
               一篇关于“大模型如何改变自然语言处理”的综述总结：从任务范式、核心任务影响，到幻觉、安全、成本与评价等挑战，并展望工具学习、多模态与具身智能。
             </p>
-            <a href="posts/llm-nlp-era-summary.html">阅读全文</a>
+            <a class="essay-feature-link" href="posts/llm-nlp-era-summary.html">阅读全文</a>
           </article>
 
-          <article class="post-card">
-            <p class="meta">2026.04.25 · Python 入门</p>
-            <h3>人生苦短，我用Python</h3>
-            <p>
-              既然是第一篇博客，那就简单记录下从0开始学习python的足迹。
-            </p>
-            <a href="posts/first-post.html">阅读全文</a>
-          </article>
-
-          <article class="post-card">
-            <p class="meta">2026.04.18 · 学习札记</p>
-            <h3>怎样写一篇未来自己也愿意重看的技术笔记</h3>
-            <p>
-              少一点复制粘贴，多一点上下文、判断过程和失败记录，文章会更有价值。
-            </p>
-            <a href="posts/notes-template.html">查看示例</a>
-          </article>
+          <ol class="essay-list" aria-label="更多文章">
+            <li class="essay-item">
+              <a class="essay-link" href="posts/python-literals-and-variables.html">
+                <span class="essay-index">01</span>
+                <span class="essay-body">
+                  <span class="essay-meta">2026.04.28 · Python 入门</span>
+                  <span class="essay-title">Python中的字面量及自变量</span>
+                  <span class="essay-excerpt">python是动态类型语言，一个变量可以存储不同类型的数据。</span>
+                </span>
+              </a>
+            </li>
+            <li class="essay-item">
+              <a class="essay-link" href="posts/first-post.html">
+                <span class="essay-index">02</span>
+                <span class="essay-body">
+                  <span class="essay-meta">2026.04.25 · Python 入门</span>
+                  <span class="essay-title">人生苦短，我用Python</span>
+                  <span class="essay-excerpt">既然是第一篇博客，那就简单记录下从0开始学习python的足迹。</span>
+                </span>
+              </a>
+            </li>
+            <li class="essay-item">
+              <a class="essay-link" href="posts/notes-template.html">
+                <span class="essay-index">03</span>
+                <span class="essay-body">
+                  <span class="essay-meta">2026.04.18 · 学习札记</span>
+                  <span class="essay-title">怎样写一篇未来自己也愿意重看的技术笔记</span>
+                  <span class="essay-excerpt">少一点复制粘贴，多一点上下文、判断过程和失败记录，文章会更有价值。</span>
+                </span>
+              </a>
+            </li>
+          </ol>
         </div>
       </section>
 
