@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>Python中的字面量及自变量 | 风迁夏回</title>
+  <meta name="description" content="Python 是动态类型语言，一个变量可以存储不同类型的数据。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-literals-and-variables.html">
+  <meta property="og:title" content="Python中的字面量及自变量 | 风迁夏回">
+  <meta property="og:description" content="Python 是动态类型语言，一个变量可以存储不同类型的数据。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-literals-and-variables.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260428-5">
+  <script src="../code-blocks.js?v=20260426-1" defer></script>
+  <script src="../ambient-background.js?v=20260426-1" defer></script>
+  <script src="../music-player.js?v=20260426-3" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Python中的字面量及自变量",
+      "description": "Python 是动态类型语言，一个变量可以存储不同类型的数据。",
+      "url": "https://yezizhuang.top/posts/python-literals-and-variables.html",
+      "datePublished": "2026-04-28",
+      "dateModified": "2026-04-28",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.04.28 · Python 入门</p>
+      <h1>Python中的字面量及自变量</h1>
+    </header>
+
+    <article class="article-body">
+      <p>
+        python是动态类型语言，一个变量可以存储不同类型的数据。
+      </p>
+
+      <pre><code>#字面量的写法
+print(100)#整数类型(int)
+print(3.14)#浮点数类型(float)
+print(True)#布尔类型(bool)
+print(False)#布尔类型(bool)
+print("Hello Python")#字符串类型(str)
+print(None)#空值(NoneType)
+
+#布尔类型本质也是整型类型(True - 1;False - 0)
+print(True + 1)
+print(False - 1)
+
+#变量python是动态类型语言，一个变量可以存储不同类型的数据
+num = 1114.1
+print(num)
+
+num,num1 = 1,2
+num = num + 1
+print(num)
+
+num = "OK"
+print(num)
+
+num = True
+print(num)</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-card article-pagination-card-prev" href="llm-nlp-era-summary.html">
+        <span class="article-pagination-topline">
+          <span class="article-pagination-arrow" aria-hidden="true">←</span>
+          <span class="article-pagination-label">上一篇文章</span>
+        </span>
+        <strong class="article-pagination-title">《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结</strong>
+        <span class="article-pagination-date">2026.04.26</span>
+      </a>
+      <div class="article-pagination-card article-pagination-card-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-topline">
+          <span class="article-pagination-label">下一篇文章</span>
+          <span class="article-pagination-arrow" aria-hidden="true">→</span>
+        </span>
+        <strong class="article-pagination-title">已经是最新一篇</strong>
+        <span class="article-pagination-date">敬请期待</span>
+      </div>
+    </nav>
+  </main>
+</body>
+</html>
+
