@@ -1480,8 +1480,7 @@ html[data-theme="dark"] .article-body code {
   user-select: none;
 }
 
-.code-editor-lines span,
-.code-editor-code span {
+.code-editor-lines > span {
   display: block;
   min-height: 1.9em;
 }
@@ -1502,8 +1501,15 @@ html[data-theme="dark"] .article-body code {
   background: transparent;
 }
 
-.code-editor-code span {
+.code-editor-content > span {
+  display: block;
+  min-height: 1.9em;
   white-space: pre;
+}
+
+.code-editor-content > span > span {
+  display: inline;
+  white-space: inherit;
 }
 
 html[data-theme="dark"] .code-editor {
