@@ -9,6 +9,72 @@
     code: "Code",
   };
 
+  const pythonBuiltins = new Set([
+    "print",
+    "len",
+    "range",
+    "str",
+    "int",
+    "float",
+    "bool",
+    "list",
+    "dict",
+    "set",
+    "tuple",
+    "open",
+    "input",
+    "type",
+    "isinstance",
+    "enumerate",
+    "zip",
+    "map",
+    "filter",
+    "sum",
+    "min",
+    "max",
+    "abs",
+    "round",
+    "sorted",
+  ]);
+
+  const pythonKeywords = new Set([
+    "False",
+    "None",
+    "True",
+    "and",
+    "as",
+    "assert",
+    "async",
+    "await",
+    "break",
+    "class",
+    "continue",
+    "def",
+    "del",
+    "elif",
+    "else",
+    "except",
+    "finally",
+    "for",
+    "from",
+    "global",
+    "if",
+    "import",
+    "in",
+    "is",
+    "lambda",
+    "nonlocal",
+    "not",
+    "or",
+    "pass",
+    "raise",
+    "return",
+    "try",
+    "while",
+    "with",
+    "yield",
+  ]);
+
   async function copyToClipboard(text) {
     const value = typeof text === "string" ? text : "";
 
@@ -129,10 +195,183 @@
     return lines.join("\n");
   }
 
-  function lineMarkup(text) {
+  function escapeHtml(text) {
+    return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function wrapToken(className, text) {
+    return `<span class="${className}">${escapeHtml(text)}</span>`;
+  }
+
+  function findPythonCommentStart(line) {
+    let inSingle = false;
+    let inDouble = false;
+    let escaped = false;
+
+    for (let index = 0; index < line.length; index += 1) {
+      const char = line[index];
+
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+
+      if (char === "\\\\") {
+        escaped = true;
+        continue;
+      }
+
+      if (!inDouble && char === "'") {
+        inSingle = !inSingle;
+        continue;
+      }
+
+      if (!inSingle && char === '"') {
+        inDouble = !inDouble;
+        continue;
+      }
+
+      if (!inSingle && !inDouble && char === "#") {
+        return index;
+      }
+    }
+
+    return -1;
+  }
+
+  function highlightPythonText(text) {
+    if (!text) {
+      return "";
+    }
+
+    // Split out string literals first.
+    const segments = [];
+    let cursor = 0;
+
+    while (cursor < text.length) {
+      const char = text[cursor];
+      const isQuote = char === "'" || char === '"';
+      if (!isQuote) {
+        cursor += 1;
+        continue;
+      }
+
+      const quote = char;
+      const start = cursor;
+      cursor += 1;
+      let escaped = false;
+
+      while (cursor < text.length) {
+        const current = text[cursor];
+        if (escaped) {
+          escaped = false;
+          cursor += 1;
+          continue;
+        }
+        if (current === "\\\\") {
+          escaped = true;
+          cursor += 1;
+          continue;
+        }
+        if (current === quote) {
+          cursor += 1;
+          break;
+        }
+        cursor += 1;
+      }
+
+      const end = cursor;
+      segments.push({ type: "string", start, end });
+    }
+
+    if (!segments.length) {
+      return highlightPythonPlain(text);
+    }
+
+    let lastIndex = 0;
+    let output = "";
+
+    for (const segment of segments) {
+      const before = text.slice(lastIndex, segment.start);
+      if (before) {
+        output += highlightPythonPlain(before);
+      }
+      const literal = text.slice(segment.start, segment.end);
+      output += wrapToken("token-string", literal);
+      lastIndex = segment.end;
+    }
+
+    const tail = text.slice(lastIndex);
+    if (tail) {
+      output += highlightPythonPlain(tail);
+    }
+
+    return output;
+  }
+
+  function highlightPythonPlain(text) {
+    if (!text) {
+      return "";
+    }
+
+    // Tokenize identifiers / numbers while preserving whitespace and punctuation.
+    const regex = /([A-Za-z_][A-Za-z0-9_]*|\d+(?:_?\d)*(?:\.\d+(?:_?\d)*)?)/g;
+    let lastIndex = 0;
+    let output = "";
+
+    for (const match of text.matchAll(regex)) {
+      const start = match.index ?? 0;
+      const token = match[0];
+      const before = text.slice(lastIndex, start);
+      if (before) {
+        output += escapeHtml(before);
+      }
+
+      if (/^\\d/.test(token)) {
+        output += wrapToken("token-number", token);
+      } else if (pythonKeywords.has(token)) {
+        output += wrapToken("token-keyword", token);
+      } else if (pythonBuiltins.has(token)) {
+        output += wrapToken("token-builtin", token);
+      } else {
+        output += escapeHtml(token);
+      }
+
+      lastIndex = start + token.length;
+    }
+
+    const tail = text.slice(lastIndex);
+    if (tail) {
+      output += escapeHtml(tail);
+    }
+
+    return output;
+  }
+
+  function highlightLine(line, language) {
+    const safeLine = typeof line === "string" ? line : "";
+
+    if (language !== "python") {
+      return escapeHtml(safeLine);
+    }
+
+    const commentStart = findPythonCommentStart(safeLine);
+    const codePart = commentStart >= 0 ? safeLine.slice(0, commentStart) : safeLine;
+    const commentPart = commentStart >= 0 ? safeLine.slice(commentStart) : "";
+
+    let output = highlightPythonText(codePart);
+
+    if (commentPart) {
+      output += wrapToken("token-comment", commentPart);
+    }
+
+    return output;
+  }
+
+  function lineMarkup(text, language) {
     return text
       .split("\n")
-      .map((line) => `<span>${line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") || "&nbsp;"}</span>`)
+      .map((line) => `<span>${highlightLine(line, language) || "&nbsp;"}</span>`)
       .join("");
   }
 
@@ -167,7 +406,7 @@
         <div class="code-editor-lines" aria-hidden="true">
           ${lines.map((_, index) => `<span>${index + 1}</span>`).join("")}
         </div>
-        <pre class="code-editor-code"><code class="code-editor-content">${lineMarkup(rawText)}</code></pre>
+        <pre class="code-editor-code"><code class="code-editor-content">${lineMarkup(rawText, language)}</code></pre>
       </div>
     `;
 

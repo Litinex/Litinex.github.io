@@ -1522,13 +1522,33 @@ html[data-theme="dark"] .code-editor-body {
 }
 
 html[data-theme="dark"] .code-editor-lines {
-  background: #2b2b2b;
-  color: rgba(255, 255, 255, 0.42);
+  background: #313335;
+  color: rgba(255, 255, 255, 0.36);
   border-right-color: rgba(255, 255, 255, 0.08);
 }
 
 html[data-theme="dark"] .code-editor-code {
-  color: rgba(255, 255, 255, 0.9);
+  color: #a9b7c6;
+}
+
+html[data-theme="dark"] .code-editor-content .token-comment {
+  color: #808080;
+}
+
+html[data-theme="dark"] .code-editor-content .token-string {
+  color: #6a8759;
+}
+
+html[data-theme="dark"] .code-editor-content .token-number {
+  color: #6897bb;
+}
+
+html[data-theme="dark"] .code-editor-content .token-keyword {
+  color: #cc7832;
+}
+
+html[data-theme="dark"] .code-editor-content .token-builtin {
+  color: #8888c6;
 }
 
 html[data-theme="dark"] .code-editor-language {
