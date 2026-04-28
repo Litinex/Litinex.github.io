@@ -491,10 +491,14 @@ html[data-theme="dark"] .hero {
   margin-top: 0;
 }
 
+.home-page .hero-banner + .section {
+  margin-top: 18px;
+}
+
 .hero-banner-media {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   margin: 0;
 }
 
@@ -512,7 +516,9 @@ html[data-theme="dark"] .hero {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 0;
   background:
+    linear-gradient(180deg, rgba(247, 243, 234, 0) 0%, rgba(247, 243, 234, 0) 74%, rgba(247, 243, 234, 0.72) 88%, rgba(239, 230, 214, 0.92) 100%),
     radial-gradient(circle at 50% 36%, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.52) 62%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.32) 0%, rgba(0, 0, 0, 0.56) 72%, rgba(0, 0, 0, 0.72) 100%);
   pointer-events: none;
