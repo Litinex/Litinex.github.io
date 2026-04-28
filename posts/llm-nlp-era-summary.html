@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
   <title>《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结 | 风迁夏回</title>
   <meta name="description" content="论文笔记：总结《大模型时代的自然语言处理: 挑战、机遇与发展文献》，梳理 LLM 对 NLP 任务的影响、共性挑战与未来发展方向。">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#b85c38">
+  <meta name="theme-color" content="#11161f">
   <link rel="canonical" href="https://yezizhuang.top/posts/llm-nlp-era-summary.html">
   <meta property="og:title" content="《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结 | 风迁夏回">
   <meta property="og:description" content="论文笔记：总结《大模型时代的自然语言处理: 挑战、机遇与发展文献》，梳理 LLM 对 NLP 任务的影响、共性挑战与未来发展方向。">
@@ -20,25 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <script>
-    (() => {
-      const storageKey = "preferred-theme";
-      try {
-        const storedTheme = localStorage.getItem(storageKey);
-        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        const theme = storedTheme || systemTheme;
-        document.documentElement.dataset.theme = theme;
-        const metaTheme = document.querySelector('meta[name="theme-color"]');
-        if (metaTheme) {
-          metaTheme.setAttribute("content", theme === "dark" ? "#11161f" : "#b85c38");
-        }
-      } catch (error) {
-        document.documentElement.dataset.theme = "light";
-      }
-    })();
-  </script>
-  <link rel="stylesheet" href="../styles.css?v=20260428-1">
-  <script src="../theme.js?v=20260425-3" defer></script>
+  <link rel="stylesheet" href="../styles.css?v=20260428-3">
   <script src="../code-blocks.js?v=20260426-1" defer></script>
   <script src="../ambient-background.js?v=20260426-1" defer></script>
   <script src="../music-player.js?v=20260426-2" defer></script>
@@ -68,10 +50,6 @@
   <main class="article-shell">
     <div class="article-toolbar">
       <a class="article-back" href="../index.html">返回首页</a>
-      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换主题" aria-pressed="false">
-        <span class="theme-toggle-glyph" aria-hidden="true"></span>
-        <span class="theme-toggle-label sr-only">暗黑模式</span>
-      </button>
     </div>
     <header class="article-header">
       <p class="meta">2026.04.26 · 论文笔记</p>
