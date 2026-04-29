@@ -337,7 +337,7 @@
     return document.querySelector("[data-ambient-press]");
   }
 
-  function setPressIndicator(active, x, y, power) {
+  function setPressIndicator(active, x, y, power, state) {
     const indicator = getPressIndicator();
     if (!indicator) {
       return;
@@ -348,6 +348,10 @@
       indicator.style.removeProperty("--press-x");
       indicator.style.removeProperty("--press-y");
       indicator.style.removeProperty("--press-power");
+      indicator.style.removeProperty("--press-sx");
+      indicator.style.removeProperty("--press-sy");
+      indicator.style.removeProperty("--press-spin");
+      indicator.style.borderRadius = "";
       return;
     }
 
@@ -355,6 +359,13 @@
     indicator.style.setProperty("--press-x", `${x}px`);
     indicator.style.setProperty("--press-y", `${y}px`);
     indicator.style.setProperty("--press-power", String(power));
+
+    if (state) {
+      if (typeof state.sx === "number") indicator.style.setProperty("--press-sx", state.sx.toFixed(3));
+      if (typeof state.sy === "number") indicator.style.setProperty("--press-sy", state.sy.toFixed(3));
+      if (typeof state.spin === "number") indicator.style.setProperty("--press-spin", `${state.spin.toFixed(2)}deg`);
+      if (state.shapeRadius) indicator.style.borderRadius = state.shapeRadius;
+    }
   }
 
   function spawnClickRipple(x, y, power) {
@@ -423,18 +434,43 @@
       lastX: event.clientX,
       lastY: event.clientY,
       rafId: 0,
+      sx: 1 + rand(-0.06, 0.06),
+      sy: 1 + rand(-0.06, 0.06),
+      spinOffset: rand(0, 360),
+      spin: 0,
+      shapeRadius: blobRadius(),
+      lastBubbleAt: 0,
     };
 
-    setPressIndicator(true, pressState.startX, pressState.startY, 0);
+    setPressIndicator(true, pressState.startX, pressState.startY, 0, pressState);
 
     const tick = () => {
       if (!pressState) {
         return;
       }
 
-      const elapsed = now() - pressState.startTime;
+      const timestamp = now();
+      const elapsed = timestamp - pressState.startTime;
       const power = clamp(elapsed / maxPressMs, 0, 1);
-      setPressIndicator(true, pressState.lastX, pressState.lastY, power);
+      pressState.spin = pressState.spinOffset + elapsed * (0.06 + power * 0.18);
+      setPressIndicator(true, pressState.lastX, pressState.lastY, power, pressState);
+
+      // Long-press bubbles (water-theme): even without pointer movement,
+      // emit subtle droplets as the press power grows.
+      if (power > 0.12) {
+        const interval = 240 - power * 140;
+        if (!pressState.lastBubbleAt || timestamp - pressState.lastBubbleAt >= interval) {
+          pressState.lastBubbleAt = timestamp;
+          const count = power > 0.7 ? 2 : 1;
+          for (let i = 0; i < count; i += 1) {
+            const angle = rand(0, Math.PI * 2);
+            const distance = 28 + power * 90 + rand(-8, 26);
+            const px = pressState.lastX + rand(-6, 6);
+            const py = pressState.lastY + rand(-6, 6);
+            spawnDroplet(px, py, power * 0.9, angle, distance);
+          }
+        }
+      }
       pressState.rafId = requestAnimationFrame(tick);
     };
 

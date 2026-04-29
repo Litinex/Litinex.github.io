@@ -292,20 +292,51 @@ a {
   top: var(--press-y, -9999px);
   width: calc(120px + (var(--press-power, 0) * 220px));
   aspect-ratio: 1;
-  transform: translate(-50%, -50%) scale(0.88);
+  transform: translate(-50%, -50%) scale(0.88) scaleX(var(--press-sx, 1)) scaleY(var(--press-sy, 1)) rotate(var(--press-spin, 0deg));
   opacity: 0;
   pointer-events: none;
-  border: 1px solid rgba(184, 92, 56, 0.16);
+  border: 1px solid rgba(125, 153, 179, 0.22);
+  mix-blend-mode: screen;
+  filter: blur(0.2px) saturate(1.5);
   background:
-    radial-gradient(circle, rgba(255, 255, 255, 0.26) 0, rgba(255, 255, 255, 0) 64%),
-    repeating-conic-gradient(
-      from 0deg at 50% 50%,
-      rgba(184, 92, 56, 0) 0deg 16deg,
-      rgba(184, 92, 56, 0.12) 16deg 18deg,
-      rgba(125, 153, 179, 0.1) 18deg 20deg,
-      rgba(184, 92, 56, 0) 20deg 32deg
-    );
+    radial-gradient(circle at 42% 38%, rgba(255, 255, 255, 0.32) 0, rgba(255, 255, 255, 0) 52%),
+    radial-gradient(circle, rgba(125, 153, 179, 0) 46%, rgba(125, 153, 179, 0.2) 54%, rgba(125, 153, 179, 0) 68%),
+    radial-gradient(circle at 62% 58%, rgba(184, 92, 56, 0) 52%, rgba(184, 92, 56, 0.14) 60%, rgba(184, 92, 56, 0) 74%),
+    repeating-radial-gradient(circle, rgba(255, 255, 255, 0) 0 22px, rgba(255, 255, 255, 0.08) 22px 23px, rgba(255, 255, 255, 0) 23px 52px);
   transition: opacity 0.18s ease;
+}
+
+.ambient-press::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: calc(0.04 + (var(--press-power, 0) * 0.36));
+  filter: blur(18px) saturate(1.4);
+  background:
+    conic-gradient(
+      from var(--press-spin, 0deg) at 50% 50%,
+      rgba(125, 153, 179, 0) 0deg 34deg,
+      rgba(125, 153, 179, 0.14) 34deg 52deg,
+      rgba(184, 92, 56, 0.1) 52deg 70deg,
+      rgba(125, 153, 179, 0) 70deg 120deg,
+      rgba(230, 187, 114, 0.12) 120deg 140deg,
+      rgba(125, 153, 179, 0) 140deg 360deg
+    );
+}
+
+.ambient-press::after {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: calc(0.06 + (var(--press-power, 0) * 0.34));
+  background:
+    radial-gradient(circle at 36% 34%, rgba(255, 255, 255, 0.22) 0, rgba(255, 255, 255, 0) 58%),
+    radial-gradient(circle at 60% 60%, rgba(125, 153, 179, 0.14) 0, rgba(125, 153, 179, 0) 70%),
+    radial-gradient(circle at 48% 52%, rgba(184, 92, 56, 0.08) 0, rgba(184, 92, 56, 0) 72%);
 }
 
 .ambient-press.is-active {
@@ -415,16 +446,33 @@ html[data-theme="dark"] .ambient-click {
 }
 
 html[data-theme="dark"] .ambient-press {
-  border-color: rgba(124, 167, 255, 0.16);
+  border-color: rgba(124, 167, 255, 0.18);
+  filter: blur(0.2px) saturate(1.6);
   background:
-    radial-gradient(circle, rgba(124, 167, 255, 0.2) 0, rgba(16, 21, 29, 0) 64%),
-    repeating-conic-gradient(
-      from 0deg at 50% 50%,
-      rgba(124, 167, 255, 0) 0deg 16deg,
-      rgba(124, 167, 255, 0.14) 16deg 18deg,
-      rgba(240, 217, 170, 0.12) 18deg 20deg,
-      rgba(124, 167, 255, 0) 20deg 32deg
+    radial-gradient(circle at 42% 38%, rgba(255, 255, 255, 0.16) 0, rgba(16, 21, 29, 0) 52%),
+    radial-gradient(circle, rgba(124, 167, 255, 0) 46%, rgba(124, 167, 255, 0.22) 54%, rgba(124, 167, 255, 0) 68%),
+    radial-gradient(circle at 62% 58%, rgba(213, 140, 91, 0) 52%, rgba(213, 140, 91, 0.14) 60%, rgba(213, 140, 91, 0) 74%),
+    repeating-radial-gradient(circle, rgba(255, 255, 255, 0) 0 22px, rgba(255, 255, 255, 0.05) 22px 23px, rgba(255, 255, 255, 0) 23px 52px);
+}
+
+html[data-theme="dark"] .ambient-press::before {
+  background:
+    conic-gradient(
+      from var(--press-spin, 0deg) at 50% 50%,
+      rgba(124, 167, 255, 0) 0deg 34deg,
+      rgba(124, 167, 255, 0.16) 34deg 52deg,
+      rgba(213, 140, 91, 0.12) 52deg 70deg,
+      rgba(124, 167, 255, 0) 70deg 120deg,
+      rgba(240, 217, 170, 0.12) 120deg 140deg,
+      rgba(124, 167, 255, 0) 140deg 360deg
     );
+}
+
+html[data-theme="dark"] .ambient-press::after {
+  background:
+    radial-gradient(circle at 36% 34%, rgba(255, 255, 255, 0.14) 0, rgba(16, 21, 29, 0) 58%),
+    radial-gradient(circle at 60% 60%, rgba(124, 167, 255, 0.16) 0, rgba(124, 167, 255, 0) 70%),
+    radial-gradient(circle at 48% 52%, rgba(213, 140, 91, 0.1) 0, rgba(213, 140, 91, 0) 72%);
 }
 
 .site-shell,
@@ -2098,11 +2146,19 @@ html[data-theme="dark"] .code-editor-copy.is-error {
 @keyframes ambientPressPulse {
   0%,
   100% {
-    transform: translate(-50%, -50%) scale(calc(0.86 + (var(--press-power, 0) * 0.18)));
+    transform: translate(-50%, -50%)
+      scale(calc(0.86 + (var(--press-power, 0) * 0.18)))
+      scaleX(var(--press-sx, 1))
+      scaleY(var(--press-sy, 1))
+      rotate(var(--press-spin, 0deg));
     opacity: calc(0.42 + (var(--press-power, 0) * 0.2));
   }
   50% {
-    transform: translate(-50%, -50%) scale(calc(0.96 + (var(--press-power, 0) * 0.26)));
+    transform: translate(-50%, -50%)
+      scale(calc(0.96 + (var(--press-power, 0) * 0.26)))
+      scaleX(var(--press-sx, 1))
+      scaleY(var(--press-sy, 1))
+      rotate(calc(var(--press-spin, 0deg) + 22deg));
     opacity: calc(0.6 + (var(--press-power, 0) * 0.26));
   }
 }
