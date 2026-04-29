@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>Python中输入与输出 | 风迁夏回</title>
+  <meta name="description" content="Python 输入与输出基础：使用 input() 获取用户输入，用 print() 与 f-string 输出格式化内容。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-input-and-output.html">
+  <meta property="og:title" content="Python中输入与输出 | 风迁夏回">
+  <meta property="og:description" content="Python 输入与输出基础：使用 input() 获取用户输入，用 print() 与 f-string 输出格式化内容。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-input-and-output.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260429-5">
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260429-5" defer></script>
+  <script src="../music-player.js?v=20260426-3" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Python中输入与输出",
+      "description": "Python 输入与输出基础：使用 input() 获取用户输入，用 print() 与 f-string 输出格式化内容。",
+      "url": "https://yezizhuang.top/posts/python-input-and-output.html",
+      "datePublished": "2026-04-29",
+      "dateModified": "2026-04-29",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.04.29 · Python 入门</p>
+      <h1>Python中输入与输出</h1>
+    </header>
+
+    <article class="article-body">
+      <pre><code>#获取键盘上输入的数据：input
+name = input("请输入您的姓名：")
+age = input("请输入您的年龄：")
+
+print(f"您好,{name},{age}")
+
+#需求：小智的银行卡中有10000元，现在到ATM进行取钱操作，请根据输入的金额执行取钱操作，取钱完毕后，展示其银行卡余额。
+money = 10000
+take_money = input("请输入您要取的金额：")
+last_money = money - int(take_money)
+print(f"您剩余的金额为：{last_money}")
+#也可以这样写
+print(f"您剩余的金额为：{money - int(take_money)}")
+
+#需求：根据用户输入的两个数字，计算两个数之和，并将其输出到控制台。
+a = input()
+b = input()
+print(f"{int(a)+int(b)}")</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-strings-definition-and-operations.html">
+        <span class="article-pagination-link-arrow" aria-hidden="true">←</span>
+        <span class="article-pagination-link-text">上一篇：字符串的定义以及操作</span>
+      </a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-link-text">已经是最新一篇</span>
+        <span class="article-pagination-link-arrow" aria-hidden="true">→</span>
+      </span>
+    </nav>
+  </main>
+</body>
+</html>
+
