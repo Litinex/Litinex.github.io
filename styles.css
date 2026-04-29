@@ -628,7 +628,7 @@ html[data-theme="dark"] .hero {
   isolation: isolate;
   width: 100vw;
   margin: 28px calc(50% - 50vw) 0;
-  min-height: 100vh;
+  min-height: clamp(560px, 88vh, 860px);
   display: grid;
   align-items: center;
   justify-items: center;
@@ -757,11 +757,13 @@ html:not([data-theme="dark"]) .site-header-hero .site-nav a:hover {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: min(calc(100% - 32px), 1180px);
+  width: min(calc(100% - 44px), 1040px);
   margin: 0;
-  font-size: clamp(2.4rem, 5vw, 5rem);
+  font-size: clamp(2.05rem, 4.2vw, 4.2rem);
+  line-height: 1.05;
   max-width: none;
-  white-space: nowrap;
+  white-space: normal;
+  text-wrap: balance;
 }
 
 .hero-banner .hero-text {
