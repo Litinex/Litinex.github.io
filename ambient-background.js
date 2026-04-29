@@ -1,6 +1,7 @@
 (() => {
   const root = document.documentElement;
   const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const finePointerQuery = window.matchMedia?.("(pointer: fine)") ?? { matches: true };
   let currentX = window.innerWidth * 0.74;
   let currentY = window.innerHeight * 0.26;
   let targetX = currentX;
@@ -9,6 +10,15 @@
   let listenersAttached = false;
   let pressState = null;
   const maxPressMs = 1800;
+  const trailEase = [0.34, 0.28, 0.22, 0.18, 0.14];
+  const trail = trailEase.map(() => ({ x: currentX, y: currentY }));
+  let trailNodes = null;
+  let streakNode = null;
+  let lastHeadX = currentX;
+  let lastHeadY = currentY;
+  let velocityX = 0;
+  let velocityY = 0;
+  let smoothedSpeed = 0;
 
   function handlePointerUp(event) {
     endPress(event, false);
@@ -18,9 +28,8 @@
     endPress(event, true);
   }
 
-  function applyPosition() {
-    root.style.setProperty("--ambient-x", `${currentX}px`);
-    root.style.setProperty("--ambient-y", `${currentY}px`);
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
   }
 
   function stopAnimation() {
@@ -30,16 +39,76 @@
     }
   }
 
+  function cacheNodes() {
+    if (!trailNodes) {
+      trailNodes = Array.from(document.querySelectorAll("[data-ambient-trail]"));
+    }
+    if (!streakNode) {
+      streakNode = document.querySelector("[data-ambient-streak]");
+    }
+  }
+
+  function applyPosition() {
+    // Keep CSS vars for the rest of the ambient backdrop (if needed).
+    root.style.setProperty("--ambient-x", `${currentX}px`);
+    root.style.setProperty("--ambient-y", `${currentY}px`);
+
+    cacheNodes();
+
+    if (trailNodes && trailNodes.length) {
+      trailNodes.forEach((node, idx) => {
+        const point = trail[Math.min(idx, trail.length - 1)];
+        node.style.transform = `translate3d(${point.x}px, ${point.y}px, 0) translate(-50%, -50%)`;
+      });
+    }
+
+    if (streakNode) {
+      const angle = Math.atan2(velocityY, velocityX) * (180 / Math.PI);
+      const intensity = clamp(smoothedSpeed / 56, 0, 1);
+      streakNode.style.setProperty("--streak-alpha", intensity.toFixed(3));
+      streakNode.style.transform =
+        `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%) rotate(${angle}deg) scale(${0.92 + intensity * 0.22}) scaleX(${1 + intensity * 1.6})`;
+    }
+  }
+
   function step() {
-    currentX += (targetX - currentX) * 0.075;
-    currentY += (targetY - currentY) * 0.075;
+    currentX += (targetX - currentX) * 0.16;
+    currentY += (targetY - currentY) * 0.16;
+
+    velocityX = currentX - lastHeadX;
+    velocityY = currentY - lastHeadY;
+    lastHeadX = currentX;
+    lastHeadY = currentY;
+
+    const speed = Math.hypot(velocityX, velocityY);
+    smoothedSpeed = smoothedSpeed * 0.84 + speed * 0.16;
+
+    trail[0].x = currentX;
+    trail[0].y = currentY;
+
+    for (let i = 1; i < trail.length; i += 1) {
+      const ease = trailEase[i] ?? 0.12;
+      const prev = trail[i - 1];
+      const point = trail[i];
+      point.x += (prev.x - point.x) * ease;
+      point.y += (prev.y - point.y) * ease;
+    }
+
     applyPosition();
 
-    if (Math.abs(targetX - currentX) > 0.4 || Math.abs(targetY - currentY) > 0.4) {
+    const tail = trail[trail.length - 1];
+    const shouldContinue =
+      Math.abs(targetX - currentX) > 0.6 ||
+      Math.abs(targetY - currentY) > 0.6 ||
+      Math.abs(tail.x - currentX) > 0.6 ||
+      Math.abs(tail.y - currentY) > 0.6;
+
+    if (shouldContinue) {
       frameId = requestAnimationFrame(step);
-    } else {
-      frameId = 0;
+      return;
     }
+
+    frameId = 0;
   }
 
   function scheduleAnimation() {
@@ -69,10 +138,6 @@
   function handlePointerLeave() {
     resetTarget();
     scheduleAnimation();
-  }
-
-  function clamp(value, min, max) {
-    return Math.min(max, Math.max(min, value));
   }
 
   function prefersReducedMotion() {
@@ -122,6 +187,7 @@
     ripple.style.setProperty("--click-x", `${x}px`);
     ripple.style.setProperty("--click-y", `${y}px`);
     ripple.style.setProperty("--click-power", String(power));
+    ripple.style.setProperty("--click-angle", `${Math.floor(Math.random() * 360)}deg`);
 
     backdrop.appendChild(ripple);
 
@@ -239,12 +305,21 @@
   }
 
   function syncMotionPreference() {
-    if (reduceMotionQuery.matches) {
+    if (reduceMotionQuery.matches || !finePointerQuery.matches) {
       detachListeners();
       stopAnimation();
       resetTarget();
       currentX = targetX;
       currentY = targetY;
+      trail.forEach((point) => {
+        point.x = currentX;
+        point.y = currentY;
+      });
+      lastHeadX = currentX;
+      lastHeadY = currentY;
+      velocityX = 0;
+      velocityY = 0;
+      smoothedSpeed = 0;
       applyPosition();
       return;
     }
@@ -264,6 +339,15 @@
       currentY = Math.min(currentY, window.innerHeight);
     }
 
+    trail.forEach((point) => {
+      point.x = currentX;
+      point.y = currentY;
+    });
+    lastHeadX = currentX;
+    lastHeadY = currentY;
+    velocityX = 0;
+    velocityY = 0;
+    smoothedSpeed = 0;
     applyPosition();
   }
 
@@ -280,8 +364,12 @@
       <div class="ambient-orb ambient-orb-a"></div>
       <div class="ambient-orb ambient-orb-b"></div>
       <div class="ambient-orb ambient-orb-c"></div>
-      <div class="ambient-pointer"></div>
-      <div class="ambient-ripple"></div>
+      <div class="ambient-trail ambient-trail-0" data-ambient-trail="0"></div>
+      <div class="ambient-trail ambient-trail-1" data-ambient-trail="1"></div>
+      <div class="ambient-trail ambient-trail-2" data-ambient-trail="2"></div>
+      <div class="ambient-trail ambient-trail-3" data-ambient-trail="3"></div>
+      <div class="ambient-trail ambient-trail-4" data-ambient-trail="4"></div>
+      <div class="ambient-streak" data-ambient-streak="true"></div>
       <div class="ambient-press" data-ambient-press="true"></div>
     `;
 
@@ -298,6 +386,12 @@
       reduceMotionQuery.addEventListener("change", syncMotionPreference);
     } else if (typeof reduceMotionQuery.addListener === "function") {
       reduceMotionQuery.addListener(syncMotionPreference);
+    }
+
+    if (typeof finePointerQuery.addEventListener === "function") {
+      finePointerQuery.addEventListener("change", syncMotionPreference);
+    } else if (typeof finePointerQuery.addListener === "function") {
+      finePointerQuery.addListener(syncMotionPreference);
     }
   }
 
