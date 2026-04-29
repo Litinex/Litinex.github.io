@@ -32,6 +32,10 @@ html[data-theme="dark"] {
   --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
 }
 
+[hidden] {
+  display: none !important;
+}
+
 * {
   box-sizing: border-box;
 }
