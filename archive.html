@@ -20,11 +20,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260429-5">
+  <link rel="stylesheet" href="styles.css?v=20260429-6">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260429-5" defer></script>
   <script src="music-player.js?v=20260426-3" defer></script>
-  <script src="archive-search.js?v=20260426-1" defer></script>
+  <script src="archive-search.js?v=20260429-2" defer></script>
   <script src="views.js?v=20260427-1" defer></script>
   <script type="application/ld+json">
     {
@@ -72,7 +72,7 @@
 
         <div class="archive-layout">
           <div class="archive-content">
-            <ul class="archive-list" data-archive-list>
+            <ul class="archive-list" data-archive-list data-archive-page-size="7">
               <li>
                 <a href="posts/python-input-and-output.html">Python中输入与输出</a>
                 <span class="archive-meta">2026.04.29 · Python 入门</span>
@@ -103,6 +103,17 @@
               </li>
             </ul>
             <p class="archive-empty" data-archive-empty hidden>没有找到匹配的文章。</p>
+            <nav class="archive-pagination" aria-label="文章列表分页" data-archive-pagination hidden>
+              <div class="archive-pagination-bar">
+                <button class="archive-pagination-control" type="button" data-archive-pagination-prev aria-label="上一页" disabled>
+                  <span aria-hidden="true">‹</span>
+                </button>
+                <div class="archive-pagination-pages" data-archive-pagination-pages></div>
+                <button class="archive-pagination-control" type="button" data-archive-pagination-next aria-label="下一页" disabled>
+                  <span aria-hidden="true">›</span>
+                </button>
+              </div>
+            </nav>
           </div>
 
           <aside class="archive-sidebar" aria-label="搜索文章">
