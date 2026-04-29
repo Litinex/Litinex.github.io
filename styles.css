@@ -112,6 +112,48 @@ a {
   opacity: 0.4;
 }
 
+.ambient-liquid,
+.ambient-meteors {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ambient-droplet {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  mix-blend-mode: screen;
+  filter: blur(10px) saturate(1.7);
+  background:
+    radial-gradient(circle at 36% 34%, rgba(255, 255, 255, 0.5) 0, rgba(255, 255, 255, 0) 56%),
+    radial-gradient(circle at 64% 50%, rgba(184, 92, 56, 0.28) 0, rgba(184, 92, 56, 0) 70%),
+    radial-gradient(circle at 42% 66%, rgba(125, 153, 179, 0.22) 0, rgba(125, 153, 179, 0) 72%);
+}
+
+.ambient-meteor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  border-radius: 999px;
+  mix-blend-mode: screen;
+  filter: blur(0.6px) saturate(1.6);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.38) 18%,
+    rgba(240, 217, 170, 0.24) 38%,
+    rgba(125, 153, 179, 0.2) 62%,
+    rgba(184, 92, 56, 0) 100%
+  );
+}
+
 .ambient-orb,
 .ambient-trail,
 .ambient-streak,
@@ -283,6 +325,26 @@ html[data-theme="dark"] .ambient-backdrop::before {
 html[data-theme="dark"] .ambient-backdrop::after {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 24%, rgba(255, 255, 255, 0.02) 70%, transparent 100%);
   opacity: 0.52;
+}
+
+html[data-theme="dark"] .ambient-droplet {
+  filter: blur(11px) saturate(1.8);
+  background:
+    radial-gradient(circle at 36% 34%, rgba(255, 255, 255, 0.26) 0, rgba(255, 255, 255, 0) 56%),
+    radial-gradient(circle at 62% 48%, rgba(124, 167, 255, 0.26) 0, rgba(124, 167, 255, 0) 72%),
+    radial-gradient(circle at 44% 66%, rgba(213, 140, 91, 0.22) 0, rgba(213, 140, 91, 0) 74%);
+}
+
+html[data-theme="dark"] .ambient-meteor {
+  filter: blur(0.7px) saturate(1.7);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.22) 18%,
+    rgba(124, 167, 255, 0.26) 42%,
+    rgba(240, 217, 170, 0.18) 66%,
+    rgba(124, 167, 255, 0) 100%
+  );
 }
 
 html[data-theme="dark"] .ambient-orb-a {

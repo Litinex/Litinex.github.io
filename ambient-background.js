@@ -19,6 +19,21 @@
   let velocityX = 0;
   let velocityY = 0;
   let smoothedSpeed = 0;
+  let lastFrameTime = 0;
+  let lastDropletAt = 0;
+  let lastMeteorAt = 0;
+  let liquidHost = null;
+  let meteorHost = null;
+  const maxDroplets = 80;
+  const maxMeteors = 24;
+
+  const rand = (min, max) => min + Math.random() * (max - min);
+  const randInt = (min, max) => Math.floor(rand(min, max + 1));
+
+  const blobRadius = () => {
+    const randCorner = () => randInt(25, 75);
+    return `${randCorner()}% ${randCorner()}% ${randCorner()}% ${randCorner()}% / ${randCorner()}% ${randCorner()}% ${randCorner()}% ${randCorner()}%`;
+  };
 
   function handlePointerUp(event) {
     endPress(event, false);
@@ -46,6 +61,165 @@
     if (!streakNode) {
       streakNode = document.querySelector("[data-ambient-streak]");
     }
+    if (!liquidHost || !liquidHost.isConnected) {
+      liquidHost = document.querySelector("[data-ambient-liquid]");
+    }
+    if (!meteorHost || !meteorHost.isConnected) {
+      meteorHost = document.querySelector("[data-ambient-meteors]");
+    }
+  }
+
+  function getLiquidHost() {
+    cacheNodes();
+    return liquidHost;
+  }
+
+  function getMeteorHost() {
+    cacheNodes();
+    return meteorHost;
+  }
+
+  function spawnDroplet(x, y, intensity, angleRad, distance) {
+    const host = getLiquidHost();
+    if (!host) return;
+    if (host.childElementCount >= maxDroplets) return;
+
+    const sizeBase = 8 + intensity * 16;
+    const width = sizeBase * rand(0.7, 1.4);
+    const height = sizeBase * rand(0.7, 1.4);
+    const dx = Math.cos(angleRad) * distance;
+    const dy = Math.sin(angleRad) * distance;
+    const duration = 760 + intensity * 520 + rand(-140, 220);
+
+    const drop = document.createElement("div");
+    drop.className = "ambient-droplet";
+    drop.style.left = `${x}px`;
+    drop.style.top = `${y}px`;
+    drop.style.width = `${width.toFixed(1)}px`;
+    drop.style.height = `${height.toFixed(1)}px`;
+    drop.style.borderRadius = blobRadius();
+
+    host.appendChild(drop);
+
+    const startScale = 0.7 + intensity * 0.35;
+    const endScale = 0.22 + intensity * 0.18;
+    const startOpacity = 0.08 + intensity * 0.3;
+    const endOpacity = 0;
+
+    const animation = drop.animate(
+      [
+        {
+          transform: "translate(-50%, -50%) translate3d(0, 0, 0) scale(" + startScale.toFixed(3) + ")",
+          opacity: startOpacity,
+        },
+        {
+          transform:
+            "translate(-50%, -50%) translate3d(" +
+            dx.toFixed(1) +
+            "px, " +
+            dy.toFixed(1) +
+            "px, 0) scale(" +
+            endScale.toFixed(3) +
+            ")",
+          opacity: endOpacity,
+          offset: 1,
+        },
+      ],
+      {
+        duration,
+        easing: "cubic-bezier(0.12, 0.9, 0.2, 1)",
+        fill: "forwards",
+      }
+    );
+
+    animation.addEventListener("finish", () => drop.remove(), { once: true });
+  }
+
+  function spawnMeteor(x, y, intensity, angleRad, distance) {
+    const host = getMeteorHost();
+    if (!host) return;
+    if (host.childElementCount >= maxMeteors) return;
+
+    const thickness = 2 + intensity * 2.6;
+    const length = 60 + intensity * 140 + rand(-20, 60);
+    const duration = 620 + rand(-120, 240);
+    const angleDeg = angleRad * (180 / Math.PI);
+    const dx = Math.cos(angleRad) * distance;
+    const dy = Math.sin(angleRad) * distance;
+
+    const meteor = document.createElement("div");
+    meteor.className = "ambient-meteor";
+    meteor.style.left = `${x}px`;
+    meteor.style.top = `${y}px`;
+    meteor.style.width = `${length.toFixed(1)}px`;
+    meteor.style.height = `${thickness.toFixed(1)}px`;
+    meteor.style.setProperty("--meteor-angle", `${angleDeg.toFixed(2)}deg`);
+
+    host.appendChild(meteor);
+
+    const animation = meteor.animate(
+      [
+        {
+          transform: "translate(-50%, -50%) rotate(var(--meteor-angle)) translate3d(0, 0, 0) scale(0.92)",
+          opacity: 0,
+        },
+        {
+          transform: "translate(-50%, -50%) rotate(var(--meteor-angle)) translate3d(0, 0, 0) scale(1)",
+          opacity: 0.95,
+          offset: 0.12,
+        },
+        {
+          transform:
+            "translate(-50%, -50%) rotate(var(--meteor-angle)) translate3d(" +
+            dx.toFixed(1) +
+            "px, " +
+            dy.toFixed(1) +
+            "px, 0) scale(1.04)",
+          opacity: 0,
+        },
+      ],
+      {
+        duration,
+        easing: "cubic-bezier(0.2, 0.9, 0.18, 1)",
+        fill: "forwards",
+      }
+    );
+
+    animation.addEventListener("finish", () => meteor.remove(), { once: true });
+  }
+
+  function spawnMoveParticles(timestamp) {
+    const pressBoost = pressState ? 1.25 : 1;
+    const intensity = clamp((smoothedSpeed / 18) * pressBoost, 0, 1);
+    if (intensity < 0.08) return;
+
+    const angleBase = Math.atan2(velocityY, velocityX);
+    if (!Number.isFinite(angleBase)) return;
+
+    const dropletInterval = (pressState ? 78 : 95) - intensity * 55;
+    if (timestamp - lastDropletAt >= dropletInterval) {
+      lastDropletAt = timestamp;
+
+      const count = intensity > 0.72 ? 2 : 1;
+      for (let i = 0; i < count; i += 1) {
+        const spread = rand(-0.75, 0.75);
+        const angle = angleBase + Math.PI + spread;
+        const distance = 22 + intensity * 160 + rand(-14, 34);
+        const px = currentX + rand(-6, 6);
+        const py = currentY + rand(-6, 6);
+        spawnDroplet(px, py, intensity, angle, distance);
+      }
+    }
+
+    if (intensity < 0.62) return;
+
+    const meteorInterval = 240 - intensity * 140;
+    if (timestamp - lastMeteorAt < meteorInterval) return;
+    lastMeteorAt = timestamp;
+
+    const angle = angleBase + rand(-0.55, 0.55);
+    const distance = 220 + intensity * 260 + rand(-40, 120);
+    spawnMeteor(currentX, currentY, intensity, angle, distance);
   }
 
   function applyPosition() {
@@ -72,6 +246,12 @@
   }
 
   function step() {
+    const timestamp = now();
+    if (!lastFrameTime) {
+      lastFrameTime = timestamp;
+    }
+    lastFrameTime = timestamp;
+
     currentX += (targetX - currentX) * 0.16;
     currentY += (targetY - currentY) * 0.16;
 
@@ -95,6 +275,7 @@
     }
 
     applyPosition();
+    spawnMoveParticles(timestamp);
 
     const tail = trail[trail.length - 1];
     const shouldContinue =
@@ -190,6 +371,23 @@
     ripple.style.setProperty("--click-angle", `${Math.floor(Math.random() * 360)}deg`);
 
     backdrop.appendChild(ripple);
+
+    const burstIntensity = clamp(power / 1.4, 0.2, 1);
+    const meteorCount = Math.round(3 + burstIntensity * 4);
+    for (let i = 0; i < meteorCount; i += 1) {
+      const angle = rand(0, Math.PI * 2);
+      const distance = 220 + burstIntensity * 360 + rand(-60, 140);
+      spawnMeteor(x, y, burstIntensity, angle, distance);
+    }
+
+    const splashCount = Math.round(8 + burstIntensity * 10);
+    for (let i = 0; i < splashCount; i += 1) {
+      const angle = rand(0, Math.PI * 2);
+      const distance = 40 + burstIntensity * 180 + rand(-10, 60);
+      const px = x + rand(-10, 10);
+      const py = y + rand(-10, 10);
+      spawnDroplet(px, py, burstIntensity, angle, distance);
+    }
 
     ripple.addEventListener(
       "animationend",
@@ -319,10 +517,13 @@
       lastHeadY = currentY;
       velocityX = 0;
       velocityY = 0;
-      smoothedSpeed = 0;
-      applyPosition();
-      return;
-    }
+    smoothedSpeed = 0;
+    lastFrameTime = 0;
+    lastDropletAt = 0;
+    lastMeteorAt = 0;
+    applyPosition();
+    return;
+  }
 
     attachListeners();
     scheduleAnimation();
@@ -348,6 +549,9 @@
     velocityX = 0;
     velocityY = 0;
     smoothedSpeed = 0;
+    lastFrameTime = 0;
+    lastDropletAt = 0;
+    lastMeteorAt = 0;
     applyPosition();
   }
 
@@ -364,6 +568,8 @@
       <div class="ambient-orb ambient-orb-a"></div>
       <div class="ambient-orb ambient-orb-b"></div>
       <div class="ambient-orb ambient-orb-c"></div>
+      <div class="ambient-liquid" data-ambient-liquid="true"></div>
+      <div class="ambient-meteors" data-ambient-meteors="true"></div>
       <div class="ambient-trail ambient-trail-0" data-ambient-trail="0"></div>
       <div class="ambient-trail ambient-trail-1" data-ambient-trail="1"></div>
       <div class="ambient-trail ambient-trail-2" data-ambient-trail="2"></div>
