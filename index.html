@@ -22,11 +22,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/hero-sky-1920.jpg" imagesrcset="assets/hero-sky-1280.jpg 1280w, assets/hero-sky-1920.jpg 1920w, assets/hero-sky-2560.jpg 2560w" imagesizes="100vw">
   <link rel="stylesheet" href="styles.css?v=20260429-7">
+  <link rel="stylesheet" href="writing-heatmap.css?v=20260429-1">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260429-5" defer></script>
   <script src="music-player.js?v=20260426-3" defer></script>
   <script src="hero-poem.js?v=20260428-3" defer></script>
   <script src="home-essays.js?v=20260429-1" defer></script>
+  <script src="posts-data.js?v=20260429-1" defer></script>
+  <script src="writing-heatmap.js?v=20260429-1" defer></script>
   <script src="views.js?v=20260427-1" defer></script>
   <script type="application/ld+json">
     {
@@ -79,9 +82,39 @@
           <h1 data-hero-poem>行到水穷处，坐看云起时。</h1>
 
         </div>
-        <a class="hero-scroll" href="#essays" aria-label="向下滚动到最新文章">
+        <a class="hero-scroll" href="#activity" aria-label="向下滚动到写作热力图">
           <span class="hero-scroll-glyph" aria-hidden="true"></span>
         </a>
+      </section>
+
+      <section class="section" id="activity">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Writing Activity</p>
+            <h2>写作热力图</h2>
+          </div>
+        </div>
+
+        <div class="writing-heatmap" data-writing-heatmap>
+          <div class="writing-heatmap-header">
+            <p class="writing-heatmap-summary" data-writing-heatmap-summary>加载中…</p>
+            <div class="writing-heatmap-legend" aria-label="热力图图例">
+              <span class="writing-heatmap-legend-label">少</span>
+              <span class="writing-heatmap-legend-swatches" data-writing-heatmap-legend></span>
+              <span class="writing-heatmap-legend-label">多</span>
+            </div>
+          </div>
+
+          <div class="writing-heatmap-chart" data-writing-heatmap-chart>
+            <div class="writing-heatmap-graph">
+              <div class="writing-heatmap-months" aria-hidden="true" data-writing-heatmap-months></div>
+              <div class="writing-heatmap-days" aria-hidden="true" data-writing-heatmap-days></div>
+              <div class="writing-heatmap-grid" data-writing-heatmap-grid></div>
+            </div>
+          </div>
+
+          <div class="writing-heatmap-tooltip" data-writing-heatmap-tooltip hidden></div>
+        </div>
       </section>
 
       <section class="section" id="essays">
