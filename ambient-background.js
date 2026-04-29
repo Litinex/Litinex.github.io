@@ -369,10 +369,18 @@
     ripple.style.setProperty("--click-y", `${y}px`);
     ripple.style.setProperty("--click-power", String(power));
     ripple.style.setProperty("--click-angle", `${Math.floor(Math.random() * 360)}deg`);
+    ripple.style.borderRadius = blobRadius();
+
+    const intensity = clamp(power / 1.4, 0.2, 1);
+    const skew = 0.12 * intensity;
+    const sx = 1 + rand(-skew, skew);
+    const sy = 1 + rand(-skew, skew);
+    ripple.style.setProperty("--click-sx", sx.toFixed(3));
+    ripple.style.setProperty("--click-sy", sy.toFixed(3));
 
     backdrop.appendChild(ripple);
 
-    const burstIntensity = clamp(power / 1.4, 0.2, 1);
+    const burstIntensity = intensity;
     const meteorCount = Math.round(3 + burstIntensity * 4);
     for (let i = 0; i < meteorCount; i += 1) {
       const angle = rand(0, Math.PI * 2);
