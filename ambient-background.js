@@ -1,7 +1,7 @@
 (() => {
   const root = document.documentElement;
   const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const finePointerQuery = window.matchMedia?.("(pointer: fine)") ?? { matches: true };
+  const finePointerQuery = window.matchMedia?.("(any-pointer: fine)") ?? { matches: true };
   let currentX = window.innerWidth * 0.74;
   let currentY = window.innerHeight * 0.26;
   let targetX = currentX;
