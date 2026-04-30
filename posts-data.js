@@ -2,6 +2,12 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      href: "posts/python-operators.html",
+      title: "Python中的运算符",
+      date: "2026-04-30",
+      category: "Python 入门",
+    },
+    {
       href: "posts/python-input-and-output.html",
       title: "Python中输入与输出",
       date: "2026-04-29",
@@ -45,4 +51,3 @@
     },
   ];
 })();
-

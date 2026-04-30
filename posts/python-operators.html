@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>Python中的运算符 | 风迁夏回</title>
+  <meta name="description" content="Python 运算符示例：加减乘除、整除、取余、幂运算，以及输入两个数计算和与差。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-operators.html">
+  <meta property="og:title" content="Python中的运算符 | 风迁夏回">
+  <meta property="og:description" content="Python 运算符示例：加减乘除、整除、取余、幂运算，以及输入两个数计算和与差。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-operators.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260429-7">
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260429-5" defer></script>
+  <script src="../music-player.js?v=20260426-3" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Python中的运算符",
+      "description": "Python 运算符示例：加减乘除、整除、取余、幂运算，以及输入两个数计算和与差。",
+      "url": "https://yezizhuang.top/posts/python-operators.html",
+      "datePublished": "2026-04-30",
+      "dateModified": "2026-04-30",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.04.30 · Python 入门</p>
+      <h1>Python中的运算符</h1>
+    </header>
+
+    <article class="article-body">
+      <pre><code>print("10 + 4 = ", 10 + 4) #加 
+print("10 - 4 = ", 10 - 4) #减
+print("10 * 4 = ", 10 * 4) #乘
+print("10 / 4 = ", 10 / 4) #除
+print("10 // 4 = ", 10 // 4) #整除
+print("10 % 4 = ", 10 % 4) #取余/求模
+print("10 ** 4 = ", 10 ** 4) #幂指数
+
+#案例1：要求输入两个数x与y，分别输出x+y的结果和x-y的结果
+#注意：由于计算机底层是基于二进制来进行数据的存储和处理的，而二进制是无法精确表示所有的小数的，因此涉及到浮点数的运算时，可能损失精度。
+x = input()
+y = input()
+print(float(x) + float(y), float(x) - float(y))</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-input-and-output.html">
+        <span class="article-pagination-link-arrow" aria-hidden="true">←</span>
+        <span class="article-pagination-link-text">上一篇：Python中输入与输出</span>
+      </a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-link-text">已经是最新一篇</span>
+        <span class="article-pagination-link-arrow" aria-hidden="true">→</span>
+      </span>
+    </nav>
+  </main>
+</body>
+</html>
+
