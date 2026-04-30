@@ -55,14 +55,22 @@
     return a > b ? a : b;
   };
 
+  const minKey = (a, b) => {
+    if (!a) return b;
+    if (!b) return a;
+    return a < b ? a : b;
+  };
+
   const counts = new Map();
   const titlesByDate = new Map();
   let latestPostKey = null;
+  let earliestPostKey = null;
 
   posts.forEach((post) => {
     const key = normalizeDateKey(post?.date);
     if (!key) return;
     latestPostKey = maxKey(latestPostKey, key);
+    earliestPostKey = minKey(earliestPostKey, key);
     counts.set(key, (counts.get(key) || 0) + 1);
 
     const title = String(post?.title || "").trim();
@@ -80,9 +88,19 @@
     return;
   }
 
-  const rangeDays = 365;
-  const rawStartDate = addUtcDays(endDate, -(rangeDays - 1));
-  const rawStartKey = utcDateToKey(rawStartDate);
+  const rawStartKey = (() => {
+    const earliest = earliestPostKey;
+    if (!earliest) return endKey;
+    const date = parseKeyToUtcDate(earliest);
+    if (!date) return endKey;
+    return `${date.getUTCFullYear()}-${pad2(date.getUTCMonth() + 1)}-01`;
+  })();
+
+  const rawStartDate = parseKeyToUtcDate(rawStartKey);
+  if (!rawStartDate) {
+    mount.hidden = true;
+    return;
+  }
 
   const gridStartDate = (() => {
     const copy = new Date(rawStartDate.getTime());
@@ -123,7 +141,7 @@
     monthLabels[weekIndex] = `${date.getUTCMonth() + 1}月`;
   });
   if (!monthLabels[0]) {
-    monthLabels[0] = `${gridStartDate.getUTCMonth() + 1}月`;
+    monthLabels[0] = `${rawStartDate.getUTCMonth() + 1}月`;
   }
 
   const daysLabels = ["", "一", "", "三", "", "五", ""];
@@ -138,7 +156,7 @@
   const totalPosts = posts.length;
   const activeDays = Array.from(counts.values()).filter((value) => value > 0).length;
   if (summaryEl) {
-    summaryEl.textContent = `过去一年写了 ${totalPosts} 篇文章 · ${activeDays} 天有更新`;
+    summaryEl.textContent = `从 ${rawStartKey} 到 ${endKey} 写了 ${totalPosts} 篇文章 · ${activeDays} 天有更新`;
   }
 
   if (legendEl) {
@@ -276,4 +294,3 @@
     }
   });
 })();
-

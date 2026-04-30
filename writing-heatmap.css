@@ -2,18 +2,18 @@
   --writing-heatmap-cell: 12px;
   --writing-heatmap-gap: 5px;
   --writing-heatmap-level-0: rgba(31, 40, 51, 0.08);
-  --writing-heatmap-level-1: rgba(184, 92, 56, 0.18);
-  --writing-heatmap-level-2: rgba(184, 92, 56, 0.32);
-  --writing-heatmap-level-3: rgba(184, 92, 56, 0.52);
-  --writing-heatmap-level-4: rgba(184, 92, 56, 0.74);
+  --writing-heatmap-level-1: #f2d7cc;
+  --writing-heatmap-level-2: #e6b79a;
+  --writing-heatmap-level-3: #cf7b50;
+  --writing-heatmap-level-4: #b85c38;
 }
 
 html[data-theme="dark"] {
   --writing-heatmap-level-0: rgba(255, 255, 255, 0.06);
-  --writing-heatmap-level-1: rgba(213, 140, 91, 0.18);
-  --writing-heatmap-level-2: rgba(213, 140, 91, 0.34);
-  --writing-heatmap-level-3: rgba(213, 140, 91, 0.56);
-  --writing-heatmap-level-4: rgba(213, 140, 91, 0.78);
+  --writing-heatmap-level-1: #3b2a21;
+  --writing-heatmap-level-2: #6a3a24;
+  --writing-heatmap-level-3: #a3542e;
+  --writing-heatmap-level-4: #d58c5b;
 }
 
 .writing-heatmap {
@@ -178,7 +178,9 @@ html[data-theme="dark"] .writing-heatmap-cell:focus-visible {
 }
 
 .writing-heatmap-cell.is-outside-range {
-  opacity: 0.22;
+  opacity: 0;
+  border-color: transparent;
+  background: transparent;
   cursor: default;
 }
 
