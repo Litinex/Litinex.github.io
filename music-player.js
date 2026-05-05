@@ -108,6 +108,30 @@
       artist: "ヨルシカ",
       cover: "https://p1.music.126.net/Ok0xk_CpJW21lAUG9UiMww==/109951165666599650.jpg",
     },
+    {
+      neteaseSongId: "2093433056",
+      title: "Ethereal",
+      artist: "txmy",
+      cover: "https://p2.music.126.net/HDlXcbUwFf9YXObc8aZ2aQ==/109951170245612849.jpg",
+    },
+    {
+      neteaseSongId: "28481734",
+      title: "a memories for us feat.\"Day's\"",
+      artist: "MANYO / 三輪学",
+      cover: "https://p2.music.126.net/GuHMyPqydehCKSPSnjddwQ==/109951171282694931.jpg",
+    },
+    {
+      neteaseSongId: "2106662944",
+      title: "Seraphic",
+      artist: "txmy",
+      cover: "https://p2.music.126.net/waQXFPUyyA8LB8B3_388vA==/109951171329995384.jpg",
+    },
+    {
+      neteaseSongId: "2049977284",
+      title: "A New Era",
+      artist: "John Lunn / The Chamber Orchestra Of London",
+      cover: "https://p2.music.126.net/dw4qiE2NMr3UabCaTIJ5og==/109951168634292660.jpg",
+    },
   ];
 
   const settings = {
