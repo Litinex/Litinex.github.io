@@ -1557,8 +1557,9 @@ html[data-theme="dark"] .archive-pagination-control:focus-visible {
 }
 
 html[data-theme="dark"] .archive-page-button[aria-current="page"] {
+  background: var(--accent);
   border-color: rgba(255, 255, 255, 0.16);
-  color: #0f141b;
+  color: rgba(255, 255, 255, 0.96);
   box-shadow: 0 18px 50px rgba(213, 140, 91, 0.25);
 }
 
@@ -1571,7 +1572,7 @@ html[data-theme="dark"] .archive-page-button[aria-current="page"] {
 html[data-theme="dark"] .archive-page-button[aria-current="page"]:hover {
   border-color: rgba(255, 255, 255, 0.16);
   background: var(--accent);
-  color: #0f141b;
+  color: rgba(255, 255, 255, 0.96);
 }
 
 .archive-page-button:disabled,
