@@ -2,6 +2,14 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      href: "posts/python-if-elif-else.html",
+      title: "Python中if elif else用法",
+      date: "2026-05-17",
+      category: "Python 入门",
+      tags: ["Python", "基础", "条件判断", "if elif else"],
+      series: { id: "python-intro", name: "Python 入门", index: 6 },
+    },
+    {
       href: "posts/python-operators.html",
       title: "Python中的运算符",
       date: "2026-04-30",

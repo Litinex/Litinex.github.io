@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>Python中if elif else用法 | 风迁夏回</title>
+  <meta name="description" content="Python 条件判断示例：使用 if、elif、else 完成分数判断、账号密码登录判断，以及正数、负数和 0 的判断。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-if-elif-else.html">
+  <meta property="og:title" content="Python中if elif else用法 | 风迁夏回">
+  <meta property="og:description" content="Python 条件判断示例：使用 if、elif、else 完成分数判断、账号密码登录判断，以及正数、负数和 0 的判断。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-if-elif-else.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260505-1">
+  <script src="../posts-data.js?v=20260517-1" defer></script>
+  <script src="../taxonomy.js?v=20260504-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260429-5" defer></script>
+  <script src="../music-player.js?v=20260505-1" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Python中if elif else用法",
+      "description": "Python 条件判断示例：使用 if、elif、else 完成分数判断、账号密码登录判断，以及正数、负数和 0 的判断。",
+      "url": "https://yezizhuang.top/posts/python-if-elif-else.html",
+      "datePublished": "2026-05-17",
+      "dateModified": "2026-05-17",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.05.17 · Python 入门</p>
+      <h1>Python中if elif else用法</h1>
+    </header>
+
+    <article class="article-body">
+      <pre><code>#条件判断：如果分数超过680，我就去清华读书
+#在python中if所管辖的区域用代码块的缩进来划分
+score = 700
+if score &gt;680:
+    print("欢迎你来清华读书")
+    print("也恭喜你即将踏入精彩的大学生活")
+print("-------------------------")
+
+#B站账号密码输入判断的逻辑案例
+ok_account = "188888"
+ok_password = "666666"
+account = input("请输入B站账号：")
+password = input("请输入B站密码：")
+
+if account == ok_account and password == ok_password:
+    print("登录成功")
+else:
+    print("登录失败")
+
+#根据用户输入的数字，判断该数字是正数还是负数
+num = int(input("请输入数字 "))
+
+if num &gt; 0:
+    print(f"{num} 是一个正数")
+
+elif num &lt; 0:
+    print(f"{num} 是一个负数")
+else:
+    print(f"{num} 是0")</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-operators.html">
+        <span class="article-pagination-link-arrow" aria-hidden="true">←</span>
+        <span class="article-pagination-link-text">上一篇：Python中的运算符</span>
+      </a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-link-text">已经是最新一篇</span>
+        <span class="article-pagination-link-arrow" aria-hidden="true">→</span>
+      </span>
+    </nav>
+  </main>
+</body>
+</html>
