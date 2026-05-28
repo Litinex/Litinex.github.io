@@ -1969,6 +1969,160 @@ html[data-theme="dark"] .article-page {
   max-width: 10ch;
 }
 
+.article-read-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.article-read-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--accent), #7fb18a);
+  box-shadow: 0 0 18px rgba(213, 140, 91, 0.45);
+}
+
+.article-toc {
+  margin: 24px 0 30px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.article-toc-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.article-toc-title {
+  margin: 4px 0 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.article-toc-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.article-toc-item a {
+  display: block;
+  padding: 7px 10px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  line-height: 1.45;
+}
+
+.article-toc-item a:hover,
+.article-toc-item a[aria-current="true"] {
+  color: var(--ink);
+  background: rgba(184, 92, 56, 0.1);
+}
+
+html[data-theme="dark"] .article-toc-item a:hover,
+html[data-theme="dark"] .article-toc-item a[aria-current="true"] {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.article-toc-level-3 {
+  padding-left: 18px;
+}
+
+.article-toc-level-4,
+.article-toc-level-5,
+.article-toc-level-6 {
+  padding-left: 36px;
+}
+
+.article-body h2,
+.article-body h3,
+.article-body h4,
+.article-body h5,
+.article-body h6,
+.article-section-heading {
+  position: relative;
+  scroll-margin-top: 86px;
+}
+
+.article-body h2,
+.article-section-heading {
+  margin: 30px 0 12px;
+  color: var(--ink);
+}
+
+.article-section-heading {
+  font-size: 1.14rem;
+  line-height: 1.7;
+  font-weight: 900;
+}
+
+.article-section-heading strong {
+  font-weight: 900;
+}
+
+.heading-anchor {
+  margin-left: 0.45em;
+  color: var(--accent);
+  font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 0.78em;
+  font-weight: 800;
+  opacity: 0;
+  text-decoration: none;
+  transition: opacity 0.18s ease, color 0.18s ease;
+}
+
+.article-body h2:hover .heading-anchor,
+.article-body h3:hover .heading-anchor,
+.article-body h4:hover .heading-anchor,
+.article-body h5:hover .heading-anchor,
+.article-body h6:hover .heading-anchor,
+.article-section-heading:hover .heading-anchor,
+.heading-anchor:focus-visible,
+.heading-anchor[data-copied] {
+  opacity: 1;
+}
+
+.heading-anchor:focus-visible {
+  outline: none;
+  color: var(--accent-deep);
+}
+
+.heading-anchor[data-copied="true"]::after,
+.heading-anchor[data-copied="false"]::after {
+  content: "已复制";
+  position: absolute;
+  margin-left: 8px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(184, 92, 56, 0.14);
+  color: var(--accent-deep);
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.heading-anchor[data-copied="false"]::after {
+  content: "复制失败";
+}
+
 .article-taxonomy {
   margin-top: 10px;
   display: flex;
@@ -3023,6 +3177,34 @@ html[data-theme="dark"] .code-editor-copy.is-error {
   .article-header h1 {
     font-size: clamp(2.15rem, 11vw, 3rem);
     line-height: 1.05;
+  }
+
+  .article-toc {
+    margin: 20px 0 24px;
+    padding: 14px 0;
+  }
+
+  .article-toc-heading {
+    display: block;
+  }
+
+  .article-toc-item a {
+    padding: 8px 10px;
+    font-size: 0.92rem;
+  }
+
+  .article-toc-level-3 {
+    padding-left: 12px;
+  }
+
+  .article-toc-level-4,
+  .article-toc-level-5,
+  .article-toc-level-6 {
+    padding-left: 22px;
+  }
+
+  .heading-anchor {
+    opacity: 1;
   }
 
   .article-body ul {

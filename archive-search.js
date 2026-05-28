@@ -13,10 +13,103 @@
     return;
   }
 
+  const safeText = (value) => (typeof value === "string" ? value.trim() : "");
+
+  function normalizeDate(value) {
+    const text = safeText(value);
+    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return match ? `${match[1]}-${match[2]}-${match[3]}` : "";
+  }
+
+  function dateValue(value) {
+    const normalized = normalizeDate(value);
+    if (!normalized) return 0;
+    const date = new Date(`${normalized}T00:00:00+08:00`);
+    return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+  }
+
+  function formatDateCompact(value) {
+    const normalized = normalizeDate(value);
+    return normalized ? normalized.replaceAll("-", ".") : safeText(value);
+  }
+
+  function seriesIndex(post) {
+    const raw = post?.series?.index;
+    const parsed = Number.isFinite(raw) ? raw : Number.parseInt(String(raw || ""), 10);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  function sortNewestFirst(posts) {
+    return posts.slice().sort((a, b) => {
+      const dateDiff = dateValue(b?.date) - dateValue(a?.date);
+      if (dateDiff !== 0) return dateDiff;
+
+      const aSeries = safeText(a?.series?.id);
+      const bSeries = safeText(b?.series?.id);
+      if (aSeries && aSeries === bSeries) {
+        return seriesIndex(b) - seriesIndex(a);
+      }
+
+      return safeText(a?.title).localeCompare(safeText(b?.title), "zh-Hans-CN");
+    });
+  }
+
+  function renderArchiveListFromData() {
+    const posts = Array.isArray(window.__BLOG_POSTS__)
+      ? window.__BLOG_POSTS__.filter((post) => safeText(post?.href) && safeText(post?.title))
+      : [];
+
+    if (posts.length === 0) {
+      return;
+    }
+
+    listElement.innerHTML = "";
+
+    sortNewestFirst(posts).forEach((post) => {
+      const item = document.createElement("li");
+      const href = safeText(post.href);
+      const titleText = safeText(post.title);
+      const dateText = formatDateCompact(post.date);
+      const categoryText = safeText(post.category);
+      const tags = Array.isArray(post.tags) ? post.tags.map(safeText).filter(Boolean) : [];
+      const seriesName = safeText(post?.series?.name);
+
+      item.dataset.postHref = href;
+      item.dataset.searchText = [
+        titleText,
+        normalizeDate(post.date),
+        dateText,
+        categoryText,
+        safeText(post.excerpt),
+        seriesName,
+        ...tags,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      const link = document.createElement("a");
+      link.href = href;
+      link.textContent = titleText;
+
+      const meta = document.createElement("span");
+      meta.className = "archive-meta";
+      meta.textContent = [dateText, categoryText].filter(Boolean).join(" · ");
+
+      item.append(link, meta);
+      listElement.appendChild(item);
+    });
+  }
+
+  renderArchiveListFromData();
+
   const items = Array.from(listElement.querySelectorAll("li"));
-  const itemTexts = items.map((item) => String(item.textContent || "").trim().toLowerCase());
+  const itemTexts = items.map((item) => {
+    const indexed = safeText(item.dataset.searchText);
+    return (indexed || safeText(item.textContent)).toLowerCase();
+  });
   const pageSize = (() => {
-    const raw = String(listElement.dataset.archivePageSize || "").trim();
+    const raw = safeText(listElement.dataset.archivePageSize);
     const parsed = Number.parseInt(raw, 10);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 7;
   })();
@@ -27,7 +120,7 @@
   let currentQuery = "";
 
   function normalizeQuery(value) {
-    return String(value || "").trim();
+    return safeText(value);
   }
 
   function queryTokens(value) {
@@ -53,7 +146,7 @@
 
       window.history.replaceState({}, "", url.toString());
     } catch (error) {
-      // Ignore URL rewrite failures (e.g. file://)
+      // Ignore URL rewrite failures, for example when previewing by file://.
     }
   }
 

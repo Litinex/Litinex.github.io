@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>数据容器list基本用法 | 风迁夏回</title>
+  <meta name="description" content="Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改元素、删除元素、for 循环遍历和列表切片。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-list-basic-usage.html">
+  <meta property="og:title" content="数据容器list基本用法 | 风迁夏回">
+  <meta property="og:description" content="Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改元素、删除元素、for 循环遍历和列表切片。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-list-basic-usage.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260524-1">
+  <script src="../posts-data.js?v=20260528-1" defer></script>
+  <script src="../taxonomy.js?v=20260524-2" defer></script>
+  <script src="../article-reader.js?v=20260524-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260429-5" defer></script>
+  <script src="../music-player.js?v=20260505-1" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "数据容器list基本用法",
+      "description": "Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改元素、删除元素、for 循环遍历和列表切片。",
+      "url": "https://yezizhuang.top/posts/python-list-basic-usage.html",
+      "datePublished": "2026-05-28",
+      "dateModified": "2026-05-28",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.05.28 · Python 入门</p>
+      <h1>数据容器list基本用法</h1>
+    </header>
+
+    <article class="article-body">
+      <pre><code>#列表操作
+#定义
+s = [50, 90, 88, "hello", True]
+print(type(s))
+
+#访问列表元素
+#获取
+print(s[0])
+print(s[-5])#负数索引从后往前数，-1是最后一个元素，-2是倒数第二个元素，以此类推
+#注意：如果指定索引，超出范围会报错
+# print(s[5])#IndexError: list index out of range
+
+#修改
+s[0] = 100
+print(s[0])
+
+#删除
+del s[0]
+print(s)
+
+#遍历
+for item in s:
+    print(item)
+
+#列表的切片
+#注意左边包含，右边不包含
+# [0:5]表示获取索引0到4的元素，结束索引不包含在内
+#切片不仅可以用正向索引，还可以用负向索引
+s = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
+#切片语法：列表[起始索引:结束索引:步长]
+print(s[0:5:1])#获取索引0到4的元素，结束索引不包含在内
+print(s[0:5])#步长默认为1，可以省略
+print(s[:5])#起始索引默认为0，可以省略
+print(s[0:5:2])#获取索引0到4的元素，步长为2，即每隔一个元素获取一个
+print(type(s[0:5:2]))#切片返回一个新的列表</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-if-elif-else.html">
+        <span class="article-pagination-link-arrow" aria-hidden="true">←</span>
+        <span class="article-pagination-link-text">上一篇：Python中if elif else用法</span>
+      </a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-link-text">已经是最新一篇</span>
+        <span class="article-pagination-link-arrow" aria-hidden="true">→</span>
+      </span>
+    </nav>
+  </main>
+</body>
+</html>
