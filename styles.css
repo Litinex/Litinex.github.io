@@ -2165,64 +2165,18 @@ html[data-theme="dark"] .article-toc-item a[aria-current="true"] {
   margin-top: 0;
 }
 
-.article-related,
 .article-series-card {
   margin-top: 32px;
   padding-top: 22px;
   border-top: 1px solid var(--line);
 }
 
-.article-related-title,
 .article-series-card-title {
   margin: 6px 0 0;
   font-family: "Cormorant Garamond", Georgia, serif;
   line-height: 1.12;
   letter-spacing: 0;
   font-size: clamp(1.6rem, 4vw, 2.2rem);
-}
-
-.article-related-list {
-  list-style: none;
-  margin: 16px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 14px;
-}
-
-.article-related-item {
-  padding: 16px 18px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(31, 40, 51, 0.08);
-  background: rgba(255, 255, 255, 0.58);
-}
-
-html[data-theme="dark"] .article-related-item {
-  border-color: rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.article-related-link {
-  display: block;
-  text-decoration: none;
-}
-
-.article-related-titleline {
-  font-weight: 900;
-  color: var(--ink);
-}
-
-.article-related-link:hover .article-related-titleline {
-  color: var(--accent);
-}
-
-.article-related-meta {
-  margin-top: 6px;
-  font-size: 0.92rem;
-  color: var(--muted);
-}
-
-.article-related-tags {
-  margin-top: 12px;
 }
 
 .article-series-card-heading {
@@ -3216,20 +3170,17 @@ html[data-theme="dark"] .code-editor-copy.is-error {
     word-break: break-word;
   }
 
-  .article-related,
   .article-series-card {
     margin-top: 26px;
     padding-top: 18px;
   }
 
-  .article-related-item,
   .article-series-nav-link {
     padding: 14px;
     border-radius: 18px;
   }
 
-  .article-series-nav-title,
-  .article-related-titleline {
+  .article-series-nav-title {
     white-space: normal;
   }
 

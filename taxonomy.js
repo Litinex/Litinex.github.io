@@ -28,13 +28,6 @@
     return result;
   }
 
-  function formatDateCompact(isoDate) {
-    const raw = safeText(isoDate).trim();
-    const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!match) return raw;
-    return `${match[1]}.${match[2]}.${match[3]}`;
-  }
-
   function getCurrentPostKey() {
     const pathname = String(window.location?.pathname || "").replace(/\\/g, "/");
     const segments = pathname.split("/").filter(Boolean);
@@ -187,7 +180,6 @@
       renderSeriesCard({ currentPost, series });
     }
 
-    renderRelatedPosts({ currentPost });
   }
 
   function renderSeriesCard({ currentPost, series }) {
@@ -264,110 +256,6 @@
     } else {
       shell.appendChild(card);
     }
-  }
-
-  function relatedScore(a, b) {
-    // a = current, b = candidate
-    if (!a || !b) return 0;
-    if (safeText(a.href) && safeText(a.href) === safeText(b.href)) return 0;
-
-    let score = 0;
-
-    const sa = seriesMeta(a);
-    const sb = seriesMeta(b);
-    if (sa && sb && sa.id === sb.id) {
-      score += 100;
-      const distance = Math.abs(sa.index - sb.index);
-      score += Math.max(0, 18 - distance * 6);
-    }
-
-    const tagsA = new Set(postTags(a).map((t) => t.toLowerCase()));
-    const tagsB = postTags(b).map((t) => t.toLowerCase());
-    const shared = tagsB.filter((t) => tagsA.has(t)).length;
-    score += shared * 20;
-
-    if (safeText(a.category) && safeText(a.category) === safeText(b.category)) {
-      score += 10;
-    }
-
-    return score;
-  }
-
-  function renderRelatedPosts({ currentPost }) {
-    const shell = document.querySelector(".article-shell");
-    const pagination = shell?.querySelector(".article-pagination");
-    if (!shell || !pagination) return;
-
-    const candidates = posts
-      .filter((post) => safeText(post?.href) && safeText(post.href) !== safeText(currentPost.href))
-      .map((post) => ({ post, score: relatedScore(currentPost, post) }))
-      .filter((item) => item.score > 0);
-
-    candidates.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      const ad = safeText(a.post?.date);
-      const bd = safeText(b.post?.date);
-      if (ad !== bd) return bd.localeCompare(ad);
-      return safeText(a.post?.title).localeCompare(safeText(b.post?.title));
-    });
-
-    const top = candidates.slice(0, 5).map((item) => item.post);
-    if (top.length === 0) return;
-
-    const section = document.createElement("section");
-    section.className = "article-related";
-    section.setAttribute("aria-label", "相关文章推荐");
-    section.setAttribute("data-related-posts", "");
-
-    section.innerHTML = `
-      <div class="article-related-heading">
-        <p class="section-kicker">Related</p>
-        <h2 class="article-related-title">相关文章</h2>
-      </div>
-    `;
-
-    const list = document.createElement("ol");
-    list.className = "article-related-list";
-    list.setAttribute("aria-label", "相关文章列表");
-
-    top.forEach((post) => {
-      const item = document.createElement("li");
-      item.className = "article-related-item";
-
-      const link = document.createElement("a");
-      link.className = "article-related-link";
-      link.href = postLinkFromHere(post);
-
-      const title = document.createElement("div");
-      title.className = "article-related-titleline";
-      title.textContent = safeText(post.title);
-
-      const meta = document.createElement("div");
-      meta.className = "article-related-meta";
-      const date = formatDateCompact(post.date);
-      const category = safeText(post.category);
-      meta.textContent = [date, category].filter(Boolean).join(" · ");
-
-      link.append(title, meta);
-      item.appendChild(link);
-
-      const tags = postTags(post);
-      if (tags.length > 0) {
-        const tagsEl = document.createElement("div");
-        tagsEl.className = "article-related-tags tag-list";
-        tags.slice(0, 5).forEach((tag) => {
-          const chip = buildTagChip(tag);
-          if (chip) tagsEl.appendChild(chip);
-        });
-        item.appendChild(tagsEl);
-      }
-
-      list.appendChild(item);
-    });
-
-    section.appendChild(list);
-
-    pagination.insertAdjacentElement("beforebegin", section);
   }
 
   function renderArchiveTaxonomy() {
