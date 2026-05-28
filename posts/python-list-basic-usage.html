@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title>数据容器list基本用法 | 风迁夏回</title>
-  <meta name="description" content="Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改元素、删除元素、for 循环遍历和列表切片。">
+  <meta name="description" content="Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改、删除、遍历、切片，以及 append、insert、extend、remove、pop、index、count、sort、reverse 等常用方法。">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#11161f">
   <link rel="canonical" href="https://yezizhuang.top/posts/python-list-basic-usage.html">
   <meta property="og:title" content="数据容器list基本用法 | 风迁夏回">
-  <meta property="og:description" content="Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改元素、删除元素、for 循环遍历和列表切片。">
+  <meta property="og:description" content="Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改、删除、遍历、切片，以及 append、insert、extend、remove、pop、index、count、sort、reverse 等常用方法。">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://yezizhuang.top/posts/python-list-basic-usage.html">
   <meta property="og:site_name" content="风迁夏回">
@@ -33,7 +33,7 @@
       "@context": "https://schema.org",
       "@type": "BlogPosting",
       "headline": "数据容器list基本用法",
-      "description": "Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改元素、删除元素、for 循环遍历和列表切片。",
+      "description": "Python 列表 list 基本用法示例：定义列表、访问元素、负数索引、修改、删除、遍历、切片，以及 append、insert、extend、remove、pop、index、count、sort、reverse 等常用方法。",
       "url": "https://yezizhuang.top/posts/python-list-basic-usage.html",
       "datePublished": "2026-05-28",
       "dateModified": "2026-05-28",
@@ -94,7 +94,40 @@ print(s[0:5:1])#获取索引0到4的元素，结束索引不包含在内
 print(s[0:5])#步长默认为1，可以省略
 print(s[:5])#起始索引默认为0，可以省略
 print(s[0:5:2])#获取索引0到4的元素，步长为2，即每隔一个元素获取一个
-print(type(s[0:5:2]))#切片返回一个新的列表</code></pre>
+print(type(s[0:5:2]))#切片返回一个新的列表
+
+#list常用方法
+s = [10,20,30,40,50,70,80,90,100]
+#append()方法在列表末尾添加一个元素
+s.append(110)
+print(s)
+#insert()方法在指定位置插入一个元素
+s.insert(0, 0)#在索引0的位置插入元素0
+print(s)
+#extend()方法在列表末尾一次性添加多个元素
+s.extend([120, 130, 140])
+print(s)
+#remove()方法删除列表中指定的元素
+s.remove(70)
+print(s)
+#pop()方法删除列表中指定位置的元素，并返回该元素
+removed_element = s.pop(0)#删除索引0的元素，并返回该元素
+print(removed_element)
+print(s)
+#index()方法返回列表中第一个匹配项的索引
+index = s.index(30)
+print(index)
+#count()方法返回列表中指定元素的出现次数
+count = s.count(30)
+print(count)
+#sort()方法对列表进行排序
+s.sort()#默认升序排序
+print(s)
+s.sort(reverse=True)#降序排序
+print(s)
+#reverse()方法反转列表中的元素
+s.reverse()
+print(s)</code></pre>
     </article>
 
     <nav class="article-pagination" aria-label="文章导航">

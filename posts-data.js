@@ -7,7 +7,7 @@
       date: "2026-05-28",
       updated: "2026-05-28",
       category: "Python 入门",
-      excerpt: "列表的定义、元素访问、负数索引、修改、删除、for 循环遍历和切片示例。",
+      excerpt: "列表的定义、元素访问、修改、删除、遍历、切片，以及 append、insert、extend、remove、pop、sort 等常用方法。",
       tags: ["Python", "基础", "列表", "数据容器"],
       series: { id: "python-intro", name: "Python 入门", index: 7 },
     },
