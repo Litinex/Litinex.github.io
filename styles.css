@@ -1498,6 +1498,13 @@ html[data-theme="light"] .article-series-name {
   box-shadow: var(--shadow);
 }
 
+html[data-theme="dark"] .article-body {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(20, 24, 34, 0.96);
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
 .article-body > :first-child {
   margin-top: 0;
 }
@@ -1512,6 +1519,11 @@ html[data-theme="light"] .article-series-name {
   font-family: var(--font-serif);
   font-size: 1.06rem;
   line-height: 1.95;
+}
+
+html[data-theme="dark"] .article-body p,
+html[data-theme="dark"] .article-body li {
+  color: rgba(241, 238, 230, 0.84);
 }
 
 .article-body p {
@@ -1536,6 +1548,15 @@ html[data-theme="light"] .article-series-name {
   font-weight: 900;
   letter-spacing: 0;
   scroll-margin-top: 96px;
+}
+
+html[data-theme="dark"] .article-body h2,
+html[data-theme="dark"] .article-body h3,
+html[data-theme="dark"] .article-body h4,
+html[data-theme="dark"] .article-body h5,
+html[data-theme="dark"] .article-body h6,
+html[data-theme="dark"] .article-section-heading {
+  color: var(--ink-strong);
 }
 
 .article-body h2,
@@ -1612,6 +1633,22 @@ html[data-theme="light"] .article-series-name {
   color: #9e3e2c;
   font-family: var(--font-mono);
   font-size: 0.88em;
+}
+
+html[data-theme="dark"] .article-body code {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  color: #f2ca7e;
+}
+
+html[data-theme="dark"] .article-body pre code,
+html[data-theme="dark"] .article-body .code-editor code {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
 }
 
 .article-body pre {

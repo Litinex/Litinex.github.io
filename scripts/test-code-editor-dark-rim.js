@@ -12,6 +12,7 @@ const surfaceSampleOffsetCssPx = 6;
 const verticalInsetCssPx = 16;
 const maxOuterRimLumaDelta = 16;
 const maxOuterHaloLumaDelta = 4;
+const maxDarkPaperGutterLuma = 95;
 // Baseline samples the paper gutter beside the editor; halo samples the band
 // directly below the editor where the previous shadow formed a visible ring.
 const baselineOffsetFromEditorRightCssPx = 10;
@@ -20,6 +21,7 @@ const baselineVerticalInsetCssPx = 28;
 const haloHorizontalInsetCssPx = 24;
 const haloOffsetBelowEditorCssPx = 10;
 const haloSampleHeightCssPx = 14;
+const transparentBackgroundColor = "rgba(0, 0, 0, 0)";
 
 const { PNG } = requireWorkspaceDependency("pngjs");
 const { chromium } = requireWorkspaceDependency("playwright");
@@ -184,10 +186,79 @@ async function measureDarkCodeEditorHalo(page) {
   const shadowLuma = averageLumaForRect(png, haloRect, "editor halo sample");
 
   return {
-    baselineLuma,
+    paperGutterLuma: baselineLuma,
     shadowLuma,
     lumaDelta: Math.abs(shadowLuma - baselineLuma),
   };
+}
+
+async function readDarkCodeChrome(page, codeSelector, inheritedColorSelector) {
+  await page.evaluate(() => {
+    document.documentElement.dataset.theme = "dark";
+  });
+
+  return page.evaluate(
+    ({ codeSelector: targetCodeSelector, inheritedColorSelector: targetColorSelector }) => {
+      const codeElement = document.querySelector(targetCodeSelector);
+      const inheritedColorElement = document.querySelector(targetColorSelector);
+      if (!codeElement) {
+        throw new Error(`Unable to find code element for selector: ${targetCodeSelector}`);
+      }
+      if (!inheritedColorElement) {
+        throw new Error(`Unable to find inherited color element for selector: ${targetColorSelector}`);
+      }
+
+      const codeStyle = getComputedStyle(codeElement);
+      const inheritedStyle = getComputedStyle(inheritedColorElement);
+
+      return {
+        backgroundColor: codeStyle.backgroundColor,
+        borderTopWidth: codeStyle.borderTopWidth,
+        borderRightWidth: codeStyle.borderRightWidth,
+        borderBottomWidth: codeStyle.borderBottomWidth,
+        borderLeftWidth: codeStyle.borderLeftWidth,
+        paddingTop: codeStyle.paddingTop,
+        paddingRight: codeStyle.paddingRight,
+        paddingBottom: codeStyle.paddingBottom,
+        paddingLeft: codeStyle.paddingLeft,
+        codeColor: codeStyle.color,
+        inheritedColor: inheritedStyle.color,
+      };
+    },
+    { codeSelector, inheritedColorSelector }
+  );
+}
+
+function assertCodeChromeReset(style, label) {
+  assertTransparentBackground(style.backgroundColor, `${label} background`);
+  assertZeroCssLength(style.borderTopWidth, `${label} top border`);
+  assertZeroCssLength(style.borderRightWidth, `${label} right border`);
+  assertZeroCssLength(style.borderBottomWidth, `${label} bottom border`);
+  assertZeroCssLength(style.borderLeftWidth, `${label} left border`);
+  assertZeroCssLength(style.paddingTop, `${label} top padding`);
+  assertZeroCssLength(style.paddingRight, `${label} right padding`);
+  assertZeroCssLength(style.paddingBottom, `${label} bottom padding`);
+  assertZeroCssLength(style.paddingLeft, `${label} left padding`);
+
+  if (style.codeColor !== style.inheritedColor) {
+    throw new Error(
+      `${label} should inherit its container text color: ` +
+        `code=${style.codeColor}, inherited=${style.inheritedColor}.`
+    );
+  }
+}
+
+function assertTransparentBackground(value, label) {
+  if (value !== transparentBackgroundColor && value !== "transparent") {
+    throw new Error(`${label} should be transparent, but got ${value}.`);
+  }
+}
+
+function assertZeroCssLength(value, label) {
+  const pixels = Number.parseFloat(value);
+  if (!Number.isFinite(pixels) || Math.abs(pixels) > 0.01) {
+    throw new Error(`${label} should be 0px, but got ${value}.`);
+  }
 }
 
 async function run() {
@@ -230,9 +301,47 @@ async function run() {
       );
     }
 
+    if (haloMeasurement.paperGutterLuma > maxDarkPaperGutterLuma) {
+      throw new Error(
+        `Dark theme code editor surrounding paper is too bright: ` +
+          `gutter luma=${haloMeasurement.paperGutterLuma.toFixed(2)}, ` +
+          `expected at most ${maxDarkPaperGutterLuma}.`
+      );
+    }
+
+    const editorCodeStyle = await readDarkCodeChrome(
+      page,
+      ".article-body .code-editor code",
+      ".article-body .code-editor"
+    );
+    assertCodeChromeReset(editorCodeStyle, "Dark theme code editor code");
+
+    const plainCodePage = await browser.newPage({
+      viewport: { width: 920, height: 760 },
+      deviceScaleFactor: 3,
+    });
+    try {
+      await plainCodePage.route(/code-blocks\.js/, (route) => route.abort());
+      await plainCodePage.goto(`http://127.0.0.1:${port}/posts/python-list-basic-usage.html`, {
+        waitUntil: "domcontentloaded",
+      });
+      await plainCodePage.waitForSelector(".article-body pre code");
+
+      const plainPreCodeStyle = await readDarkCodeChrome(
+        plainCodePage,
+        ".article-body pre code",
+        ".article-body pre"
+      );
+      assertCodeChromeReset(plainPreCodeStyle, "Dark theme plain pre code");
+    } finally {
+      await plainCodePage.close();
+    }
+
     console.log(
       `Dark theme code editor rim luma delta: ${rimMeasurement.lumaDelta.toFixed(2)}, ` +
-        `halo luma delta: ${haloMeasurement.lumaDelta.toFixed(2)}`
+        `halo luma delta: ${haloMeasurement.lumaDelta.toFixed(2)}, ` +
+        `paper gutter luma: ${haloMeasurement.paperGutterLuma.toFixed(2)}, ` +
+        `code block chrome reset verified`
     );
   } finally {
     try {
