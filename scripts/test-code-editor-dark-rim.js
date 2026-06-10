@@ -7,11 +7,19 @@ const {
 } = require("./test-helpers");
 
 const port = Number.parseInt(process.env.TEST_PORT || "4183", 10);
-const samplePaddingCssPx = 8;
 const borderSampleOffsetCssPx = 0.5;
 const surfaceSampleOffsetCssPx = 6;
 const verticalInsetCssPx = 16;
 const maxOuterRimLumaDelta = 16;
+const maxOuterHaloLumaDelta = 4;
+// Baseline samples the paper gutter beside the editor; halo samples the band
+// directly below the editor where the previous shadow formed a visible ring.
+const baselineOffsetFromEditorRightCssPx = 10;
+const baselineSampleWidthCssPx = 18;
+const baselineVerticalInsetCssPx = 28;
+const haloHorizontalInsetCssPx = 24;
+const haloOffsetBelowEditorCssPx = 10;
+const haloSampleHeightCssPx = 14;
 
 const { PNG } = requireWorkspaceDependency("pngjs");
 const { chromium } = requireWorkspaceDependency("playwright");
@@ -33,6 +41,7 @@ function readPixel(png, x, y) {
 }
 
 function averageLumaForColumn(png, x, top, bottom) {
+  assertColumnWithinImage(png, x, top, bottom, "rim column sample");
   let total = 0;
   let count = 0;
 
@@ -51,31 +60,91 @@ function averageLumaForColumn(png, x, top, bottom) {
   return total / count;
 }
 
+function assertColumnWithinImage(png, x, top, bottom, label) {
+  const isValidRange = top < bottom;
+  const isInsideImage = x >= 0 && x < png.width && top >= 0 && bottom <= png.height;
+
+  if (!isValidRange || !isInsideImage) {
+    throw new Error(
+      `${label} is outside the screenshot: ` +
+        `x=${x}, top=${top}, bottom=${bottom}, image=${png.width}x${png.height}.`
+    );
+  }
+}
+
+function averageLumaForRect(png, rect, label) {
+  assertRectWithinImage(png, rect, label);
+  let total = 0;
+  let count = 0;
+
+  for (let y = rect.top; y < rect.bottom; y += 1) {
+    for (let x = rect.left; x < rect.right; x += 1) {
+      const pixel = readPixel(png, x, y);
+      if (pixel.alpha === 0) continue;
+
+      total += relativeLuma(pixel.red, pixel.green, pixel.blue);
+      count += 1;
+    }
+  }
+
+  if (count === 0) {
+    throw new Error("Unable to sample code editor halo pixels.");
+  }
+
+  return total / count;
+}
+
+function assertRectWithinImage(png, rect, label) {
+  const isValidRect = rect.left < rect.right && rect.top < rect.bottom;
+  const isInsideImage =
+    rect.left >= 0 &&
+    rect.top >= 0 &&
+    rect.right <= png.width &&
+    rect.bottom <= png.height;
+
+  if (!isValidRect || !isInsideImage) {
+    throw new Error(
+      `${label} rectangle is outside the screenshot: ` +
+        `rect=${JSON.stringify(rect)}, image=${png.width}x${png.height}.`
+    );
+  }
+}
+
+async function codeEditorDocumentBox(page) {
+  const editorBox = await page.evaluate(() => {
+    const editor = document.querySelector(".code-editor");
+    if (!editor) return null;
+
+    const rect = editor.getBoundingClientRect();
+    return {
+      x: rect.left + window.scrollX,
+      y: rect.top + window.scrollY,
+      width: rect.width,
+      height: rect.height,
+    };
+  });
+
+  if (!editorBox) {
+    throw new Error("Code editor must be rendered before measuring its dark rim.");
+  }
+
+  return editorBox;
+}
+
 async function measureDarkCodeEditorRim(page) {
   await page.evaluate(() => {
     document.documentElement.dataset.theme = "dark";
   });
 
-  const editor = page.locator(".code-editor").first();
-  const editorBox = await editor.boundingBox();
-  if (!editorBox) {
-    throw new Error("Code editor must be rendered before measuring its dark rim.");
-  }
-
-  const clip = {
-    x: Math.max(0, editorBox.x - samplePaddingCssPx),
-    y: Math.max(0, editorBox.y - samplePaddingCssPx),
-    width: editorBox.width + samplePaddingCssPx * 2,
-    height: editorBox.height + samplePaddingCssPx * 2,
-  };
-  const screenshot = await page.screenshot({ clip });
+  const editorBox = await codeEditorDocumentBox(page);
+  const screenshot = await page.screenshot({ fullPage: true });
   const png = PNG.sync.read(screenshot);
-  const scale = page.viewportSize().width ? png.width / clip.width : 1;
+  const scale = await page.evaluate(() => window.devicePixelRatio);
 
-  const borderX = Math.round((samplePaddingCssPx + borderSampleOffsetCssPx) * scale);
-  const surfaceX = Math.round((samplePaddingCssPx + surfaceSampleOffsetCssPx) * scale);
-  const top = Math.round((samplePaddingCssPx + verticalInsetCssPx) * scale);
-  const bottom = Math.round((samplePaddingCssPx + editorBox.height - verticalInsetCssPx) * scale);
+  const borderX = Math.round((editorBox.x + borderSampleOffsetCssPx) * scale);
+  const surfaceX = Math.round((editorBox.x + surfaceSampleOffsetCssPx) * scale);
+  const top = Math.round((editorBox.y + verticalInsetCssPx) * scale);
+  const bottom = Math.round((editorBox.y + editorBox.height - verticalInsetCssPx) * scale);
   const borderLuma = averageLumaForColumn(png, borderX, top, bottom);
   const surfaceLuma = averageLumaForColumn(png, surfaceX, top, bottom);
 
@@ -83,6 +152,41 @@ async function measureDarkCodeEditorRim(page) {
     borderLuma,
     surfaceLuma,
     lumaDelta: borderLuma - surfaceLuma,
+  };
+}
+
+async function measureDarkCodeEditorHalo(page) {
+  await page.evaluate(() => {
+    document.documentElement.dataset.theme = "dark";
+  });
+
+  const editorBox = await codeEditorDocumentBox(page);
+  const screenshot = await page.screenshot({ fullPage: true });
+  const png = PNG.sync.read(screenshot);
+  const scale = await page.evaluate(() => window.devicePixelRatio);
+  const leftEdge = editorBox.x * scale;
+  const rightEdge = (editorBox.x + editorBox.width) * scale;
+  const topEdge = editorBox.y * scale;
+  const bottomEdge = (editorBox.y + editorBox.height) * scale;
+  const baselineRect = {
+    left: Math.round(rightEdge + baselineOffsetFromEditorRightCssPx * scale),
+    right: Math.round(rightEdge + (baselineOffsetFromEditorRightCssPx + baselineSampleWidthCssPx) * scale),
+    top: Math.round(topEdge + baselineVerticalInsetCssPx * scale),
+    bottom: Math.round(bottomEdge - baselineVerticalInsetCssPx * scale),
+  };
+  const haloRect = {
+    left: Math.round(leftEdge + haloHorizontalInsetCssPx * scale),
+    right: Math.round(rightEdge - haloHorizontalInsetCssPx * scale),
+    top: Math.round(bottomEdge + haloOffsetBelowEditorCssPx * scale),
+    bottom: Math.round(bottomEdge + (haloOffsetBelowEditorCssPx + haloSampleHeightCssPx) * scale),
+  };
+  const baselineLuma = averageLumaForRect(png, baselineRect, "paper baseline sample");
+  const shadowLuma = averageLumaForRect(png, haloRect, "editor halo sample");
+
+  return {
+    baselineLuma,
+    shadowLuma,
+    lumaDelta: Math.abs(shadowLuma - baselineLuma),
   };
 }
 
@@ -108,17 +212,27 @@ async function run() {
     });
     await page.waitForSelector(".code-editor");
 
-    const measurement = await measureDarkCodeEditorRim(page);
-    if (measurement.lumaDelta > maxOuterRimLumaDelta) {
+    const rimMeasurement = await measureDarkCodeEditorRim(page);
+    if (rimMeasurement.lumaDelta > maxOuterRimLumaDelta) {
       throw new Error(
         `Dark theme code editor outer rim is too bright: ` +
-          `border/surface luma delta=${measurement.lumaDelta.toFixed(2)}, ` +
+          `border/surface luma delta=${rimMeasurement.lumaDelta.toFixed(2)}, ` +
           `expected at most ${maxOuterRimLumaDelta}.`
       );
     }
 
+    const haloMeasurement = await measureDarkCodeEditorHalo(page);
+    if (haloMeasurement.lumaDelta > maxOuterHaloLumaDelta) {
+      throw new Error(
+        `Dark theme code editor outer halo is too visible: ` +
+          `shadow/paper luma delta=${haloMeasurement.lumaDelta.toFixed(2)}, ` +
+          `expected at most ${maxOuterHaloLumaDelta}.`
+      );
+    }
+
     console.log(
-      `Dark theme code editor rim luma delta: ${measurement.lumaDelta.toFixed(2)}`
+      `Dark theme code editor rim luma delta: ${rimMeasurement.lumaDelta.toFixed(2)}, ` +
+        `halo luma delta: ${haloMeasurement.lumaDelta.toFixed(2)}`
     );
   } finally {
     try {

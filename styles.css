@@ -1743,7 +1743,7 @@ html[data-theme="light"] .article-series-name {
   border-radius: var(--radius-lg);
   background: #111722;
   color: #edf3f8;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.26);
+  box-shadow: none;
 }
 
 .code-editor-bar {
