@@ -7,7 +7,7 @@
   <title>风迁夏回 | 个人博客</title>
   <meta name="description" content="一个关于写作、技术与日常观察的个人博客。记录长期学习、项目复盘和生活片段。">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#11161f">
+  <meta name="theme-color" content="#0f1117">
   <link rel="canonical" href="https://yezizhuang.top/">
   <meta property="og:title" content="风迁夏回 | 个人博客">
   <meta property="og:description" content="一个关于写作、技术与日常观察的个人博客。记录长期学习、项目复盘和生活片段。">
@@ -19,18 +19,20 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/hero-sky-1920.jpg" imagesrcset="assets/hero-sky-1280.jpg 1280w, assets/hero-sky-1920.jpg 1920w, assets/hero-sky-2560.jpg 2560w" imagesizes="100vw">
-  <link rel="stylesheet" href="styles.css?v=20260528-1">
-  <link rel="stylesheet" href="writing-heatmap.css?v=20260524-1">
+  <link rel="stylesheet" href="styles.css?v=20260610-2">
+  <link rel="stylesheet" href="writing-heatmap.css?v=20260609-1">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260429-5" defer></script>
   <script src="music-player.js?v=20260505-1" defer></script>
   <script src="posts-data.js?v=20260528-1" defer></script>
-  <script src="hero-poem.js?v=20260428-3" defer></script>
+  <script src="hero-poem.js?v=20260610-1" defer></script>
   <script src="home-essays.js?v=20260528-1" defer></script>
   <script src="writing-heatmap.js?v=20260430-2" defer></script>
   <script src="views.js?v=20260427-1" defer></script>
+  <script src="theme-toggle.js?v=20260610-1" defer></script>
+  <script src="page-transitions.js?v=20260610-1" defer></script>
   <script src="site-uptime.js?v=20260430-1" defer></script>
   <script type="application/ld+json">
     {
@@ -64,41 +66,43 @@
 
         <header class="site-header site-header-hero">
           <a class="site-brand" href="index.html">
-            <span class="site-brand-mark"></span>
+            <span class="site-brand-mark" aria-hidden="true"></span>
             <span>
               <strong>风迁夏回</strong>
               <small>May all the beauty be blessed.</small>
             </span>
           </a>
           <div class="header-actions">
-            <nav class="site-nav">
-              <a href="index.html">首页</a>
+            <nav class="site-nav" aria-label="主导航">
+              <a href="index.html" aria-current="page">首页</a>
+              <a href="archive.html">文章</a>
               <a href="about.html">关于</a>
-              <a href="archive.html">文章列表</a>
             </nav>
           </div>
         </header>
 
         <div class="hero-banner-inner">
+          <p class="eyebrow">Personal Journal / Technical Notes</p>
           <h1 data-hero-poem>行到水穷处，坐看云起时。</h1>
-
+          <div class="hero-actions">
+            <a class="button button-primary" href="#essays">阅读最新文章</a>
+            <a class="button button-secondary" href="archive.html">浏览历史文章</a>
+          </div>
         </div>
-        <a class="hero-scroll" href="#activity" aria-label="向下滚动到写作热力图">
-          <span class="hero-scroll-glyph" aria-hidden="true"></span>
-        </a>
       </section>
 
-      <section class="section" id="activity">
-        <div class="section-heading">
-          <div>
-            <p class="section-kicker">Writing Activity</p>
-            <h2>写作热力图</h2>
-          </div>
+      <section class="section section-split" id="activity">
+        <div class="section-copy">
+          <p class="section-kicker">Writing Activity</p>
+          <h2>写作热力图</h2>
+          <p>
+            用时间轴记录更新节奏。它不只是数量统计，更像一个长期学习的轨迹，让未来回看时能看见哪些问题真正被持续推进。
+          </p>
         </div>
 
         <div class="writing-heatmap" data-writing-heatmap>
           <div class="writing-heatmap-header">
-            <p class="writing-heatmap-summary" data-writing-heatmap-summary>加载中…</p>
+            <p class="writing-heatmap-summary" data-writing-heatmap-summary>加载中...</p>
             <div class="writing-heatmap-legend" aria-label="热力图图例">
               <span class="writing-heatmap-legend-label">少</span>
               <span class="writing-heatmap-legend-swatches" data-writing-heatmap-legend></span>
@@ -118,26 +122,54 @@
         </div>
       </section>
 
-      <section class="section" id="essays">
+      <section class="section section-featured" id="essays">
         <div class="section-heading">
           <div>
             <p class="section-kicker">Latest Essays</p>
             <h2>最新文章</h2>
           </div>
-          <a class="text-link" href="archive.html">查看文章列表</a>
+          <a class="text-link" href="archive.html">查看全部</a>
         </div>
 
         <div class="essays-layout">
-          <ol class="essay-list" aria-label="最新文章列表" data-home-essays-max="5"></ol>
+          <ol class="essay-list" aria-label="最新文章列表" data-home-essays-max="6"></ol>
         </div>
       </section>
 
+      <section class="section history-finder" aria-label="查找历史文章">
+        <div class="history-finder-copy">
+          <p class="section-kicker">Find Older Posts</p>
+          <h2>查找历史文章</h2>
+          <p>
+            输入标题、分类、日期或标签，可以直接跳到历史文章页并自动筛选结果。
+          </p>
+        </div>
+
+        <form class="history-finder-form" action="archive.html" method="get">
+          <label class="sr-only" for="home-history-search">搜索历史文章</label>
+          <input
+            id="home-history-search"
+            class="history-finder-input"
+            type="search"
+            name="q"
+            placeholder="例如：Python / LLM / list / 写作"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button class="button button-primary" type="submit">搜索历史文章</button>
+          <div class="history-finder-links" aria-label="常用搜索">
+            <a href="archive.html?q=Python">Python</a>
+            <a href="archive.html?q=list">list</a>
+            <a href="archive.html?q=LLM">LLM</a>
+            <a href="archive.html?q=写作">写作</a>
+          </div>
+        </form>
+      </section>
     </main>
 
     <footer class="site-footer">
       <p>
         © 2026 风迁夏回. Built for long-form thinking.
-        <br>
         <span class="site-uptime">
           本站已运行
           <span class="site-uptime-value" data-site-uptime data-site-start="2026-04-25T20:42:08+08:00">0 天 00 小时 00 分 00 秒</span>

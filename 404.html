@@ -7,7 +7,7 @@
   <title>页面不存在 | 风迁夏回</title>
   <meta name="description" content="你访问的页面不存在。">
   <meta name="robots" content="noindex,follow">
-  <meta name="theme-color" content="#11161f">
+  <meta name="theme-color" content="#0f1117">
   <link rel="canonical" href="https://yezizhuang.top/404.html">
   <meta property="og:title" content="页面不存在 | 风迁夏回">
   <meta property="og:description" content="你访问的页面不存在。">
@@ -19,38 +19,40 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260528-1">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260610-2">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260429-5" defer></script>
   <script src="music-player.js?v=20260505-1" defer></script>
   <script src="views.js?v=20260427-1" defer></script>
+  <script src="theme-toggle.js?v=20260610-1" defer></script>
+  <script src="page-transitions.js?v=20260610-1" defer></script>
 </head>
 <body>
   <div class="site-shell">
     <header class="site-header">
       <a class="site-brand" href="index.html">
-        <span class="site-brand-mark"></span>
+        <span class="site-brand-mark" aria-hidden="true"></span>
         <span>
           <strong>风迁夏回</strong>
           <small>May all the beauty be blessed.</small>
         </span>
       </a>
       <div class="header-actions">
-        <nav class="site-nav">
+        <nav class="site-nav" aria-label="主导航">
           <a href="index.html">首页</a>
+          <a href="archive.html">文章</a>
           <a href="about.html">关于</a>
-          <a href="archive.html">文章列表</a>
         </nav>
       </div>
     </header>
 
     <main class="page-main">
-      <section class="page-hero" aria-label="404 Not Found">
+      <section class="page-hero page-hero-compact" aria-label="404 Not Found">
         <p class="eyebrow">404 Not Found</p>
         <h1>这个页面不存在。</h1>
         <p>
-          你可能访问了一个过期链接，或者地址输入有误。
+          你可能访问了一个过期链接，或者地址输入有误。可以回到首页，或者直接在归档里查找文章。
         </p>
         <div class="hero-actions">
           <a class="button button-primary" href="index.html">返回首页</a>

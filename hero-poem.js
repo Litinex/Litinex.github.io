@@ -21,8 +21,40 @@
     "人生如逆旅，我亦是行人。",
   ];
 
+  const maxDisplayLength = 16;
+
+  const cleanPoem = (value) => String(value || "").replace(/\s+/g, "").trim();
+
+  const isDisplayablePoem = (value) => {
+    const poem = cleanPoem(value);
+    return poem.length > 0 && poem.length <= maxDisplayLength;
+  };
+
   const pickFallback = () =>
     fallbackPoems[Math.floor(Math.random() * fallbackPoems.length)];
+
+  const fitPoemToLine = () => {
+    target.style.removeProperty("--hero-poem-scale");
+
+    const availableWidth = target.parentElement
+      ? target.parentElement.getBoundingClientRect().width
+      : target.getBoundingClientRect().width;
+    const actualWidth = target.scrollWidth;
+
+    if (!availableWidth || !actualWidth || actualWidth <= availableWidth) {
+      return;
+    }
+
+    const scale = Math.max(0.48, Math.min(1, availableWidth / actualWidth));
+    target.style.setProperty("--hero-poem-scale", String(scale));
+  };
+
+  const setPoem = (poem) => {
+    const displayPoem = isDisplayablePoem(poem) ? cleanPoem(poem) : pickFallback();
+    target.textContent = displayPoem;
+    setTitle(displayPoem);
+    window.requestAnimationFrame(fitPoemToLine);
+  };
 
   const requestPoem = async () => {
     const endpoint = "https://v1.jinrishici.com/all.json";
@@ -47,18 +79,14 @@
         throw new Error("Empty poem content");
       }
 
-      target.textContent = content;
-      setTitle(content);
+      setPoem(content);
     } catch (error) {
-      const fallback = pickFallback();
-      if (fallback) {
-        target.textContent = fallback;
-        setTitle(fallback);
-      }
+      setPoem(pickFallback());
     } finally {
       window.clearTimeout(timer);
     }
   };
 
+  window.addEventListener("resize", fitPoemToLine);
   requestPoem();
 })();
