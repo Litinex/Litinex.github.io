@@ -167,19 +167,16 @@ strong {
 
 .page-transition-ready body {
   opacity: 0;
-  transform: translateY(10px);
 }
 
 .page-transition-ready.page-transition-entered body {
   opacity: 1;
-  transform: translateY(0);
-  transition: opacity 360ms ease, transform 360ms ease;
+  transition: opacity 360ms ease;
 }
 
 .page-transition-ready.page-transition-leaving body {
   opacity: 0.28;
-  transform: translateY(12px);
-  transition: opacity 210ms ease, transform 210ms ease;
+  transition: opacity 210ms ease;
 }
 
 .page-transition-overlay {
@@ -2289,7 +2286,28 @@ html[data-theme="light"] .music-panel {
   }
 
   .music-dock {
-    display: none;
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    opacity: 0.82;
+  }
+
+  .music-disc {
+    width: 48px;
+    height: 48px;
+  }
+
+  .music-disc-groove {
+    width: 36px;
+    height: 36px;
+  }
+
+  .music-disc-art {
+    width: 25px;
+    height: 25px;
+  }
+
+  .music-panel {
+    width: min(284px, calc(100vw - 92px));
   }
 }
 
