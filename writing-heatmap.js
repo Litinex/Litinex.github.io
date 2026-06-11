@@ -6,6 +6,8 @@
   const legendEl = mount.querySelector("[data-writing-heatmap-legend]");
   const monthsEl = mount.querySelector("[data-writing-heatmap-months]");
   const daysEl = mount.querySelector("[data-writing-heatmap-days]");
+  const chartEl = mount.querySelector("[data-writing-heatmap-chart]");
+  const graphEl = mount.querySelector(".writing-heatmap-graph");
   const gridEl = mount.querySelector("[data-writing-heatmap-grid]");
   const tooltipEl = mount.querySelector("[data-writing-heatmap-tooltip]");
 
@@ -16,6 +18,10 @@
   }
 
   const pad2 = (value) => String(value).padStart(2, "0");
+  const clamp = (value, min, max) => {
+    if (max < min) return min;
+    return Math.min(Math.max(value, min), max);
+  };
 
   const localTodayKey = () => {
     const now = new Date();
@@ -245,18 +251,39 @@
 
     tooltipEl.textContent = formatTooltip(dateKey, Number.isFinite(count) ? count : 0);
     tooltipEl.hidden = false;
+    tooltipEl.style.left = "0px";
+    tooltipEl.style.top = "0px";
 
+    const mountRect = mount.getBoundingClientRect();
+    const chartRect = (chartEl || gridEl).getBoundingClientRect();
+    const graphRect = (graphEl || gridEl).getBoundingClientRect();
     const rect = cell.getBoundingClientRect();
     const tooltipRect = tooltipEl.getBoundingClientRect();
 
-    const margin = 10;
-    const preferredLeft = rect.left + rect.width / 2 - tooltipRect.width / 2;
-    const clampedLeft = Math.max(margin, Math.min(window.innerWidth - tooltipRect.width - margin, preferredLeft));
+    const margin = 12;
+    const gap = 14;
+    const minLeft = margin;
+    const maxLeft = mountRect.width - tooltipRect.width - margin;
+    const blankLeft = graphRect.right - mountRect.left + gap;
+    const rightOfCell = rect.right - mountRect.left + gap;
+    const leftOfCell = rect.left - mountRect.left - tooltipRect.width - gap;
+    const centeredOnCell = rect.left - mountRect.left + rect.width / 2 - tooltipRect.width / 2;
 
-    const placeAbove = rect.top - tooltipRect.height - 12 >= margin;
-    const top = placeAbove ? rect.top - tooltipRect.height - 12 : rect.bottom + 12;
+    let left = centeredOnCell;
+    if (blankLeft + tooltipRect.width <= mountRect.width - margin) {
+      left = blankLeft;
+    } else if (rightOfCell + tooltipRect.width <= mountRect.width - margin) {
+      left = rightOfCell;
+    } else if (leftOfCell >= margin) {
+      left = leftOfCell;
+    }
 
-    tooltipEl.style.left = `${Math.round(clampedLeft)}px`;
+    const minTop = Math.max(margin, chartRect.top - mountRect.top);
+    const maxTop = mountRect.height - tooltipRect.height - margin;
+    const preferredTop = rect.top - mountRect.top + rect.height / 2 - tooltipRect.height / 2;
+    const top = clamp(preferredTop, minTop, maxTop);
+
+    tooltipEl.style.left = `${Math.round(clamp(left, minLeft, maxLeft))}px`;
     tooltipEl.style.top = `${Math.round(top)}px`;
   }
 

@@ -17,6 +17,7 @@ html[data-theme="light"] {
 }
 
 .writing-heatmap {
+  position: relative;
   min-width: 0;
   padding: 20px;
   border: 1px solid var(--line);
@@ -216,9 +217,10 @@ html[data-theme="light"] .writing-heatmap-chart::-webkit-scrollbar-track {
 }
 
 .writing-heatmap-tooltip {
-  position: fixed;
+  position: absolute;
   z-index: 90;
-  max-width: min(380px, calc(100vw - 24px));
+  width: max-content;
+  max-width: min(380px, calc(100% - 40px));
   padding: 10px 12px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-sm);
@@ -228,6 +230,7 @@ html[data-theme="light"] .writing-heatmap-chart::-webkit-scrollbar-track {
   font-size: 0.86rem;
   font-weight: 800;
   line-height: 1.45;
+  overflow-wrap: anywhere;
   pointer-events: none;
 }
 
