@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>数据容器str基本操作 | 风迁夏回</title>
+  <meta name="description" content="Python 字符串 str 基本操作示例：索引、遍历、切片，以及 find、count、upper、lower、split、strip、replace、startswith 和邮箱格式验证。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-str-basic-operations.html">
+  <meta property="og:title" content="数据容器str基本操作 | 风迁夏回">
+  <meta property="og:description" content="Python 字符串 str 基本操作示例：索引、遍历、切片，以及 find、count、upper、lower、split、strip、replace、startswith 和邮箱格式验证。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-str-basic-operations.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260610-7">
+  <script src="../posts-data.js?v=20260617-2" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260429-5" defer></script>
+  <script src="../music-player.js?v=20260505-1" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "数据容器str基本操作",
+      "description": "Python 字符串 str 基本操作示例：索引、遍历、切片，以及 find、count、upper、lower、split、strip、replace、startswith 和邮箱格式验证。",
+      "url": "https://yezizhuang.top/posts/python-str-basic-operations.html",
+      "datePublished": "2026-06-17",
+      "dateModified": "2026-06-17",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.06.17 · Python 入门</p>
+      <h1>数据容器str基本操作</h1>
+    </header>
+
+    <article class="article-body">
+      <pre><code>s = "Hello-Python"
+#字符串无法修改,有序性，不可迭代
+print(s[4])
+print(s[-8])
+
+for i in s:
+    print(i)
+
+#切片
+print(s[0:5])
+
+# 常用字符串方法示例
+print('----- 字符串方法示例 -----')
+print('原始字符串:', s)
+
+# find(): 查找子串，返回第一次出现的索引，找不到返回 -1
+print("find('Python'):", s.find('Python'))
+print("find('o'):", s.find('o'))
+
+# count(): 统计子串出现次数
+print("count('o'):", s.count('o'))
+print("count('l'):", s.count('l'))
+
+# upper(): 全部字母大写
+print('upper():', s.upper())
+
+# lower(): 全部字母小写
+print('lower():', s.lower())
+
+# split(): 按指定分隔符分割成列表
+print("split('-'):", s.split('-'))
+print("split('o'):", s.split('o'))
+
+# strip(): 去除两端空白或指定字符
+s2 = '  Hello-Python  '
+print('原始 s2:', repr(s2))
+print('strip():', repr(s2.strip()))
+print("strip('-'):", repr('***Hello***'.strip('*')))
+
+# replace(): 将指定子串替换为新子串
+print("replace('Hello', 'Hi'):", s.replace('Hello', 'Hi'))
+
+# startswith(): 检查是否以指定子串开头，返回布尔值
+print("startswith('Hello'):", s.startswith('Hello'))
+print("startswith('Python'):", s.startswith('Python'))
+
+# 邮箱格式验证：包含一个 @ 和至少一个 .
+email = input('请输入邮箱：')
+if email.count('@') == 1 and email.count('.') &gt;= 1:
+    print('邮箱格式正确')
+else:
+    print('邮箱格式错误')</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-list-basic-usage.html">
+        <span class="article-pagination-link-arrow" aria-hidden="true">←</span>
+        <span class="article-pagination-link-text">上一篇：数据容器list基本用法</span>
+      </a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-link-text">已经是最新一篇</span>
+        <span class="article-pagination-link-arrow" aria-hidden="true">→</span>
+      </span>
+    </nav>
+  </main>
+</body>
+</html>

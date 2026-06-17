@@ -2,10 +2,22 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      href: "posts/python-str-basic-operations.html",
+      title: "数据容器 str 基本操作",
+      date: "2026-06-17",
+      updated: "2026-06-17",
+      category: "Python 入门",
+      excerpt: "字符串的索引、遍历、切片，以及 find、count、upper、lower、split、strip、replace、startswith 和邮箱格式验证示例。",
+      tags: ["Python", "基础", "字符串", "数据容器"],
+      words: 1380,
+      readTime: 5,
+      series: { id: "python-intro", name: "Python 入门", index: 8 },
+    },
+    {
       href: "posts/python-list-basic-usage.html",
       title: "数据容器 list 基本用法",
       date: "2026-05-28",
-      updated: "2026-05-28",
+      updated: "2026-06-17",
       category: "Python 入门",
       excerpt: "列表的定义、元素访问、修改、删除、遍历、切片，以及 append、insert、extend、remove、pop、sort 等常用方法。",
       tags: ["Python", "基础", "列表", "数据容器"],
