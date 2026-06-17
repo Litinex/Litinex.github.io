@@ -38,7 +38,7 @@
     document.documentElement.classList.add("page-transition-leaving");
     window.setTimeout(() => {
       window.location.href = href;
-    }, 210);
+    }, 280);
   };
 
   document.addEventListener("click", (event) => {
