@@ -110,12 +110,12 @@ async function run() {
       document.documentElement.dataset.theme = "light";
 
       const title = document.querySelector(".essay-item.is-latest .essay-title");
-      const link = document.querySelector(".essay-item.is-latest .essay-link");
+      const card = document.querySelector(".essay-item.is-latest .post-card-inner");
       const titleStyle = window.getComputedStyle(title);
       const textRange = document.createRange();
       textRange.selectNodeContents(title);
       const textRect = textRange.getBoundingClientRect();
-      const linkRect = link.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
       const y = Math.round(textRect.top + textRect.height / 2);
       const candidatePoints = [
         { x: Math.round(textRect.right + 24), y },
@@ -125,8 +125,8 @@ async function run() {
       ];
       const samplePoint = candidatePoints.find((point) => {
         return (
-          point.x >= linkRect.left + 12 &&
-          point.x <= linkRect.right - 12 &&
+          point.x >= cardRect.left + 12 &&
+          point.x <= cardRect.right - 12 &&
           !(
             point.x >= textRect.left &&
             point.x <= textRect.right &&

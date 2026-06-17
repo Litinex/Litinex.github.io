@@ -2651,6 +2651,37 @@ html[data-theme="light"] .site-banner-content p:not(.eyebrow) {
   margin-inline: auto;
 }
 
+.home-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.overview-card {
+  display: grid;
+  gap: 8px;
+  min-height: 138px;
+  padding: 20px;
+}
+
+.overview-card h2 {
+  margin: 0;
+  color: var(--ink-strong);
+  font-family: var(--font-sans);
+  font-size: 1.2rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.overview-card p:not(.section-kicker) {
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: 0.94rem;
+  font-weight: 750;
+  line-height: 1.65;
+}
+
 .fuwari-grid {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
@@ -3259,6 +3290,10 @@ html[data-theme="dark"] .article-body {
   .profile-card {
     grid-row: span 2;
   }
+
+  .home-overview {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -3326,6 +3361,11 @@ html[data-theme="dark"] .article-body {
 
   .profile-card {
     grid-row: auto;
+  }
+
+  .home-overview {
+    gap: 12px;
+    margin-bottom: 18px;
   }
 
   .section-heading,
