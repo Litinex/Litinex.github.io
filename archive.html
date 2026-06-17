@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <title>历史文章 | 风迁夏回</title>
+  <title>归档 | 风迁夏回</title>
   <meta name="description" content="查找风迁夏回以前写过的博客文章，可以按标题、日期、分类、标签或系列筛选。">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#0f1117">
+  <meta name="theme-color" content="#111318">
   <link rel="canonical" href="https://yezizhuang.top/archive.html">
-  <meta property="og:title" content="历史文章 | 风迁夏回">
+  <meta property="og:title" content="归档 | 风迁夏回">
   <meta property="og:description" content="查找风迁夏回以前写过的博客文章，可以按标题、日期、分类、标签或系列筛选。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://yezizhuang.top/archive.html">
@@ -20,12 +20,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260610-7">
+  <link rel="stylesheet" href="styles.css?v=20260617-1">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260429-5" defer></script>
   <script src="music-player.js?v=20260505-1" defer></script>
-  <script src="posts-data.js?v=20260528-1" defer></script>
-  <script src="archive-search.js?v=20260528-1" defer></script>
+  <script src="posts-data.js?v=20260617-1" defer></script>
+  <script src="archive-search.js?v=20260617-1" defer></script>
   <script src="taxonomy.js?v=20260528-1" defer></script>
   <script src="views.js?v=20260427-1" defer></script>
   <script src="theme-toggle.js?v=20260610-1" defer></script>
@@ -34,7 +34,7 @@
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      "name": "历史文章",
+      "name": "归档",
       "description": "查找风迁夏回以前写过的博客文章，可以按标题、日期、分类、标签或系列筛选。",
       "url": "https://yezizhuang.top/archive.html",
       "inLanguage": "zh-CN",
@@ -46,80 +46,81 @@
     }
   </script>
 </head>
-<body>
+<body class="fuwari-page archive-page">
   <div class="site-shell">
     <header class="site-header">
-      <a class="site-brand" href="index.html">
+      <a class="site-brand" href="index.html" aria-label="风迁夏回首页">
         <span class="site-brand-mark" aria-hidden="true"></span>
         <span>
           <strong>风迁夏回</strong>
-          <small>May all the beauty be blessed.</small>
+          <small>Personal Journal</small>
         </span>
       </a>
       <div class="header-actions">
         <nav class="site-nav" aria-label="主导航">
-          <a href="index.html">首页</a>
-          <a href="archive.html" aria-current="page">文章</a>
+          <a href="index.html">主页</a>
+          <a href="archive.html" aria-current="page">归档</a>
           <a href="about.html">关于</a>
         </nav>
       </div>
     </header>
 
-    <main class="page-main">
-      <section class="page-hero page-hero-compact">
-        <p class="eyebrow">History</p>
-        <h1>历史文章</h1>
-        <p>
-          想找以前写过的内容，可以按标题、日期、分类、标签或系列快速筛选。
-        </p>
-      </section>
+    <section class="site-banner compact-banner" aria-label="归档页横幅">
+      <picture class="site-banner-media" aria-hidden="true">
+        <img src="assets/hero-sky-1920.jpg" alt="" decoding="async">
+      </picture>
+      <div class="site-banner-content">
+        <p class="eyebrow">Archive</p>
+        <h1>归档</h1>
+        <p>按标题、分类、日期、标签或系列快速筛选历史文章。</p>
+      </div>
+    </section>
 
-      <section class="section archive-section" aria-label="历史文章">
-        <div class="archive-layout">
-          <aside class="archive-sidebar" aria-label="搜索文章">
-            <div class="archive-search">
-              <p class="section-kicker">Search</p>
-              <h2 class="archive-search-title">检索文章</h2>
-              <label class="sr-only" for="archive-search-input">搜索文章关键词</label>
-              <div class="archive-search-row">
-                <input
-                  id="archive-search-input"
-                  class="archive-search-input"
-                  type="search"
-                  inputmode="search"
-                  placeholder="标题 / 分类 / 日期 / 标签"
-                  autocomplete="off"
-                  spellcheck="false"
-                  data-archive-search
-                >
-                <button class="archive-search-clear" type="button" data-archive-search-clear aria-label="清空搜索" hidden>×</button>
-              </div>
-              <p class="archive-search-count" data-archive-search-count></p>
+    <main class="page-main fuwari-main">
+      <div class="fuwari-grid">
+        <aside class="archive-sidebar profile-sidebar" aria-label="搜索与筛选">
+          <section class="archive-search sidebar-card fuwari-card">
+            <p class="section-kicker">Search</p>
+            <h2 class="archive-search-title">检索文章</h2>
+            <label class="sr-only" for="archive-search-input">搜索文章关键词</label>
+            <div class="archive-search-row">
+              <input
+                id="archive-search-input"
+                class="archive-search-input"
+                type="search"
+                inputmode="search"
+                placeholder="标题 / 分类 / 日期 / 标签"
+                autocomplete="off"
+                spellcheck="false"
+                data-archive-search
+              >
+              <button class="archive-search-clear" type="button" data-archive-search-clear aria-label="清空搜索" hidden>×</button>
             </div>
-          </aside>
+            <p class="archive-search-count" data-archive-search-count></p>
+          </section>
+        </aside>
 
-          <div class="archive-content">
-            <ul class="archive-list" data-archive-list data-archive-page-size="8"></ul>
-            <p class="archive-empty" data-archive-empty hidden>没有找到匹配的文章。</p>
-            <nav class="archive-pagination" aria-label="文章列表分页" data-archive-pagination hidden>
-              <div class="archive-pagination-bar">
-                <button class="archive-pagination-control" type="button" data-archive-pagination-prev aria-label="上一页" disabled>
-                  <span aria-hidden="true">‹</span>
-                </button>
-                <div class="archive-pagination-pages" data-archive-pagination-pages></div>
-                <button class="archive-pagination-control" type="button" data-archive-pagination-next aria-label="下一页" disabled>
-                  <span aria-hidden="true">›</span>
-                </button>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </section>
+        <section class="archive-content content-column" aria-label="历史文章">
+          <ul class="archive-list post-card-list" data-archive-list data-archive-page-size="8"></ul>
+          <p class="archive-empty fuwari-card" data-archive-empty hidden>没有找到匹配的文章。</p>
+          <nav class="archive-pagination" aria-label="文章列表分页" data-archive-pagination hidden>
+            <div class="archive-pagination-bar">
+              <button class="archive-pagination-control" type="button" data-archive-pagination-prev aria-label="上一页" disabled>
+                <span aria-hidden="true">‹</span>
+              </button>
+              <div class="archive-pagination-pages" data-archive-pagination-pages></div>
+              <button class="archive-pagination-control" type="button" data-archive-pagination-next aria-label="下一页" disabled>
+                <span aria-hidden="true">›</span>
+              </button>
+            </div>
+          </nav>
+        </section>
+      </div>
     </main>
 
     <footer class="site-footer">
-      <p>© 2026 风迁夏回. Built for long-form thinking.</p>
-      <a href="index.html">返回首页</a>
+      <p>© 2026 风迁夏回</p>
+      <a href="index.html">返回主页</a>
     </footer>
   </div>
 </body>

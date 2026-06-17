@@ -7,7 +7,7 @@
   <title>关于 | 风迁夏回</title>
   <meta name="description" content="关于风迁夏回这个博客的写作方向、内容主题和联系方式。">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#0f1117">
+  <meta name="theme-color" content="#111318">
   <link rel="canonical" href="https://yezizhuang.top/about.html">
   <meta property="og:title" content="关于 | 风迁夏回">
   <meta property="og:description" content="关于风迁夏回这个博客的写作方向、内容主题和联系方式。">
@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260610-7">
+  <link rel="stylesheet" href="styles.css?v=20260617-1">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260429-5" defer></script>
   <script src="music-player.js?v=20260505-1" defer></script>
@@ -38,71 +38,95 @@
     }
   </script>
 </head>
-<body>
+<body class="fuwari-page about-page">
   <div class="site-shell">
     <header class="site-header">
-      <a class="site-brand" href="index.html">
+      <a class="site-brand" href="index.html" aria-label="风迁夏回首页">
         <span class="site-brand-mark" aria-hidden="true"></span>
         <span>
           <strong>风迁夏回</strong>
-          <small>May all the beauty be blessed.</small>
+          <small>Personal Journal</small>
         </span>
       </a>
       <div class="header-actions">
         <nav class="site-nav" aria-label="主导航">
-          <a href="index.html">首页</a>
-          <a href="archive.html">文章</a>
+          <a href="index.html">主页</a>
+          <a href="archive.html">归档</a>
           <a href="about.html" aria-current="page">关于</a>
         </nav>
       </div>
     </header>
 
-    <main class="page-main">
-      <section class="page-hero about-hero">
-        <p class="eyebrow">About The Blog</p>
+    <section class="site-banner compact-banner" aria-label="关于页横幅">
+      <picture class="site-banner-media" aria-hidden="true">
+        <img src="assets/hero-sky-1920.jpg" alt="" decoding="async">
+      </picture>
+      <div class="site-banner-content">
+        <p class="eyebrow">About</p>
         <h1>把学习过程写成可以被未来继续使用的材料。</h1>
-        <p>
-          这个博客用来沉淀技术学习、论文阅读、项目复盘和日常观察。文章会尽量保留问题背景、推导过程和当时的判断，而不是只留下结论。
-        </p>
-      </section>
+        <p>这个博客用于沉淀技术学习、论文阅读、项目复盘和日常观察。</p>
+      </div>
+    </section>
 
-      <section class="about-layout">
-        <article class="about-card">
-          <span class="about-card-index">01</span>
-          <h2>我在写什么</h2>
-          <p>
-            目前主要记录 Python 入门学习、LLM 与 NLP 相关论文笔记、技术笔记写法，以及值得整理的生活片段。
-          </p>
-        </article>
+    <main class="page-main fuwari-main">
+      <div class="fuwari-grid">
+        <aside class="profile-sidebar" aria-label="作者信息">
+          <section class="profile-card fuwari-card">
+            <img class="profile-avatar" src="assets/avatar.jpg" alt="风迁夏回头像" width="104" height="104">
+            <h2>风迁夏回</h2>
+            <p>长期记录，慢慢修正。</p>
+          </section>
 
-        <article class="about-card">
-          <span class="about-card-index">02</span>
-          <h2>我为什么写</h2>
-          <p>
-            写作是一种复盘。把模糊的理解写清楚，可以暴露遗漏，也能让很久之后的自己重新接上当时的上下文。
-          </p>
-        </article>
+          <section class="sidebar-card fuwari-card">
+            <p class="section-kicker">Topics</p>
+            <h2>主题</h2>
+            <div class="sidebar-links">
+              <a href="archive.html?q=Python">Python 入门</a>
+              <a href="archive.html?q=LLM">LLM / NLP</a>
+              <a href="archive.html?q=写作">写作方法</a>
+              <a href="archive.html?q=生活">生活片段</a>
+            </div>
+          </section>
+        </aside>
 
-        <article class="about-card">
-          <span class="about-card-index">03</span>
-          <h2>如何阅读</h2>
-          <p>
-            如果你想系统浏览，可以从归档页按「Python 入门」系列开始；如果只是随便看看，最新文章会更接近当前关注的问题。
-          </p>
-        </article>
-      </section>
+        <section class="about-content content-column" aria-label="关于博客">
+          <article class="about-card fuwari-card">
+            <span class="about-card-index">01</span>
+            <h2>我在写什么</h2>
+            <p>
+              目前主要记录 Python 入门学习、LLM 与 NLP 相关论文笔记、技术笔记写法，以及值得整理的生活片段。
+            </p>
+          </article>
 
-      <section class="section about-note">
-        <p class="section-kicker">Contact</p>
-        <h2>联系与更新</h2>
-        <p>
-          这里可以放邮箱、GitHub、微信公众号或其他公开主页。当前版本先保留为个人博客介绍区域，后续只需要替换这一段文字即可。
-        </p>
-      </section>
+          <article class="about-card fuwari-card">
+            <span class="about-card-index">02</span>
+            <h2>我为什么写</h2>
+            <p>
+              写作是一种复盘。把模糊的理解写清楚，可以暴露遗漏，也能让很久之后的自己重新接上当时的上下文。
+            </p>
+          </article>
+
+          <article class="about-card fuwari-card">
+            <span class="about-card-index">03</span>
+            <h2>如何阅读</h2>
+            <p>
+              如果想系统浏览，可以从归档页按「Python 入门」系列开始；如果只是随便看看，首页最新文章更接近当前关注的问题。
+            </p>
+          </article>
+
+          <article class="about-note fuwari-card">
+            <p class="section-kicker">Contact</p>
+            <h2>联系与更新</h2>
+            <p>
+              这里可以放邮箱、GitHub、微信公众号或其他公开主页。当前版本先保留为个人博客介绍区域，后续只需要替换这一段文字即可。
+            </p>
+          </article>
+        </section>
+      </div>
     </main>
 
     <footer class="site-footer">
-      <p>© 2026 风迁夏回. Built for long-form thinking.</p>
+      <p>© 2026 风迁夏回</p>
       <a href="archive.html">浏览文章</a>
     </footer>
   </div>

@@ -30,7 +30,7 @@
     if (metaThemeColor) {
       metaThemeColor.setAttribute(
         "content",
-        nextTheme === "light" ? "#f4efe5" : "#0f1117"
+        nextTheme === "light" ? "#edf0f4" : "#111318"
       );
     }
 

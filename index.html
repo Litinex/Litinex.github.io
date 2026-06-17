@@ -7,7 +7,7 @@
   <title>风迁夏回 | 个人博客</title>
   <meta name="description" content="一个关于写作、技术与日常观察的个人博客。记录长期学习、项目复盘和生活片段。">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#0f1117">
+  <meta name="theme-color" content="#111318">
   <link rel="canonical" href="https://yezizhuang.top/">
   <meta property="og:title" content="风迁夏回 | 个人博客">
   <meta property="og:description" content="一个关于写作、技术与日常观察的个人博客。记录长期学习、项目复盘和生活片段。">
@@ -15,20 +15,19 @@
   <meta property="og:url" content="https://yezizhuang.top/">
   <meta property="og:site_name" content="风迁夏回">
   <meta property="og:locale" content="zh_CN">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/hero-sky-1920.jpg" imagesrcset="assets/hero-sky-1280.jpg 1280w, assets/hero-sky-1920.jpg 1920w, assets/hero-sky-2560.jpg 2560w" imagesizes="100vw">
-  <link rel="stylesheet" href="styles.css?v=20260610-7">
-  <link rel="stylesheet" href="writing-heatmap.css?v=20260611-1">
+  <link rel="stylesheet" href="styles.css?v=20260617-1">
+  <link rel="stylesheet" href="writing-heatmap.css?v=20260617-1">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260429-5" defer></script>
   <script src="music-player.js?v=20260505-1" defer></script>
-  <script src="posts-data.js?v=20260528-1" defer></script>
-  <script src="hero-poem.js?v=20260610-1" defer></script>
-  <script src="home-essays.js?v=20260528-1" defer></script>
+  <script src="posts-data.js?v=20260617-1" defer></script>
+  <script src="home-essays.js?v=20260617-1" defer></script>
   <script src="writing-heatmap.js?v=20260611-1" defer></script>
   <script src="views.js?v=20260427-1" defer></script>
   <script src="theme-toggle.js?v=20260610-1" defer></script>
@@ -49,127 +48,127 @@
     }
   </script>
 </head>
-<body class="home-page">
+<body class="home-page fuwari-page">
   <div class="site-shell">
-    <main>
-      <section class="hero-banner" aria-label="首页封面">
-        <picture class="hero-banner-media" aria-hidden="true">
-          <img
-            src="assets/hero-sky-1920.jpg"
-            srcset="assets/hero-sky-1280.jpg 1280w, assets/hero-sky-1920.jpg 1920w, assets/hero-sky-2560.jpg 2560w"
-            sizes="100vw"
-            alt=""
-            decoding="async"
-            fetchpriority="high"
-          >
-        </picture>
+    <header class="site-header">
+      <a class="site-brand" href="index.html" aria-label="风迁夏回首页">
+        <span class="site-brand-mark" aria-hidden="true"></span>
+        <span>
+          <strong>风迁夏回</strong>
+          <small>Personal Journal</small>
+        </span>
+      </a>
+      <div class="header-actions">
+        <nav class="site-nav" aria-label="主导航">
+          <a href="index.html" aria-current="page">主页</a>
+          <a href="archive.html">归档</a>
+          <a href="about.html">关于</a>
+        </nav>
+      </div>
+    </header>
 
-        <header class="site-header site-header-hero">
-          <a class="site-brand" href="index.html">
-            <span class="site-brand-mark" aria-hidden="true"></span>
-            <span>
-              <strong>风迁夏回</strong>
-              <small>May all the beauty be blessed.</small>
-            </span>
-          </a>
-          <div class="header-actions">
-            <nav class="site-nav" aria-label="主导航">
-              <a href="index.html" aria-current="page">首页</a>
-              <a href="archive.html">文章</a>
-              <a href="about.html">关于</a>
-            </nav>
-          </div>
-        </header>
+    <section class="site-banner home-banner" aria-label="首页横幅">
+      <picture class="site-banner-media" aria-hidden="true">
+        <img
+          src="assets/hero-sky-1920.jpg"
+          srcset="assets/hero-sky-1280.jpg 1280w, assets/hero-sky-1920.jpg 1920w, assets/hero-sky-2560.jpg 2560w"
+          sizes="100vw"
+          alt=""
+          decoding="async"
+          fetchpriority="high"
+        >
+      </picture>
+      <div class="site-banner-content">
+        <p class="eyebrow">Hello</p>
+        <h1>行到水穷处，坐看云起时。</h1>
+        <p>记录 Python 学习、论文阅读、技术复盘和生活片段。</p>
+      </div>
+    </section>
 
-        <div class="hero-banner-inner">
-          <p class="eyebrow">Personal Journal / Technical Notes</p>
-          <h1 data-hero-poem>行到水穷处，坐看云起时。</h1>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#essays">阅读最新文章</a>
-            <a class="button button-secondary" href="archive.html">浏览历史文章</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section-split" id="activity">
-        <div class="section-copy">
-          <p class="section-kicker">Writing Activity</p>
-          <h2>写作热力图</h2>
-          <p>
-            用时间轴记录更新节奏。它不只是数量统计，更像一个长期学习的轨迹，让未来回看时能看见哪些问题真正被持续推进。
-          </p>
-        </div>
-
-        <div class="writing-heatmap" data-writing-heatmap>
-          <div class="writing-heatmap-header">
-            <p class="writing-heatmap-summary" data-writing-heatmap-summary>加载中...</p>
-            <div class="writing-heatmap-legend" aria-label="热力图图例">
-              <span class="writing-heatmap-legend-label">少</span>
-              <span class="writing-heatmap-legend-swatches" data-writing-heatmap-legend></span>
-              <span class="writing-heatmap-legend-label">多</span>
+    <main class="page-main fuwari-main">
+      <div class="fuwari-grid">
+        <aside class="profile-sidebar" aria-label="博客信息">
+          <section class="profile-card fuwari-card">
+            <img class="profile-avatar" src="assets/avatar.jpg" alt="风迁夏回头像" width="104" height="104">
+            <h2>风迁夏回</h2>
+            <p>May all the beauty be blessed.</p>
+            <div class="profile-stats" aria-label="站点统计">
+              <span><strong>10</strong><small>文章</small></span>
+              <span><strong>4</strong><small>分类</small></span>
+              <span><strong>2026</strong><small>开始</small></span>
             </div>
-          </div>
+          </section>
 
-          <div class="writing-heatmap-chart" data-writing-heatmap-chart>
-            <div class="writing-heatmap-graph">
-              <div class="writing-heatmap-months" aria-hidden="true" data-writing-heatmap-months></div>
-              <div class="writing-heatmap-days" aria-hidden="true" data-writing-heatmap-days></div>
-              <div class="writing-heatmap-grid" data-writing-heatmap-grid></div>
+          <section class="sidebar-card fuwari-card">
+            <p class="section-kicker">Categories</p>
+            <h2>分类</h2>
+            <div class="sidebar-links">
+              <a href="archive.html?q=Python">Python 入门</a>
+              <a href="archive.html?q=LLM">论文笔记</a>
+              <a href="archive.html?q=学习">学习札记</a>
+              <a href="archive.html?q=日常">日常</a>
             </div>
-          </div>
+          </section>
 
-          <div class="writing-heatmap-tooltip" data-writing-heatmap-tooltip hidden></div>
+          <section class="sidebar-card fuwari-card">
+            <p class="section-kicker">Quick Search</p>
+            <h2>查找</h2>
+            <form class="sidebar-search" action="archive.html" method="get">
+              <label class="sr-only" for="sidebar-search-input">搜索文章</label>
+              <input id="sidebar-search-input" type="search" name="q" placeholder="Python / LLM / 写作" autocomplete="off" spellcheck="false">
+              <button class="button button-primary" type="submit">搜索</button>
+            </form>
+          </section>
+        </aside>
+
+        <div class="content-column">
+          <section class="content-card activity-card fuwari-card" id="activity">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Writing Activity</p>
+                <h2>写作热力图</h2>
+              </div>
+            </div>
+
+            <div class="writing-heatmap" data-writing-heatmap>
+              <div class="writing-heatmap-header">
+                <p class="writing-heatmap-summary" data-writing-heatmap-summary>加载中...</p>
+                <div class="writing-heatmap-legend" aria-label="热力图图例">
+                  <span class="writing-heatmap-legend-label">少</span>
+                  <span class="writing-heatmap-legend-swatches" data-writing-heatmap-legend></span>
+                  <span class="writing-heatmap-legend-label">多</span>
+                </div>
+              </div>
+
+              <div class="writing-heatmap-chart" data-writing-heatmap-chart>
+                <div class="writing-heatmap-graph">
+                  <div class="writing-heatmap-months" aria-hidden="true" data-writing-heatmap-months></div>
+                  <div class="writing-heatmap-days" aria-hidden="true" data-writing-heatmap-days></div>
+                  <div class="writing-heatmap-grid" data-writing-heatmap-grid></div>
+                </div>
+              </div>
+
+              <div class="writing-heatmap-tooltip" data-writing-heatmap-tooltip hidden></div>
+            </div>
+          </section>
+
+          <section class="post-feed" id="essays">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Latest Posts</p>
+                <h2>最新文章</h2>
+              </div>
+              <a class="text-link" href="archive.html">查看全部</a>
+            </div>
+            <ol class="essay-list" aria-label="最新文章列表" data-home-essays-max="6"></ol>
+          </section>
         </div>
-      </section>
-
-      <section class="section section-featured" id="essays">
-        <div class="section-heading">
-          <div>
-            <p class="section-kicker">Latest Essays</p>
-            <h2>最新文章</h2>
-          </div>
-          <a class="text-link" href="archive.html">查看全部</a>
-        </div>
-
-        <div class="essays-layout">
-          <ol class="essay-list" aria-label="最新文章列表" data-home-essays-max="6"></ol>
-        </div>
-      </section>
-
-      <section class="section history-finder" aria-label="查找历史文章">
-        <div class="history-finder-copy">
-          <p class="section-kicker">Find Older Posts</p>
-          <h2>查找历史文章</h2>
-          <p>
-            输入标题、分类、日期或标签，可以直接跳到历史文章页并自动筛选结果。
-          </p>
-        </div>
-
-        <form class="history-finder-form" action="archive.html" method="get">
-          <label class="sr-only" for="home-history-search">搜索历史文章</label>
-          <input
-            id="home-history-search"
-            class="history-finder-input"
-            type="search"
-            name="q"
-            placeholder="例如：Python / LLM / list / 写作"
-            autocomplete="off"
-            spellcheck="false"
-          >
-          <button class="button button-primary" type="submit">搜索历史文章</button>
-          <div class="history-finder-links" aria-label="常用搜索">
-            <a href="archive.html?q=Python">Python</a>
-            <a href="archive.html?q=list">list</a>
-            <a href="archive.html?q=LLM">LLM</a>
-            <a href="archive.html?q=写作">写作</a>
-          </div>
-        </form>
-      </section>
+      </div>
     </main>
 
     <footer class="site-footer">
       <p>
-        © 2026 风迁夏回. Built for long-form thinking.
+        © 2026 风迁夏回
         <span class="site-uptime">
           本站已运行
           <span class="site-uptime-value" data-site-uptime data-site-start="2026-04-25T20:42:08+08:00">0 天 00 小时 00 分 00 秒</span>

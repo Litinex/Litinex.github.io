@@ -28,9 +28,9 @@
     return Number.isNaN(date.getTime()) ? 0 : date.getTime();
   }
 
-  function formatDateCompact(value) {
+  function formatDate(value) {
     const normalized = normalizeDate(value);
-    return normalized ? normalized.replaceAll("-", ".") : safeText(value);
+    return normalized || safeText(value);
   }
 
   function seriesIndex(post) {
@@ -54,6 +54,41 @@
     });
   }
 
+  function appendMeta(parent, text, iconText) {
+    const item = document.createElement("span");
+    item.className = "post-meta-item";
+
+    const icon = document.createElement("span");
+    icon.className = "post-meta-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = iconText;
+
+    const label = document.createElement("span");
+    label.textContent = text;
+
+    item.append(icon, label);
+    parent.appendChild(item);
+  }
+
+  function createTagList(tags) {
+    const wrap = document.createElement("div");
+    wrap.className = "post-tags tag-list";
+
+    tags.slice(0, 5).forEach((tag) => {
+      const label = safeText(tag);
+      if (!label) return;
+
+      const chip = document.createElement("a");
+      chip.className = "tag-chip";
+      chip.href = `archive.html?q=${encodeURIComponent(label)}`;
+      chip.textContent = label;
+      chip.setAttribute("data-tag", label);
+      wrap.appendChild(chip);
+    });
+
+    return wrap;
+  }
+
   function renderArchiveListFromData() {
     const posts = Array.isArray(window.__BLOG_POSTS__)
       ? window.__BLOG_POSTS__.filter((post) => safeText(post?.href) && safeText(post?.title))
@@ -67,9 +102,11 @@
 
     sortNewestFirst(posts).forEach((post) => {
       const item = document.createElement("li");
+      item.className = "post-card fuwari-card";
+
       const href = safeText(post.href);
       const titleText = safeText(post.title);
-      const dateText = formatDateCompact(post.date);
+      const dateText = formatDate(post.date);
       const categoryText = safeText(post.category);
       const tags = Array.isArray(post.tags) ? post.tags.map(safeText).filter(Boolean) : [];
       const seriesName = safeText(post?.series?.name);
@@ -88,15 +125,45 @@
         .join(" ")
         .toLowerCase();
 
-      const link = document.createElement("a");
-      link.href = href;
-      link.textContent = titleText;
+      const card = document.createElement("div");
+      card.className = "post-card-inner";
+
+      const body = document.createElement("span");
+      body.className = "post-card-body";
+
+      const title = document.createElement("a");
+      title.className = "post-card-title";
+      title.href = href;
+      title.textContent = titleText;
 
       const meta = document.createElement("span");
-      meta.className = "archive-meta";
-      meta.textContent = [dateText, categoryText].filter(Boolean).join(" · ");
+      meta.className = "archive-meta post-meta";
+      appendMeta(meta, dateText, "▣");
+      if (categoryText) appendMeta(meta, categoryText, "▤");
+      if (Number.isFinite(post.words) || Number.isFinite(post.readTime)) {
+        const words = Number.isFinite(post.words) ? `${post.words} 字` : "";
+        const readTime = Number.isFinite(post.readTime) ? `${post.readTime} 分钟` : "";
+        appendMeta(meta, [words, readTime].filter(Boolean).join(" / "), "◇");
+      }
 
-      item.append(link, meta);
+      const excerpt = document.createElement("span");
+      excerpt.className = "post-card-excerpt";
+      excerpt.textContent = safeText(post.excerpt);
+
+      body.append(title, meta, excerpt);
+
+      if (tags.length > 0) {
+        body.appendChild(createTagList(tags));
+      }
+
+      const arrow = document.createElement("a");
+      arrow.className = "post-card-arrow";
+      arrow.href = href;
+      arrow.setAttribute("aria-label", `阅读：${titleText}`);
+      arrow.textContent = "›";
+
+      card.append(body, arrow);
+      item.appendChild(card);
       listElement.appendChild(item);
     });
   }
@@ -362,6 +429,19 @@
 
     searchInput.value = "";
     applyFilter("", { resetPage: true });
+  });
+
+  listElement.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target.closest("a.tag-chip") : null;
+    if (!target) return;
+
+    const tag = safeText(target.getAttribute("data-tag") || target.textContent);
+    if (!tag) return;
+
+    event.preventDefault();
+    searchInput.value = tag;
+    applyFilter(tag, { resetPage: true });
+    setFocus(searchInput);
   });
 
   if (paginationPrev) {
