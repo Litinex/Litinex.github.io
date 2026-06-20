@@ -24,8 +24,30 @@
   let lastMeteorAt = 0;
   let liquidHost = null;
   let meteorHost = null;
+  let codeHost = null;
   const maxDroplets = 80;
   const maxMeteors = 24;
+  const maxCodeLines = 28;
+  const codeSpawnMinDistance = 18;
+  const codeGlyphs = [
+    "_ _ _",
+    "_  _",
+    "_ _",
+    "> . >",
+    "< . >",
+    "> _",
+    "_ <",
+    "| _ |",
+    "/ _",
+    "_ \\",
+    "> . . >",
+    "< _ _",
+  ];
+  const codeVariantClasses = ["is-line", "is-dot", "is-angle", "is-faint"];
+  let lastCodeAt = 0;
+  let lastCodeX = currentX;
+  let lastCodeY = currentY;
+  let codeSnippetIndex = 0;
 
   const rand = (min, max) => min + Math.random() * (max - min);
   const randInt = (min, max) => Math.floor(rand(min, max + 1));
@@ -67,6 +89,9 @@
     if (!meteorHost || !meteorHost.isConnected) {
       meteorHost = document.querySelector("[data-ambient-meteors]");
     }
+    if (!codeHost || !codeHost.isConnected) {
+      codeHost = document.querySelector("[data-ambient-code]");
+    }
   }
 
   function getLiquidHost() {
@@ -77,6 +102,97 @@
   function getMeteorHost() {
     cacheNodes();
     return meteorHost;
+  }
+
+  function getCodeHost() {
+    cacheNodes();
+    return codeHost;
+  }
+
+  function nextCodeGlyph() {
+    const step = randInt(1, 4);
+    codeSnippetIndex = (codeSnippetIndex + step) % codeGlyphs.length;
+    return codeGlyphs[codeSnippetIndex];
+  }
+
+  function clearCodeLines() {
+    const host = getCodeHost();
+    if (!host) return;
+    host.replaceChildren();
+  }
+
+  function trimCodeLines(host) {
+    while (host.childElementCount >= maxCodeLines) {
+      host.firstElementChild?.remove();
+    }
+  }
+
+  function spawnCodeLine(x, y, intensity, angleRad) {
+    if (prefersReducedMotion()) return;
+
+    const host = getCodeHost();
+    if (!host) return;
+
+    trimCodeLines(host);
+
+    const glyph = nextCodeGlyph();
+    const offsetAngle = angleRad + rand(-1.15, 1.15);
+    const offsetDistance = rand(8, 30 + intensity * 46);
+    const px = clamp(x + Math.cos(offsetAngle) * offsetDistance, 20, window.innerWidth - 20);
+    const py = clamp(y + Math.sin(offsetAngle) * offsetDistance, 24, window.innerHeight - 24);
+    const driftAngle = angleRad + Math.PI + rand(-0.7, 0.7);
+    const driftDistance = 36 + intensity * 92 + rand(-6, 30);
+    const driftX = Math.cos(driftAngle) * driftDistance;
+    const driftY = Math.sin(driftAngle) * driftDistance - rand(4, 20);
+    const duration = 780 + intensity * 420 + rand(-90, 180);
+    const size = 13 + intensity * 2.4 + rand(-0.7, 0.9);
+    const opacity = 0.38 + intensity * 0.22;
+
+    const line = document.createElement("span");
+    line.className = `ambient-code-line ${codeVariantClasses[randInt(0, codeVariantClasses.length - 1)]}`;
+    line.textContent = glyph;
+    line.style.setProperty("--code-x", `${px.toFixed(1)}px`);
+    line.style.setProperty("--code-y", `${py.toFixed(1)}px`);
+    line.style.setProperty("--code-drift-x", `${driftX.toFixed(1)}px`);
+    line.style.setProperty("--code-drift-y", `${driftY.toFixed(1)}px`);
+    line.style.setProperty("--code-rotate", `${rand(-5, 5).toFixed(2)}deg`);
+    line.style.setProperty("--code-duration", `${duration.toFixed(0)}ms`);
+    line.style.setProperty("--code-size", `${size.toFixed(2)}px`);
+    line.style.setProperty("--code-opacity", opacity.toFixed(3));
+    line.style.setProperty("--code-width", `${Math.min(glyph.length + 1, 18)}ch`);
+
+    host.appendChild(line);
+    line.addEventListener("animationend", () => line.remove(), { once: true });
+  }
+
+  function spawnCodeTrail(timestamp) {
+    const speed = smoothedSpeed || 0;
+    if (speed < 0.18 && !pressState) return;
+
+    const distanceFromLast = Math.hypot(currentX - lastCodeX, currentY - lastCodeY);
+    const intensity = clamp(speed / 22, pressState ? 0.32 : 0.18, 1);
+    const interval = 150 - intensity * 64;
+
+    if (timestamp - lastCodeAt < interval && distanceFromLast < codeSpawnMinDistance) {
+      return;
+    }
+
+    lastCodeAt = timestamp;
+    lastCodeX = currentX;
+    lastCodeY = currentY;
+
+    const fallbackAngle = rand(0, Math.PI * 2);
+    const baseAngle = speed > 0.05 ? Math.atan2(velocityY, velocityX) : fallbackAngle;
+    spawnCodeLine(currentX, currentY, intensity, baseAngle + rand(-0.35, 0.35));
+  }
+
+  function spawnCodeBurst(x, y, power) {
+    const intensity = clamp(power / 1.35, 0.26, 1);
+    const count = Math.round(3 + intensity * 3);
+
+    for (let i = 0; i < count; i += 1) {
+      spawnCodeLine(x, y, intensity, rand(0, Math.PI * 2));
+    }
   }
 
   function spawnDroplet(x, y, intensity, angleRad, distance) {
@@ -275,6 +391,7 @@
     }
 
     applyPosition();
+    spawnCodeTrail(timestamp);
     spawnMoveParticles(timestamp);
 
     const tail = trail[trail.length - 1];
@@ -407,6 +524,8 @@
       const py = y + rand(-10, 10);
       spawnDroplet(px, py, burstIntensity, angle, distance);
     }
+
+    spawnCodeBurst(x, y, power);
 
     ripple.addEventListener(
       "animationend",
@@ -561,13 +680,17 @@
       lastHeadY = currentY;
       velocityX = 0;
       velocityY = 0;
-    smoothedSpeed = 0;
-    lastFrameTime = 0;
-    lastDropletAt = 0;
-    lastMeteorAt = 0;
-    applyPosition();
-    return;
-  }
+      smoothedSpeed = 0;
+      lastFrameTime = 0;
+      lastDropletAt = 0;
+      lastMeteorAt = 0;
+      lastCodeAt = 0;
+      lastCodeX = currentX;
+      lastCodeY = currentY;
+      clearCodeLines();
+      applyPosition();
+      return;
+    }
 
     attachListeners();
     scheduleAnimation();
@@ -596,6 +719,9 @@
     lastFrameTime = 0;
     lastDropletAt = 0;
     lastMeteorAt = 0;
+    lastCodeAt = 0;
+    lastCodeX = currentX;
+    lastCodeY = currentY;
     applyPosition();
   }
 
@@ -614,6 +740,7 @@
       <div class="ambient-orb ambient-orb-c"></div>
       <div class="ambient-liquid" data-ambient-liquid="true"></div>
       <div class="ambient-meteors" data-ambient-meteors="true"></div>
+      <div class="ambient-code-layer" data-ambient-code="true"></div>
       <div class="ambient-trail ambient-trail-0" data-ambient-trail="0"></div>
       <div class="ambient-trail ambient-trail-1" data-ambient-trail="1"></div>
       <div class="ambient-trail ambient-trail-2" data-ambient-trail="2"></div>
@@ -623,7 +750,7 @@
       <div class="ambient-press" data-ambient-press="true"></div>
     `;
 
-    document.body.prepend(backdrop);
+    root.prepend(backdrop);
   }
 
   function init() {
