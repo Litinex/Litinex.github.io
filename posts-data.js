@@ -101,6 +101,7 @@
       title: "人生苦短，我用 Python",
       date: "2026-04-25",
       updated: "2026-04-26",
+      indexable: false,
       category: "Python 入门",
       excerpt: "第一篇博客，记录从 0 开始学习 Python、项目结构和 Hello World 的足迹。",
       tags: ["Python", "入门"],

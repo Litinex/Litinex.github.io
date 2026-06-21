@@ -6,7 +6,7 @@ const rootDir = path.resolve(__dirname, "..");
 const baseUrl = "https://yezizhuang.top";
 
 const staticPages = [
-  { path: "/", changefreq: "weekly", priority: "1.0", useLatestPostDate: true },
+  { path: "/", lastmod: "2026-06-20", changefreq: "weekly", priority: "1.0", useLatestPostDate: true },
   { path: "/about.html", lastmod: "2026-04-25", changefreq: "monthly", priority: "0.7" },
   { path: "/archive.html", changefreq: "weekly", priority: "0.8", useLatestPostDate: true },
 ];
@@ -79,6 +79,18 @@ function newestDate(posts) {
   }, "1970-01-01");
 }
 
+function indexablePosts(posts) {
+  return posts.filter((post) => post.indexable !== false);
+}
+
+function pageLastmod(page, latestPostDate) {
+  if (!page.useLatestPostDate) {
+    return page.lastmod;
+  }
+
+  return page.lastmod && page.lastmod > latestPostDate ? page.lastmod : latestPostDate;
+}
+
 function buildUrlEntry({ loc, lastmod, changefreq, priority }) {
   return [
     "  <url>",
@@ -91,19 +103,20 @@ function buildUrlEntry({ loc, lastmod, changefreq, priority }) {
 }
 
 function buildSitemap(posts) {
-  const latest = newestDate(posts);
+  const postsForSitemap = indexablePosts(posts);
+  const latest = newestDate(postsForSitemap);
   const entries = [];
 
   staticPages.forEach((page) => {
     entries.push({
       loc: `${baseUrl}${page.path}`,
-      lastmod: page.useLatestPostDate ? latest : page.lastmod,
+      lastmod: pageLastmod(page, latest),
       changefreq: page.changefreq,
       priority: page.priority,
     });
   });
 
-  posts.forEach((post) => {
+  postsForSitemap.forEach((post) => {
     entries.push({
       loc: `${baseUrl}/${post.href}`,
       lastmod: post.updated || post.date,
