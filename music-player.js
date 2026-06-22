@@ -132,6 +132,30 @@
       artist: "John Lunn / The Chamber Orchestra Of London",
       cover: "https://p2.music.126.net/dw4qiE2NMr3UabCaTIJ5og==/109951168634292660.jpg",
     },
+    {
+      neteaseSongId: "1856336348",
+      title: "8.8",
+      artist: "あたらよ",
+      cover: "https://p1.music.126.net/33QleQ2pw4RTFTbHD2-z3w==/109951166120531270.jpg",
+    },
+    {
+      neteaseSongId: "2112531307",
+      title: "「僕は...」",
+      artist: "あたらよ",
+      cover: "https://p1.music.126.net/41BC-DD4kBShAYLNvcVzOg==/109951169217397474.jpg",
+    },
+    {
+      neteaseSongId: "1973608593",
+      title: "また夏を追う",
+      artist: "あたらよ",
+      cover: "https://p1.music.126.net/qMj8LmjgfBHlFxOHvTIyUw==/109951167795762268.jpg",
+    },
+    {
+      neteaseSongId: "1867150097",
+      title: "夏霞",
+      artist: "あたらよ",
+      cover: "https://p1.music.126.net/zi2Fm_ckfMEpkM37rZ5UEg==/109951166253940594.jpg",
+    },
   ];
 
   const settings = {
@@ -172,57 +196,121 @@
   audio.volume = typeof settings.volume === "number" ? settings.volume : 0.7;
 
   const root = document.createElement("div");
-  root.className = "music-dock";
+  root.className = "music-dock is-collapsed";
   root.innerHTML = `
-    <button class="music-disc" type="button" aria-label="播放音乐" aria-pressed="false">
-      <span class="music-disc-rotor" aria-hidden="true">
-        <span class="music-disc-groove"></span>
-        <span class="music-disc-art"></span>
-        <span class="music-disc-hole"></span>
+    <button class="music-collapsed-button" type="button" aria-label="展开音乐播放器" aria-expanded="false">
+      <span class="music-collapsed-cover" aria-hidden="true">
+        <span class="music-collapsed-disc-rotor">
+          <span class="music-collapsed-disc-groove"></span>
+          <span class="music-collapsed-disc-art"></span>
+          <span class="music-collapsed-disc-hole"></span>
+        </span>
       </span>
-      <span class="music-disc-icon" aria-hidden="true"></span>
+      <span class="music-collapsed-equalizer" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
     </button>
-    <div class="music-panel" aria-live="polite">
-      <div class="music-panel-inner">
-        <div class="music-title"></div>
-        <div class="music-artist"></div>
-        <div class="music-status"></div>
-        <div class="music-controls" role="group" aria-label="切歌控制">
-          <button class="music-skip music-prev" type="button" aria-label="上一首">
-            <span class="music-skip-icon" aria-hidden="true">⏮</span>
-            上一首
-          </button>
-          <button class="music-skip music-next" type="button" aria-label="下一首">
-            <span class="music-skip-icon" aria-hidden="true">⏭</span>
-            下一首
-          </button>
+    <section class="music-player" aria-label="音乐播放器">
+      <button class="music-cover-button" type="button" aria-label="播放音乐" aria-pressed="false">
+        <span class="music-cover-shell" aria-hidden="true">
+          <span class="music-disc-rotor">
+            <span class="music-disc-groove"></span>
+            <span class="music-disc-art"></span>
+            <span class="music-disc-hole"></span>
+          </span>
+        </span>
+      </button>
+      <div class="music-main">
+        <div class="music-meta">
+          <div class="music-title"></div>
+          <div class="music-artist"></div>
         </div>
+        <div class="music-progress" aria-hidden="true">
+          <span class="music-progress-bar"></span>
+        </div>
+        <div class="music-status" aria-live="polite"></div>
       </div>
+      <div class="music-controls" role="group" aria-label="播放控制">
+        <button class="music-icon-button music-prev" type="button" aria-label="上一首">
+          <span aria-hidden="true">‹</span>
+        </button>
+        <button class="music-icon-button music-play" type="button" aria-label="播放音乐" aria-pressed="false">
+          <span class="music-play-symbol" aria-hidden="true"></span>
+        </button>
+        <button class="music-icon-button music-next" type="button" aria-label="下一首">
+          <span aria-hidden="true">›</span>
+        </button>
+        <button class="music-icon-button music-list-toggle" type="button" aria-label="展开播放列表" aria-expanded="false">
+          <span aria-hidden="true">≡</span>
+        </button>
+        <button class="music-icon-button music-collapse-toggle" type="button" aria-label="折叠播放器">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+    </section>
+    <div class="music-playlist-panel" aria-label="播放列表" hidden>
+      <div class="music-playlist-head">
+        <span>Playlist</span>
+        <strong class="music-playlist-count"></strong>
+      </div>
+      <ol class="music-playlist"></ol>
     </div>
   `;
 
-  const mountPoint = document.body;
+  const mountPoint = document.documentElement;
   if (!mountPoint) {
     return;
   }
 
   mountPoint.appendChild(root);
 
-  const discButton = root.querySelector(".music-disc");
+  const collapsedButton = root.querySelector(".music-collapsed-button");
+  const collapsedArt = root.querySelector(".music-collapsed-disc-art");
+  const playerEl = root.querySelector(".music-player");
+  const coverButton = root.querySelector(".music-cover-button");
+  const playButton = root.querySelector(".music-play");
   const art = root.querySelector(".music-disc-art");
   const titleEl = root.querySelector(".music-title");
   const artistEl = root.querySelector(".music-artist");
   const statusEl = root.querySelector(".music-status");
+  const progressBar = root.querySelector(".music-progress-bar");
   const prevButton = root.querySelector(".music-prev");
   const nextButton = root.querySelector(".music-next");
+  const listToggle = root.querySelector(".music-list-toggle");
+  const collapseToggle = root.querySelector(".music-collapse-toggle");
+  const playlistPanel = root.querySelector(".music-playlist-panel");
+  const playlistEl = root.querySelector(".music-playlist");
+  const playlistCountEl = root.querySelector(".music-playlist-count");
 
-  if (!discButton || !art || !titleEl || !artistEl || !statusEl || !prevButton || !nextButton) {
+  if (
+    !collapsedButton ||
+    !collapsedArt ||
+    !playerEl ||
+    !coverButton ||
+    !playButton ||
+    !art ||
+    !titleEl ||
+    !artistEl ||
+    !statusEl ||
+    !progressBar ||
+    !prevButton ||
+    !nextButton ||
+    !listToggle ||
+    !collapseToggle ||
+    !playlistPanel ||
+    !playlistEl ||
+    !playlistCountEl
+  ) {
     root.remove();
     return;
   }
 
   let currentIndex = initialIndex;
   let consecutiveFailures = 0;
+  let isPlaylistOpen = false;
+  let isCollapsed = true;
 
   function currentTrack() {
     return tracks[currentIndex] || null;
@@ -233,8 +321,54 @@
   }
 
   function setPressed(isPressed) {
-    discButton.setAttribute("aria-pressed", String(Boolean(isPressed)));
-    root.classList.toggle("is-playing", Boolean(isPressed));
+    const pressed = Boolean(isPressed);
+    coverButton.setAttribute("aria-pressed", String(pressed));
+    playButton.setAttribute("aria-pressed", String(pressed));
+    root.classList.toggle("is-playing", pressed);
+  }
+
+  function setControlLabels(track) {
+    const title = safeText(track?.title) || "未命名歌曲";
+    const artist = safeText(track?.artist) || "未知演唱者";
+    const action = audio.paused ? "播放" : "暂停";
+
+    coverButton.setAttribute("aria-label", `${action}：${title} - ${artist}`);
+    playButton.setAttribute("aria-label", `${action}：${title} - ${artist}`);
+    collapsedButton.setAttribute("aria-label", `展开音乐播放器：${title} - ${artist}`);
+  }
+
+  function setCollapsed(shouldCollapse) {
+    isCollapsed = Boolean(shouldCollapse);
+    root.classList.toggle("is-collapsed", isCollapsed);
+    playerEl.setAttribute("aria-hidden", String(isCollapsed));
+    collapsedButton.setAttribute("aria-expanded", String(!isCollapsed));
+
+    if (isCollapsed) {
+      setPlaylistOpen(false);
+    }
+  }
+
+  function setPlaylistOpen(isOpen) {
+    isPlaylistOpen = Boolean(isOpen);
+    root.classList.toggle("is-playlist-open", isPlaylistOpen);
+    listToggle.setAttribute("aria-expanded", String(isPlaylistOpen));
+    listToggle.setAttribute("aria-label", isPlaylistOpen ? "收起播放列表" : "展开播放列表");
+    playlistPanel.hidden = !isPlaylistOpen;
+  }
+
+  function updateProgress() {
+    const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+    const currentTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+    const percent = duration > 0 ? Math.min(Math.max((currentTime / duration) * 100, 0), 100) : 0;
+    progressBar.style.setProperty("--music-progress", `${percent}%`);
+  }
+
+  function updatePlaylistActive() {
+    playlistEl.querySelectorAll(".music-track").forEach((button) => {
+      const isCurrent = Number(button.dataset.index) === currentIndex;
+      button.classList.toggle("is-current", isCurrent);
+      button.setAttribute("aria-current", isCurrent ? "true" : "false");
+    });
   }
 
   function updateSkipButtons() {
@@ -264,11 +398,14 @@
 
     if (cover) {
       art.style.setProperty("--music-cover", `url("${cover}")`);
+      collapsedArt.style.setProperty("--music-cover", `url("${cover}")`);
     } else {
       art.style.removeProperty("--music-cover");
+      collapsedArt.style.removeProperty("--music-cover");
     }
 
-    discButton.setAttribute("aria-label", `${audio.paused ? "播放" : "暂停"}：${title} - ${artist}`);
+    setControlLabels(track);
+    updatePlaylistActive();
   }
 
   function loadTrack(index, { autoplay = false, statusText = "" } = {}) {
@@ -281,6 +418,7 @@
     audio.pause();
     audio.src = src;
     audio.currentTime = 0;
+    updateProgress();
 
     updateMetadata(track);
     setPressed(false);
@@ -364,7 +502,57 @@
     audio.pause();
   }
 
-  discButton.addEventListener("click", (event) => {
+  function renderPlaylist() {
+    const fragment = document.createDocumentFragment();
+    playlistCountEl.textContent = `${tracks.length} 首`;
+
+    tracks.forEach((track, index) => {
+      const item = document.createElement("li");
+      const button = document.createElement("button");
+      const cover = document.createElement("span");
+      const text = document.createElement("span");
+      const title = document.createElement("span");
+      const artist = document.createElement("span");
+
+      button.className = "music-track";
+      button.type = "button";
+      button.dataset.index = String(index);
+      button.setAttribute("aria-current", index === currentIndex ? "true" : "false");
+
+      cover.className = "music-track-cover";
+      const coverUrl = safeText(track.cover);
+      if (coverUrl) {
+        cover.style.setProperty("--music-cover", `url("${coverUrl}")`);
+      }
+
+      text.className = "music-track-text";
+      title.className = "music-track-title";
+      artist.className = "music-track-artist";
+      title.textContent = safeText(track.title) || "未命名歌曲";
+      artist.textContent = safeText(track.artist) || "未知演唱者";
+
+      text.append(title, artist);
+      button.append(cover, text);
+      item.appendChild(button);
+      fragment.appendChild(item);
+    });
+
+    playlistEl.appendChild(fragment);
+    updatePlaylistActive();
+  }
+
+  collapsedButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    setCollapsed(false);
+    playButton.focus({ preventScroll: true });
+  });
+
+  coverButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    togglePlay();
+  });
+
+  playButton.addEventListener("click", (event) => {
     event.preventDefault();
     togglePlay();
   });
@@ -379,6 +567,36 @@
     skip(1);
   });
 
+  listToggle.addEventListener("click", (event) => {
+    event.preventDefault();
+    setPlaylistOpen(!isPlaylistOpen);
+  });
+
+  collapseToggle.addEventListener("click", (event) => {
+    event.preventDefault();
+    setCollapsed(true);
+    collapsedButton.focus({ preventScroll: true });
+  });
+
+  playlistEl.addEventListener("click", (event) => {
+    const trackButton = event.target.closest(".music-track");
+    if (!trackButton) {
+      return;
+    }
+
+    const nextIndex = Number(trackButton.dataset.index);
+    if (!Number.isInteger(nextIndex) || nextIndex === currentIndex) {
+      if (nextIndex === currentIndex) {
+        togglePlay();
+      }
+      return;
+    }
+
+    consecutiveFailures = 0;
+    const wasPlaying = !audio.paused;
+    loadTrack(nextIndex, { autoplay: wasPlaying, statusText: "已切换歌曲" });
+  });
+
   audio.addEventListener("play", () => {
     consecutiveFailures = 0;
     setPressed(true);
@@ -391,6 +609,12 @@
     updateMetadata(currentTrack());
     setStatus("已暂停");
   });
+
+  audio.addEventListener("timeupdate", updateProgress);
+
+  audio.addEventListener("loadedmetadata", updateProgress);
+
+  audio.addEventListener("emptied", updateProgress);
 
   audio.addEventListener("ended", () => {
     setPressed(false);
@@ -416,5 +640,7 @@
     handlePlaybackFailure("加载失败：已尝试切到下一首");
   });
 
+  renderPlaylist();
   loadTrack(currentIndex, { autoplay: false });
+  setCollapsed(true);
 })();
