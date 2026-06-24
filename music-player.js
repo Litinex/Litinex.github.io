@@ -572,6 +572,24 @@
     setPlaylistOpen(!isPlaylistOpen);
   });
 
+  document.addEventListener("click", (event) => {
+    if (!isPlaylistOpen) {
+      return;
+    }
+
+    if (playlistPanel.contains(event.target) || listToggle.contains(event.target)) {
+      return;
+    }
+
+    setPlaylistOpen(false);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && isPlaylistOpen) {
+      setPlaylistOpen(false);
+    }
+  });
+
   collapseToggle.addEventListener("click", (event) => {
     event.preventDefault();
     setCollapsed(true);

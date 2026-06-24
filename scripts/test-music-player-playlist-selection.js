@@ -40,9 +40,11 @@ class ClassList {
 }
 
 class FakeEvent {
-  constructor(target) {
+  constructor(target, type = "click", options = {}) {
     this.defaultPrevented = false;
     this.target = target;
+    this.type = type;
+    Object.assign(this, options);
   }
 
   preventDefault() {
@@ -108,6 +110,17 @@ class FakeElement {
       element = element.parentElement;
     }
     return null;
+  }
+
+  contains(candidate) {
+    let element = candidate;
+    while (element) {
+      if (element === this) {
+        return true;
+      }
+      element = element.parentElement;
+    }
+    return false;
   }
 
   focus() {}
@@ -204,9 +217,24 @@ class FakeElement {
 
 class FakeDocument {
   constructor() {
+    this.eventListeners = new Map();
+    this.parentElement = null;
     this.documentElement = new FakeElement("html");
     this.body = new FakeElement("body");
+    this.documentElement.parentElement = this;
     this.documentElement.appendChild(this.body);
+  }
+
+  addEventListener(type, listener) {
+    const listeners = this.eventListeners.get(type) || [];
+    listeners.push(listener);
+    this.eventListeners.set(type, listeners);
+  }
+
+  dispatchEvent(event) {
+    for (const listener of this.eventListeners.get(event.type) || []) {
+      listener.call(this, event);
+    }
   }
 
   createDocumentFragment() {
@@ -398,6 +426,51 @@ function assertPlaylistHasMultipleTracks(document, audio) {
   return state.trackCount;
 }
 
+function playlistDisclosureState(document) {
+  const root = document.querySelector(".music-dock");
+  const listToggle = document.querySelector(".music-list-toggle");
+  const panel = document.querySelector(".music-playlist-panel");
+
+  assert.ok(root, "Music dock should be rendered.");
+  assert.ok(listToggle, "Music playlist toggle should be rendered.");
+  assert.ok(panel, "Music playlist panel should be rendered.");
+
+  return {
+    isCollapsed: root.classList.contains("is-collapsed"),
+    isOpen: root.classList.contains("is-playlist-open"),
+    panelHidden: panel.hidden,
+    toggleExpanded: listToggle.getAttribute("aria-expanded"),
+  };
+}
+
+function assertPlaylistOpen(document, message) {
+  const state = playlistDisclosureState(document);
+  assert.equal(state.isCollapsed, false, `${message}: music player should be expanded.`);
+  assert.equal(state.isOpen, true, `${message}: music dock should mark the playlist as open.`);
+  assert.equal(state.panelHidden, false, `${message}: playlist panel should be visible.`);
+  assert.equal(state.toggleExpanded, "true", `${message}: playlist toggle should be expanded.`);
+}
+
+function assertPlaylistClosed(document, message) {
+  const state = playlistDisclosureState(document);
+  assert.equal(state.isCollapsed, false, `${message}: the whole player should remain expanded.`);
+  assert.equal(state.isOpen, false, `${message}: music dock should mark the playlist as closed.`);
+  assert.equal(state.panelHidden, true, `${message}: playlist panel should be hidden.`);
+  assert.equal(state.toggleExpanded, "false", `${message}: playlist toggle should not be expanded.`);
+}
+
+function openExpandedPlaylist(document) {
+  const collapsedButton = document.querySelector(".music-collapsed-button");
+  const listToggle = document.querySelector(".music-list-toggle");
+
+  assert.ok(collapsedButton, "Collapsed music button should be rendered.");
+  assert.ok(listToggle, "Music playlist toggle should be rendered.");
+
+  collapsedButton.click();
+  listToggle.click();
+  assertPlaylistOpen(document, "Opening the player playlist");
+}
+
 const { audio, document } = loadMusicPlayer();
 const trackCount = assertPlaylistHasMultipleTracks(document, audio);
 const initialSource = audio.src;
@@ -422,4 +495,19 @@ assertTrackSelection(document, audio, {
   expectedPlayCalls: 2,
 });
 
-console.log("Playlist clicks select the final tracks and autoplay them.");
+const outsideClickPlayer = loadMusicPlayer();
+openExpandedPlaylist(outsideClickPlayer.document);
+outsideClickPlayer.document.body.click();
+assertPlaylistClosed(outsideClickPlayer.document, "Clicking outside the open playlist");
+
+const insideClickPlayer = loadMusicPlayer();
+openExpandedPlaylist(insideClickPlayer.document);
+clickTrackAtIndex(insideClickPlayer.document, 1);
+assertPlaylistOpen(insideClickPlayer.document, "Clicking inside the open playlist");
+
+const escapePlayer = loadMusicPlayer();
+openExpandedPlaylist(escapePlayer.document);
+escapePlayer.document.dispatchEvent(new FakeEvent(escapePlayer.document, "keydown", { key: "Escape" }));
+assertPlaylistClosed(escapePlayer.document, "Pressing Escape while the playlist is open");
+
+console.log("Playlist clicks select the final tracks, autoplay them, and close on outside clicks.");
