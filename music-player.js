@@ -585,16 +585,19 @@
     }
 
     const nextIndex = Number(trackButton.dataset.index);
-    if (!Number.isInteger(nextIndex) || nextIndex === currentIndex) {
-      if (nextIndex === currentIndex) {
+    if (!Number.isInteger(nextIndex)) {
+      return;
+    }
+
+    if (nextIndex === currentIndex) {
+      if (audio.paused) {
         togglePlay();
       }
       return;
     }
 
     consecutiveFailures = 0;
-    const wasPlaying = !audio.paused;
-    loadTrack(nextIndex, { autoplay: wasPlaying, statusText: "已切换歌曲" });
+    loadTrack(nextIndex, { autoplay: true, statusText: "已切换歌曲" });
   });
 
   audio.addEventListener("play", () => {
