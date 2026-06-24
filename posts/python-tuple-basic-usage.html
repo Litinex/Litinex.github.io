@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>Python数据容器-tuple | 风迁夏回</title>
+  <meta name="description" content="Python 元组 tuple 基础示例：元组定义、索引访问、切片访问、count 和 index 方法，以及用学生成绩单统计总分、平均分、各科最高分和最低分。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-tuple-basic-usage.html">
+  <meta property="og:title" content="Python数据容器-tuple | 风迁夏回">
+  <meta property="og:description" content="Python 元组 tuple 基础示例：元组定义、索引访问、切片访问、count 和 index 方法，以及用学生成绩单统计总分、平均分、各科最高分和最低分。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-tuple-basic-usage.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260622-1">
+  <script src="../posts-data.js?v=20260624-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260622-1" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Python数据容器-tuple",
+      "description": "Python 元组 tuple 基础示例：元组定义、索引访问、切片访问、count 和 index 方法，以及用学生成绩单统计总分、平均分、各科最高分和最低分。",
+      "url": "https://yezizhuang.top/posts/python-tuple-basic-usage.html",
+      "datePublished": "2026-06-24",
+      "dateModified": "2026-06-24",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.06.24 · Python 入门</p>
+      <h1>Python数据容器-tuple</h1>
+    </header>
+
+    <article class="article-body">
+      <pre><code>#元组是不可变的列表，类似于列表，但创建后不能修改
+#特点：1，可以存储任意类型的数据
+#2，元素可以重复、有序、不可修改
+#方法:1，count()方法返回元组中指定元素的出现次数
+#2，index()方法返回元组中第一个匹配项的索引
+t1 = (10 , 20 , 30 , 40 , 50)
+print(t1)
+print(type(t1))
+#索引访问
+print(t1[0])
+print(t1[-1])
+
+#切片访问
+print(t1[1:4])
+
+#count()方法
+print(t1.count(20))
+
+#index()方法
+print(t1.index(30))
+
+#一个元素的元组需要在元素后面加逗号
+t2 = (10,)
+
+#根据如下提供的学生成绩单，完成如下需求：
+#1，计算每个学生的总分、各科平均分，然后一并输出出来。
+#2，统计各科成绩的最低分、最高分、平均分，并输出。
+#3，查找成绩优秀（平均分大于90）的学生，并输出。
+
+students = (
+    ("S001","王林",85, 92, 78),
+    ("S002","李慕婉",92, 88, 95),
+    ("S003","张伟",75, 80, 70),
+    ("S004","赵敏",90, 95, 88),
+    ("S005","陈晨",88, 82, 91),
+    ("S006","刘洋",95, 90, 92),
+    ("S007","孙磊",80, 85, 78),
+    ("S008","周婷",92, 88, 95),
+    ("S009","吴昊",75, 80, 70),
+    ("S010","郑爽",90, 95, 88)
+)
+
+#1，计算每个学生的总分、各科平均分，然后一并输出出来。average:.1f：保留一位小数
+for s in students:
+    total = s[2] + s[3] + s[4]
+    average = total / 3
+    print(f"学号: {s[0]}, 姓名: {s[1]}, 总分: {total}, 平均分: {average:.1f}")
+
+#2，统计各科成绩的最低分、最高分、平均分，并输出。
+#2.1 获取到各科的成绩列表
+chinese_scores = [s[2] for s in students]
+math_scores = [s[3] for s in students]
+english_scores = [s[4] for s in students]
+
+#2.2 统计各科成绩的最低分、最高分、平均分
+print("语文成绩统计:")
+print(f"最低分: {min(chinese_scores)}")
+print(f"最高分: {max(chinese_scores)}")
+print(f"平均分: {sum(chinese_scores)/len(chinese_scores):.1f}")
+
+print("数学成绩统计:")
+print(f"最低分: {min(math_scores)}")
+print(f"最高分: {max(math_scores)}")
+print(f"平均分: {sum(math_scores)/len(math_scores):.1f}")
+
+print("英语成绩统计:")
+print(f"最低分: {min(english_scores)}")
+print(f"最高分: {max(english_scores)}")
+print(f"平均分: {sum(english_scores)/len(english_scores):.1f}")
+
+#3，查找成绩优秀（平均分大于90）的学生，并输出。
+print("成绩优秀的学生:")
+for s in students:
+    average =(s[2]+s[3]+s[4])/3
+    if average &gt;90:
+        print(f"学号: {s[0]}, 姓名: {s[1]}, 平均分: {average:.1f}")</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-str-basic-operations.html">
+        <span class="article-pagination-link-arrow" aria-hidden="true">←</span>
+        <span class="article-pagination-link-text">上一篇：数据容器str基本操作</span>
+      </a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-link-text">已经是最新一篇</span>
+        <span class="article-pagination-link-arrow" aria-hidden="true">→</span>
+      </span>
+    </nav>
+  </main>
+</body>
+</html>

@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      href: "posts/python-tuple-basic-usage.html",
+      title: "Python数据容器-tuple",
+      date: "2026-06-24",
+      updated: "2026-06-24",
+      category: "Python 入门",
+      excerpt: "元组的定义、索引访问、切片访问、count 和 index 方法，以及用学生成绩单统计总分、平均分、各科成绩和优秀学生。",
+      tags: ["Python", "基础", "元组", "数据容器"],
+      words: 1320,
+      readTime: 5,
+      series: { id: "python-intro", name: "Python 入门", index: 9 },
+    },
+    {
       href: "posts/python-str-basic-operations.html",
       title: "数据容器 str 基本操作",
       date: "2026-06-17",
