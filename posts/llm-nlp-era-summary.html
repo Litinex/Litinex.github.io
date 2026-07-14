@@ -20,10 +20,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20260622-1">
-  <script src="../posts-data.js?v=20260624-1" defer></script>
+  <link rel="stylesheet" href="../styles.css?v=20260714-1">
+  <script src="../posts-data.js?v=20260714-1" defer></script>
+  <script src="../related-posts-data.js?v=20260714-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
   <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
@@ -51,7 +54,7 @@
     }
   </script>
 </head>
-<body class="article-page">
+<body class="article-page" data-post-id="llm-nlp-era-summary">
   <main class="article-shell">
     <div class="article-toolbar">
       <a class="article-back" href="../index.html">返回首页</a>
@@ -62,7 +65,7 @@
     </header>
 
     <article class="article-body">
-      <p><strong>一、文章主要研究什么</strong></p>
+      <p id="research-question"><strong>一、文章主要研究什么</strong></p>
       <p>
         这篇文章研究的是“大型语言模型（LLM）对自然语言处理（NLP）领域的影响”。文章并不是做某一个单独实验，也不是只研究一个具体任务，而是从综述和分析的角度，系统讨论 ChatGPT、GPT-4 等大模型出现之后，自然语言处理领域发生了哪些变化，传统研究范式受到了什么冲击，未来又可能朝哪些方向发展。
       </p>
@@ -72,7 +75,7 @@
         <li>大模型带来的共性问题、研究挑战与未来发展方向。</li>
       </ol>
 
-      <p><strong>二、文章重点讲了什么</strong></p>
+      <p id="main-topics"><strong>二、文章重点讲了什么</strong></p>
       <p>
         文章首先回顾了自然语言处理的发展历程，以及从语言模型、预训练模型到大模型的技术演化过程。作者认为，ChatGPT 和 GPT-4 的出现，使自然语言处理从过去依赖“针对具体任务单独建模、依赖大量标注数据”的监督学习范式，逐步转向“基于大模型统一完成多种任务”的新范式。
       </p>
@@ -98,7 +101,7 @@
         <li>可以把很多原本彼此分散的 NLP 任务统一到生成式框架之下。</li>
       </ol>
 
-      <p><strong>三、文章的核心观点</strong></p>
+      <p id="core-viewpoint"><strong>三、文章的核心观点</strong></p>
       <p>
         这篇文章最核心的观点是：大模型并不意味着自然语言处理没有研究价值了，恰恰相反，它正在推动自然语言处理进入新的发展阶段。
       </p>
@@ -109,7 +112,7 @@
         同时，文章也强调，大模型虽然能力强，但并没有彻底解决所有问题。自然语言处理未来仍然大有可为，尤其是在模型可靠性、信息准确性、可解释性、安全性和具体行业落地等方面，还有大量值得深入研究的问题。
       </p>
 
-      <p><strong>四、各部分主要内容概括</strong></p>
+      <p id="section-summary"><strong>四、各部分主要内容概括</strong></p>
       <p><strong>1. 引言与背景部分</strong></p>
       <p>
         这一部分介绍了 ChatGPT、GPT-4 出现的背景，说明它们为何会对自然语言处理造成巨大冲击。作者还回顾了 NLP 从规则方法、机器学习方法到深度学习方法的发展过程，并介绍了预训练语言模型的发展脉络，如 ELMo、BERT、GPT-3 等，为后文讨论大模型奠定基础。
@@ -149,7 +152,7 @@
         <li>拓展新应用场景，如智能搜索、虚拟教师、虚拟医生、智能科研助手、虚拟律师等。</li>
       </ol>
 
-      <p><strong>五、文章研究的具体方面</strong></p>
+      <p id="research-aspects"><strong>五、文章研究的具体方面</strong></p>
       <p>从研究内容上看，这篇文章主要属于以下几个方面：</p>
       <ol>
         <li>自然语言处理（NLP）</li>
@@ -163,7 +166,7 @@
         如果从论文性质来看，它更偏向“领域综述”和“趋势分析”，而不是“提出一个新算法并做实验验证”的实证研究论文。
       </p>
 
-      <p><strong>六、文章的主要贡献和价值</strong></p>
+      <p id="contributions"><strong>六、文章的主要贡献和价值</strong></p>
       <p>这篇文章的价值主要体现在以下几个方面：</p>
       <ol>
         <li>对大模型时代的自然语言处理进行了系统梳理，覆盖面非常广。</li>
@@ -172,12 +175,12 @@
         <li>对未来研究方向提出了较清晰的判断，如工具学习、多模态、个性化和具身智能等。</li>
       </ol>
 
-      <p><strong>七、可以得出的结论</strong></p>
+      <p id="conclusion"><strong>七、可以得出的结论</strong></p>
       <p>
         综合来看，这篇文章的结论是：大模型已经深刻改变了自然语言处理的发展路径。未来 NLP 不会消失，而是会在大模型基础上继续演进。研究重点将不再只是单任务性能提升，而会更多转向统一任务框架、模型对齐、信息准确性、安全性、可解释性、工具使用能力以及多模态和实际应用落地。
       </p>
 
-      <p><strong>八、简短总结</strong></p>
+      <p id="short-summary"><strong>八、简短总结</strong></p>
       <p>
         这是一篇关于“大模型如何改变自然语言处理”的综述文章。文章系统分析了 ChatGPT、GPT-4 等大模型对文本分类、问答、翻译、摘要、对话、检索等核心任务的影响，指出大模型正在推动 NLP 从传统监督学习范式向统一生成式范式转变。同时，文章也强调了幻觉、信息准确性、安全性、成本和评价等关键问题，并展望了工具学习、多模态、个性化和具身智能等未来方向。
       </p>

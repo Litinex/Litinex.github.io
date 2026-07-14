@@ -29,6 +29,212 @@
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 }
 
+/* Learning progress and related reading */
+.resume-reading-card,
+.article-learning-card,
+.article-recommendations {
+  margin: 24px 0;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+.resume-reading-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 20px;
+}
+
+.resume-reading-card > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.resume-reading-card strong,
+.resume-reading-card span {
+  display: block;
+}
+
+.resume-reading-card span,
+.continue-learning-description,
+.article-learning-note,
+.series-learning-progress p,
+.article-recommendation-excerpt {
+  color: var(--muted);
+}
+
+.resume-reading-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
+.button-compact {
+  min-height: 38px;
+  padding: 8px 14px;
+}
+
+.article-learning-card,
+.article-recommendations {
+  padding: 24px;
+}
+
+.article-learning-heading,
+.article-recommendations-heading,
+.continue-learning-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.article-learning-heading h2,
+.article-recommendations-heading h2,
+.continue-learning-heading h2 {
+  margin: 4px 0 0;
+}
+
+.learning-complete-button {
+  min-height: 40px;
+  padding: 9px 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--surface-strong);
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.learning-complete-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--gold);
+}
+
+.learning-complete-button.is-complete {
+  border-color: color-mix(in srgb, var(--gold) 70%, var(--line));
+  color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 12%, var(--surface-strong));
+}
+
+.series-learning-progress {
+  margin-top: 20px;
+}
+
+.series-learning-progress p {
+  margin: 0 0 10px;
+}
+
+.series-learning-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 72%, transparent);
+}
+
+.series-learning-track span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--gold), var(--coral));
+  transform-origin: left center;
+  transition: transform 240ms ease;
+}
+
+.continue-learning-card {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.continue-learning-heading strong {
+  font-size: 1.1rem;
+  color: var(--gold);
+}
+
+.continue-learning-description {
+  margin: 0;
+}
+
+.continue-learning-card > .button {
+  justify-self: start;
+}
+
+.article-recommendation-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.article-recommendation-card {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  min-height: 170px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--ink);
+  background: var(--surface-strong);
+  text-decoration: none;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.article-recommendation-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--gold) 62%, var(--line));
+  box-shadow: var(--shadow-soft);
+}
+
+.article-recommendation-meta {
+  color: var(--gold);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.article-recommendation-excerpt {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+@media (max-width: 760px) {
+  .resume-reading-card,
+  .article-learning-heading,
+  .continue-learning-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .resume-reading-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .article-recommendation-list {
+    grid-template-columns: 1fr;
+  }
+
+  .article-recommendation-card {
+    min-height: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learning-complete-button,
+  .series-learning-track span,
+  .article-recommendation-card {
+    transition: none;
+  }
+}
+
 html[data-theme="light"] {
   color-scheme: light;
   --bg: #f4efe5;

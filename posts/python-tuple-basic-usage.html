@@ -20,10 +20,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20260622-1">
-  <script src="../posts-data.js?v=20260624-1" defer></script>
+  <link rel="stylesheet" href="../styles.css?v=20260714-1">
+  <script src="../posts-data.js?v=20260714-1" defer></script>
+  <script src="../related-posts-data.js?v=20260714-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
   <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
@@ -51,7 +54,7 @@
     }
   </script>
 </head>
-<body class="article-page">
+<body class="article-page" data-post-id="python-tuple-basic">
   <main class="article-shell">
     <div class="article-toolbar">
       <a class="article-back" href="../index.html">返回首页</a>
@@ -62,7 +65,7 @@
     </header>
 
     <article class="article-body">
-      <pre><code>#元组是不可变的列表，类似于列表，但创建后不能修改
+      <pre data-code-id="python-tuple-basic-example"><code>#元组是不可变的列表，类似于列表，但创建后不能修改
 #特点：1，可以存储任意类型的数据
 #2，元素可以重复、有序、不可修改
 #方法:1，count()方法返回元组中指定元素的出现次数

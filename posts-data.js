@@ -2,6 +2,7 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "python-tuple-basic",
       href: "posts/python-tuple-basic-usage.html",
       title: "Python数据容器-tuple",
       date: "2026-06-24",
@@ -14,6 +15,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 9 },
     },
     {
+      id: "python-string-container-basic",
       href: "posts/python-str-basic-operations.html",
       title: "数据容器 str 基本操作",
       date: "2026-06-17",
@@ -26,6 +28,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 8 },
     },
     {
+      id: "python-list-basic",
       href: "posts/python-list-basic-usage.html",
       title: "数据容器 list 基本用法",
       date: "2026-05-28",
@@ -38,6 +41,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 7 },
     },
     {
+      id: "python-if-elif-else",
       href: "posts/python-if-elif-else.html",
       title: "Python 中 if elif else 用法",
       date: "2026-05-17",
@@ -50,6 +54,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 6 },
     },
     {
+      id: "python-operators",
       href: "posts/python-operators.html",
       title: "Python 中的运算符",
       date: "2026-04-30",
@@ -62,6 +67,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 5 },
     },
     {
+      id: "python-input-output",
       href: "posts/python-input-and-output.html",
       title: "Python 中输入与输出",
       date: "2026-04-29",
@@ -74,6 +80,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 4 },
     },
     {
+      id: "python-string-definition",
       href: "posts/python-strings-definition-and-operations.html",
       title: "字符串的定义以及操作",
       date: "2026-04-28",
@@ -86,6 +93,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 3 },
     },
     {
+      id: "python-literals-variables",
       href: "posts/python-literals-and-variables.html",
       title: "Python 中的字面量及自变量",
       date: "2026-04-28",
@@ -98,6 +106,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 2 },
     },
     {
+      id: "llm-nlp-era-summary",
       href: "posts/llm-nlp-era-summary.html",
       title: "《大模型时代的自然语言处理: 挑战、机遇与发展文献》总结",
       date: "2026-04-26",
@@ -109,6 +118,7 @@
       readTime: 13,
     },
     {
+      id: "python-hello-world",
       href: "posts/first-post.html",
       title: "人生苦短，我用 Python",
       date: "2026-04-25",
@@ -122,6 +132,7 @@
       series: { id: "python-intro", name: "Python 入门", index: 1 },
     },
     {
+      id: "technical-notes-method",
       href: "posts/notes-template.html",
       title: "怎样写一篇未来自己也愿意重看的技术笔记",
       date: "2026-04-18",
@@ -133,6 +144,7 @@
       readTime: 3,
     },
     {
+      id: "life-fragments-writing",
       href: "posts/life-fragments.html",
       title: "把散乱的生活片段整理成可阅读的博客内容",
       date: "2026-04-10",
