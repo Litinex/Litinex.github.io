@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>kNN：K 近邻算法 | 风迁夏回</title>
+  <meta name="description" content="用 Python 和 NumPy 实现 kNN K 近邻算法，包含欧氏距离、邻居投票、数据归一化、约会网站分类器和手写数字识别示例。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-knn-basic-algorithm.html">
+  <meta property="og:title" content="kNN：K 近邻算法 | 风迁夏回">
+  <meta property="og:description" content="用 Python 和 NumPy 实现 kNN K 近邻算法，包含欧氏距离、邻居投票、数据归一化、约会网站分类器和手写数字识别示例。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-knn-basic-algorithm.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260714-1">
+  <script src="../posts-data.js?v=20260722-1" defer></script>
+  <script src="../related-posts-data.js?v=20260722-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "kNN：K 近邻算法",
+      "description": "用 Python 和 NumPy 实现 kNN K 近邻算法，包含欧氏距离、邻居投票、数据归一化、约会网站分类器和手写数字识别示例。",
+      "url": "https://yezizhuang.top/posts/python-knn-basic-algorithm.html",
+      "datePublished": "2026-07-22",
+      "dateModified": "2026-07-22",
+      "inLanguage": "zh-CN",
+      "author": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "风迁夏回"
+      }
+    }
+  </script>
+</head>
+<body class="article-page" data-post-id="python-knn-basic-algorithm">
+  <main class="article-shell">
+    <div class="article-toolbar">
+      <a class="article-back" href="../index.html">返回首页</a>
+    </div>
+    <header class="article-header">
+      <p class="meta">2026.07.22 · Python 入门</p>
+      <h1>kNN：K 近邻算法</h1>
+    </header>
+
+    <article class="article-body">
+      <pre data-code-id="python-knn-basic-algorithm-example"><code>'''
+创建时间：2010年9月16日
+kNN：K 近邻算法
+
+输入：      inX：要和已有数据集进行比较的向量（1xN）
+            dataSet：已有样本数据集
+            labels：数据集标签
+            k：用于比较的近邻数量，通常取奇数
+
+输出：      投票数量最多的类别标签
+
+作者：pbharrin
+
+给初学者的理解：
+KNN 可以想象成“找邻居投票”。
+比如你刚到一个城市，不知道一家饭店好不好吃，
+你可以问离你口味最近的 k 个朋友，看他们多数人怎么评价。
+在机器学习里，“朋友”就是训练样本，“口味相近”就是距离近，
+“多数人的评价”就是最后预测出来的类别。
+'''
+import numpy as np
+import operator
+from os import listdir
+
+def classify0(inX, dataSet, labels, k):
+    '''
+    KNN 分类函数。
+
+    参数说明：
+    inX：
+        待分类的新样本。
+        例如 [0, 0]，可以理解为“一个还不知道类别的新点”。
+
+    dataSet：
+        已知类别的数据集。
+        每一行是一个已知样本，每一列是一个特征。
+        生活类比：通讯录里已经认识的一群人，每个人有身高、体重、年龄等信息。
+
+    labels：
+        dataSet 中每个样本对应的类别。
+        例如 ['A', 'A', 'B', 'B']。
+        生活类比：每个人身上贴着一个标签，例如“动作片”“爱情片”。
+
+    k：
+        选几个最近的邻居来投票。
+        例如 k=3，就是找距离新样本最近的 3 个样本，看它们多数属于哪一类。
+    '''
+    # dataSet.shape[0] 表示数据集有多少行，也就是有多少个已知样本。
+    # 例如 dataSet 是 4 行 2 列，那么 dataSetSize 就是 4。
+    dataSetSize = dataSet.shape[0]
+
+    # np.tile(inX, (dataSetSize, 1)) 的作用：
+    # 把待分类样本 inX 复制 dataSetSize 行，变成和 dataSet 行数一样的矩阵。
+    #
+    # 生活类比：
+    # 你要把“新同学”的信息，分别和班里每个已知同学的信息做比较。
+    # 为了方便比较，就把新同学的信息复制成很多份，一份对应一个已知同学。
+    #
+    # 例如 inX = [0, 0]，dataSetSize = 4：
+    # np.tile(inX, (4, 1)) 会得到：
+    # [[0, 0],
+    #  [0, 0],
+    #  [0, 0],
+    #  [0, 0]]
+    #
+    # 然后减去 dataSet，就能一次性得到 inX 和所有样本之间每个特征的差值。
+    diffMat = np.tile(inX, (dataSetSize, 1)) - dataSet
+
+    # 差值平方。
+    # 为什么要平方？
+    # 因为距离不关心方向，只关心差多少。
+    # 比如差 +3 和差 -3，远近程度都应该是 3，平方后都是 9。
+    sqDiffMat = diffMat**2
+
+    # axis=1 表示“按行求和”。
+    # 每一行代表一个样本和 inX 的各个特征差值平方，
+    # 把一行加起来，就得到这个样本和 inX 的“平方距离”。
+    #
+    # 例子：
+    # 一个样本和新样本在两个特征上的差值平方是 [4, 9]，
+    # 那么平方距离就是 4 + 9 = 13。
+    sqDistances = sqDiffMat.sum(axis=1)
+
+    # 开方，得到欧氏距离。
+    # 欧氏距离可以理解成平面上两点之间的直线距离。
+    # 如果平方距离是 13，那么真实距离就是 sqrt(13)。
+    distances = sqDistances**0.5
+
+    # argsort() 返回的是“排序后的下标”，不是排序后的距离值。
+    #
+    # 例如 distances = [9, 2, 5]
+    # distances.argsort() 得到 [1, 2, 0]
+    # 意思是：最小的是第 1 个，第二小的是第 2 个，最大的是第 0 个。
+    #
+    # 这样我们就能知道“哪些样本离 inX 最近”。
+    sortedDistIndicies = distances.argsort()
+
+    # classCount 用来统计最近 k 个邻居中，每个类别出现了几次。
+    # 生活类比：
+    # 找到最近的 k 个朋友后，统计他们投票支持哪个类别。
+    classCount = {}
+
+    # 依次查看距离最近的 k 个样本。
+    for i in range(k):
+        # sortedDistIndicies[i] 是第 i 个最近样本在 labels 中的下标。
+        # voteIlabel 就是这个邻居的类别标签。
+        voteIlabel = labels[sortedDistIndicies[i]]
+
+        # classCount.get(voteIlabel, 0) 表示：
+        # 如果这个类别已经出现过，就取出已有次数；
+        # 如果没出现过，就从 0 开始。
+        # 然后 +1，表示这个类别又得到了一票。
+        classCount[voteIlabel] = classCount.get(voteIlabel, 0) + 1
+
+    # 按照投票次数从多到少排序。
+    # operator.itemgetter(1) 表示按字典项中的第 2 个元素排序，也就是按票数排序。
+    # reverse=True 表示从大到小排。
+    sortedClassCount = sorted(classCount.items(), key=operator.itemgetter(1), reverse=True)
+
+    # 返回票数最多的类别。
+    # sortedClassCount[0] 是票数最多的那一项，
+    # sortedClassCount[0][0] 是这一项的类别标签。
+    return sortedClassCount[0][0]
+
+def createDataSet():
+    '''
+    创建一个非常小的测试数据集。
+
+    这里有 4 个点：
+    [1.0, 1.1] -> A
+    [1.0, 1.0] -> A
+    [0, 0]     -> B
+    [0, 0.1]   -> B
+
+    你可以把它想象成地图上的 4 个点，其中两个属于 A 类，两个属于 B 类。
+    新来一个点后，KNN 会看它离哪几个点最近，再根据邻居投票判断类别。
+    '''
+    group = np.array([[1.0, 1.1], [1.0, 1.0], [0, 0], [0, 0.1]])
+    labels = ['A', 'A', 'B', 'B']
+    return group, labels
+
+def file2matrix(filename):
+    '''
+    把约会网站数据文件转换成 NumPy 矩阵和标签列表。
+
+    文件中每一行表示一个人，每个人有 3 个特征：
+    1. 每年获得的飞行常客里程数
+    2. 玩视频游戏所耗时间百分比
+    3. 每周消费冰淇淋公升数
+
+    最后一列是这个人的类别标签：
+    didntLike   -> 不喜欢
+    smallDoses  -> 魅力一般
+    largeDoses  -> 极具魅力
+
+    生活类比：
+    这就像把一张 Excel 表读进程序。
+    前 3 列是“个人特征”，最后 1 列是“评价结果”。
+    '''
+    # 把文字标签转换成数字，方便后面分类和画图。
+    love_dictionary = {'largeDoses':3, 'smallDoses':2, 'didntLike':1}
+
+    # 打开数据文件。
+    fr = open(filename)
+
+    # 一次性读取文件中所有行。
+    arrayOLines = fr.readlines()
+
+    numberOfLines = len(arrayOLines)            # 获取文件中的行数
+
+    # 创建一个 numberOfLines 行、3 列的全零矩阵，用来保存 3 个特征。
+    # 为什么是 3 列？因为每个人有 3 个数值特征。
+    returnMat = np.zeros((numberOfLines, 3))        # 创建返回用的矩阵
+
+    # 用来保存每一行对应的类别标签。
+    classLabelVector = []                       # 创建返回用的标签列表
+
+    index = 0
+    for line in arrayOLines:
+        # 去掉每行开头和结尾的空白字符，比如换行符。
+        line = line.strip()
+
+        # 按制表符 \t 分割一行。
+        # 分割后通常是：[特征1, 特征2, 特征3, 标签]
+        listFromLine = line.split('\t')
+
+        # 前 3 个元素放进特征矩阵。
+        returnMat[index, :] = listFromLine[0:3]
+
+        # 如果最后一列本身就是数字标签，就直接转成 int。
+        if(listFromLine[-1].isdigit()):
+            classLabelVector.append(int(listFromLine[-1]))
+        else:
+            # 如果最后一列是英文标签，就用 love_dictionary 转成数字。
+            classLabelVector.append(love_dictionary.get(listFromLine[-1]))
+        index += 1
+
+    return returnMat, classLabelVector
+
+
+def autoNorm(dataSet):
+    '''
+    对数据集做归一化。
+
+    为什么需要归一化？
+    KNN 是靠“距离”判断相似程度的。
+    如果某个特征数值特别大，它会在距离计算里占主导地位。
+
+    生活类比：
+    比如判断两个人是否相似，你同时看：
+    - 年收入：几十万
+    - 年龄：二十几
+    - 每周运动次数：个位数
+
+    如果不归一化，年收入这个数字太大，会把年龄和运动次数的影响“淹没”。
+    归一化就是把不同量纲的数据都压到 0 到 1 附近，让它们更公平地参与比较。
+
+    公式：
+    newValue = (oldValue - minValue) / (maxValue - minValue)
+    '''
+    # 每一列的最小值。
+    minVals = dataSet.min(0)
+
+    # 每一列的最大值。
+    maxVals = dataSet.max(0)
+
+    # 每一列的取值范围。
+    ranges = maxVals - minVals
+
+    # 创建一个和 dataSet 形状相同的全零矩阵。
+    normDataSet = np.zeros(np.shape(dataSet))
+
+    # m 是样本数量，也就是数据有多少行。
+    m = dataSet.shape[0]
+
+    # 每个样本都减去对应特征列的最小值。
+    normDataSet = dataSet - np.tile(minVals, (m, 1))
+
+    # 再除以每个特征列的取值范围，完成归一化。
+    normDataSet = normDataSet/np.tile(ranges, (m, 1))   # 按元素相除
+
+    return normDataSet, ranges, minVals
+
+def datingClassTest():
+    '''
+    测试约会网站分类器。
+
+    基本流程：
+    1. 从文件读取数据。
+    2. 对特征做归一化。
+    3. 拿前一部分样本当测试集。
+    4. 拿后一部分样本当训练集。
+    5. 用 KNN 预测测试样本类别。
+    6. 和真实标签比较，统计错误率。
+
+    生活类比：
+    你先拿一部分“已经知道答案”的题目盖住答案，让算法去做。
+    做完后再对答案，看它错了多少题。
+    错误率越低，说明算法在这个数据集上表现越好。
+    '''
+    hoRatio = 0.50      # 测试集比例
+    datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')       # 从文件中加载数据集
+
+    # KNN 用距离判断相似度，所以先做归一化。
+    normMat, ranges, minVals = autoNorm(datingDataMat)
+
+    # m 是样本总数。
+    m = normMat.shape[0]
+
+    # numTestVecs 是测试样本数量。
+    numTestVecs = int(m*hoRatio)
+
+    # 错误计数器。
+    errorCount = 0.0
+
+    for i in range(numTestVecs):
+        # normMat[i, :] 是当前要测试的样本。
+        # normMat[numTestVecs:m, :] 是训练集。
+        # datingLabels[numTestVecs:m] 是训练集对应的标签。
+        # 这里 k=3，表示找最近的 3 个邻居投票。
+        classifierResult = classify0(normMat[i, :], normMat[numTestVecs:m, :], datingLabels[numTestVecs:m], 3)
+
+        # 打印预测结果和真实答案。
+        print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, datingLabels[i]))
+
+        # 如果预测结果和真实答案不一样，错误数量加 1。
+        if (classifierResult != datingLabels[i]): errorCount += 1.0
+
+    # 错误率 = 错误数量 / 测试样本数量。
+    print("the total error rate is: %f" % (errorCount / float(numTestVecs)))
+    print(errorCount)
+
+def classifyPerson():
+    '''
+    手动输入一个人的信息，然后预测你对这个人的喜欢程度。
+
+    这个函数运行时会要求你在控制台输入 3 个数：
+    1. 玩视频游戏时间占比
+    2. 每年飞行里程数
+    3. 每年消费冰淇淋公升数
+
+    然后程序会把这个人和已有数据中的人做比较，
+    找最近的 3 个邻居投票，最后输出预测结果。
+    '''
+    resultList = ['not at all', 'in small doses', 'in large doses']
+
+    # input() 用来从键盘读取用户输入。
+    # float(...) 把输入的字符串转换成小数。
+    percentTats = float(input(\
+                                  "percentage of time spent playing video games?"))
+    ffMiles = float(input("frequent flier miles earned per year?"))
+    iceCream = float(input("liters of ice cream consumed per year?"))
+
+    # 读取已有约会数据。
+    datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
+
+    # 对已有数据归一化，同时得到 ranges 和 minVals。
+    normMat, ranges, minVals = autoNorm(datingDataMat)
+
+    # 把用户输入的 3 个特征组合成一个数组。
+    inArr = np.array([ffMiles, percentTats, iceCream, ])
+
+    # 用户输入的数据也必须用同样的 minVals 和 ranges 做归一化，
+    # 否则它和训练数据就不在同一个尺度上，距离计算会不公平。
+    classifierResult = classify0((inArr - \
+                                  minVals)/ranges, normMat, datingLabels, 3)
+
+    print("You will probably like this person: %s" % resultList[classifierResult - 1])
+
+def img2vector(filename):
+    '''
+    把 32x32 的文本图像转换成 1x1024 的向量。
+
+    书中的手写数字图片不是 jpg/png，而是 txt 文件。
+    每个文件有 32 行，每行 32 个字符，字符是 0 或 1。
+
+    例如可以把它想象成一个 32x32 的黑白方格图：
+    - 0 表示空白
+    - 1 表示有笔迹
+
+    机器学习算法通常更喜欢一行数字向量，
+    所以这里把 32x32 的二维图像“拉直”成 1x1024。
+
+    生活类比：
+    就像把一张 32 行 32 列的表格，从第一行开始一格一格读，
+    全部接到同一行里，变成长度为 1024 的长列表。
+    '''
+    # 创建一个 1 行 1024 列的全零向量。
+    returnVect = np.zeros((1, 1024))
+
+    # 打开一个手写数字 txt 文件。
+    fr = open(filename)
+
+    for i in range(32):
+        # 每次读取一行，一共读 32 行。
+        lineStr = fr.readline()
+        for j in range(32):
+            # 把第 i 行第 j 列的字符放到向量中的第 32*i+j 个位置。
+            # 例如：
+            # 第 0 行第 0 列 -> 第 0 个位置
+            # 第 0 行第 1 列 -> 第 1 个位置
+            # 第 1 行第 0 列 -> 第 32 个位置
+            returnVect[0, 32*i+j] = int(lineStr[j])
+
+    return returnVect
+
+def handwritingClassTest():
+    '''
+    测试手写数字识别。
+
+    基本流程：
+    1. 读取 trainingDigits 文件夹中的训练图片。
+    2. 把每张 32x32 图片转换成 1x1024 向量。
+    3. 从文件名中提取真实数字标签。
+    4. 读取 testDigits 文件夹中的测试图片。
+    5. 对每张测试图片用 KNN 分类。
+    6. 比较预测数字和真实数字，计算错误率。
+
+    生活类比：
+    训练集就像“带答案的字帖”，算法先拿它作为参照；
+    测试集就像“新看到的字”，算法看它最像字帖里的哪些数字，
+    再由最近的几个样本投票判断它到底是几。
+    '''
+    # 保存训练集中每张图片的真实数字标签。
+    hwLabels = []
+
+    trainingFileList = listdir('trainingDigits')           # 加载训练集
+
+    # 训练文件数量。
+    m = len(trainingFileList)
+
+    # 创建训练矩阵。
+    # 每一行是一张图片，每张图片被拉平成 1024 个数字。
+    trainingMat = np.zeros((m, 1024))
+
+    for i in range(m):
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]     # 去掉 .txt 后缀
+
+        # 文件名类似 3_45.txt。
+        # split('_')[0] 取到的是真实数字类别，例如 3。
+        classNumStr = int(fileStr.split('_')[0])
+
+        # 保存这张训练图片的标签。
+        hwLabels.append(classNumStr)
+
+        # 把这张训练图片转换成向量，放到训练矩阵的第 i 行。
+        trainingMat[i, :] = img2vector('trainingDigits/%s' % fileNameStr)
+
+    testFileList = listdir('testDigits')        # 遍历测试集
+
+    # 错误计数器。
+    errorCount = 0.0
+
+    # 测试文件数量。
+    mTest = len(testFileList)
+
+    for i in range(mTest):
+        fileNameStr = testFileList[i]
+        fileStr = fileNameStr.split('.')[0]     # 去掉 .txt 后缀
+
+        # 从测试文件名中取出真实数字标签。
+        classNumStr = int(fileStr.split('_')[0])
+
+        # 把当前测试图片转换成 1x1024 向量。
+        vectorUnderTest = img2vector('testDigits/%s' % fileNameStr)
+
+        # 用 KNN 判断当前测试图片属于哪个数字。
+        classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
+
+        # 打印预测结果和真实结果。
+        print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr))
+
+        # 如果预测错了，错误数量加 1。
+        if (classifierResult != classNumStr): errorCount += 1.0
+
+    # 输出错误数量和错误率。
+    print("\nthe total number of errors is: %d" % errorCount)
+    print("\nthe total error rate is: %f" % (errorCount/float(mTest)))</code></pre>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-tuple-basic-usage.html">
+        <span class="article-pagination-link-arrow" aria-hidden="true">←</span>
+        <span class="article-pagination-link-text">上一篇：Python数据容器-tuple</span>
+      </a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true">
+        <span class="article-pagination-link-text">已经是最新一篇</span>
+        <span class="article-pagination-link-arrow" aria-hidden="true">→</span>
+      </span>
+    </nav>
+  </main>
+</body>
+</html>

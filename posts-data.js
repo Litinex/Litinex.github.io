@@ -2,6 +2,19 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "python-knn-basic-algorithm",
+      href: "posts/python-knn-basic-algorithm.html",
+      title: "kNN：K 近邻算法",
+      date: "2026-07-22",
+      updated: "2026-07-22",
+      category: "Python 入门",
+      excerpt: "用 Python 和 NumPy 实现 kNN K 近邻算法，包含欧氏距离、邻居投票、数据归一化、约会网站分类器和手写数字识别示例。",
+      tags: ["Python", "基础", "机器学习", "KNN", "算法"],
+      words: 4200,
+      readTime: 14,
+      series: { id: "python-intro", name: "Python 入门", index: 10 },
+    },
+    {
       id: "python-tuple-basic",
       href: "posts/python-tuple-basic-usage.html",
       title: "Python数据容器-tuple",
