@@ -4,25 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <title>kNN：K 近邻算法 | 风迁夏回</title>
-  <meta name="description" content="用 Python 和 NumPy 实现 kNN K 近邻算法，包含欧氏距离、邻居投票、数据归一化、约会网站分类器和手写数字识别示例。">
+  <title>让邻居替你做决定：零基础学会 K 近邻算法（KNN） | 风迁夏回</title>
+  <meta name="description" content="面向零基础读者的 K 近邻算法图文教程：从距离、投票和 K 值讲起，手算一个分类案例，再用 NumPy 与 scikit-learn 完成可运行的 KNN 分类器。">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#11161f">
   <link rel="canonical" href="https://yezizhuang.top/posts/python-knn-basic-algorithm.html">
-  <meta property="og:title" content="kNN：K 近邻算法 | 风迁夏回">
-  <meta property="og:description" content="用 Python 和 NumPy 实现 kNN K 近邻算法，包含欧氏距离、邻居投票、数据归一化、约会网站分类器和手写数字识别示例。">
+  <meta property="og:title" content="让邻居替你做决定：零基础学会 K 近邻算法（KNN） | 风迁夏回">
+  <meta property="og:description" content="从找邻居、算距离到投票预测，一篇真正能跟着做完的 KNN 图文入门教程。">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://yezizhuang.top/posts/python-knn-basic-algorithm.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/knn-neighbor-vote.svg">
   <meta property="og:site_name" content="风迁夏回">
   <meta property="og:locale" content="zh_CN">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20260714-1">
-  <script src="../posts-data.js?v=20260722-1" defer></script>
-  <script src="../related-posts-data.js?v=20260722-1" defer></script>
+  <link rel="stylesheet" href="../styles.css?v=20260723-1">
+  <script src="../posts-data.js?v=20260723-1" defer></script>
+  <script src="../related-posts-data.js?v=20260723-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
   <script src="../article-reader.js?v=20260528-1" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
@@ -37,11 +38,12 @@
     {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "headline": "kNN：K 近邻算法",
-      "description": "用 Python 和 NumPy 实现 kNN K 近邻算法，包含欧氏距离、邻居投票、数据归一化、约会网站分类器和手写数字识别示例。",
+      "headline": "让邻居替你做决定：零基础学会 K 近邻算法（KNN）",
+      "description": "面向零基础读者的 K 近邻算法图文教程：从距离、投票和 K 值讲起，手算一个分类案例，再用 NumPy 与 scikit-learn 完成可运行的 KNN 分类器。",
+      "image": "https://yezizhuang.top/assets/knn-neighbor-vote.svg",
       "url": "https://yezizhuang.top/posts/python-knn-basic-algorithm.html",
       "datePublished": "2026-07-22",
-      "dateModified": "2026-07-22",
+      "dateModified": "2026-07-23",
       "inLanguage": "zh-CN",
       "author": {
         "@type": "Person",
@@ -54,456 +56,362 @@
     }
   </script>
 </head>
-<body class="article-page" data-post-id="python-knn-basic-algorithm">
+<body class="article-page knn-article-page" data-post-id="python-knn-basic-algorithm">
   <main class="article-shell">
     <div class="article-toolbar">
       <a class="article-back" href="../index.html">返回首页</a>
     </div>
     <header class="article-header">
-      <p class="meta">2026.07.22 · Python 入门</p>
-      <h1>kNN：K 近邻算法</h1>
+      <p class="meta">2026.07.23 · Python 入门 · 约 18 分钟</p>
+      <h1>让邻居替你做决定：零基础学会 K 近邻算法（KNN）</h1>
+      <p class="article-deck">不先背公式。我们从“向附近的人问路”开始，亲手算一次距离、投一次票，再把整个过程写成能运行的 Python 程序。</p>
     </header>
 
-    <article class="article-body">
-      <pre data-code-id="python-knn-basic-algorithm-example"><code>'''
-创建时间：2010年9月16日
-kNN：K 近邻算法
+    <article class="article-body knn-guide">
+      <p class="article-lead">假设你刚搬到一座陌生城市，想判断一家新餐馆是不是合你口味。一个很自然的办法是：找到和你口味最接近的几位朋友，听听多数人的意见。K 近邻算法做的事情几乎一模一样，只不过它找的“朋友”是数据里的已知样本。</p>
 
-输入：      inX：要和已有数据集进行比较的向量（1xN）
-            dataSet：已有样本数据集
-            labels：数据集标签
-            k：用于比较的近邻数量，通常取奇数
+      <aside class="knn-note" aria-label="名称说明">
+        <strong>先把名字说清楚：</strong>机器学习中常见的名称是 <strong>K 近邻算法</strong>，英文是 <span lang="en">K-Nearest Neighbors</span>，简称 <strong>KNN</strong>。有人会把它口头说成“K 近似算法”，本文讲的就是 KNN。
+      </aside>
 
-输出：      投票数量最多的类别标签
+      <div class="knn-at-a-glance" aria-label="本文学习目标">
+        <p class="knn-eyebrow">读完你会做到</p>
+        <ul>
+          <li>看懂“特征、距离、邻居、投票”分别是什么</li>
+          <li>不用代码也能手算一次 KNN 分类</li>
+          <li>从零写出一个能复用的 Python 分类器</li>
+          <li>知道怎样选 K、为什么要归一化，以及怎样判断模型好不好</li>
+        </ul>
+      </div>
 
-作者：pbharrin
+      <h2>一、KNN 到底在做什么</h2>
 
-给初学者的理解：
-KNN 可以想象成“找邻居投票”。
-比如你刚到一个城市，不知道一家饭店好不好吃，
-你可以问离你口味最近的 k 个朋友，看他们多数人怎么评价。
-在机器学习里，“朋友”就是训练样本，“口味相近”就是距离近，
-“多数人的评价”就是最后预测出来的类别。
-'''
+      <p><span>KNN 是一种</span><strong>监督学习</strong>算法。“监督”并不是有人盯着程序，而是训练数据已经带着正确答案。每一条旧数据都包含两部分：</p>
+
+      <ul>
+        <li><strong>特征：</strong>用来描述对象的数字，例如一部电影的打斗场面数量、情感对白数量。</li>
+        <li><strong>标签：</strong>我们已经知道的类别，例如“动作片”或“爱情片”。</li>
+      </ul>
+
+      <p>当一条没有标签的新数据出现时，KNN 只做三件事：计算它到所有旧数据的距离，找出最近的 K 个邻居，让这些邻居投票。</p>
+
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/knn-neighbor-vote.svg" alt="KNN 邻居投票示意图：待预测的新样本周围最近的五个邻居中，蓝色有三个，红色有两个，所以预测为蓝色类别" width="1200" height="720">
+        <figcaption>图 1：当 K = 5 时，虚线圈内有 3 个蓝色圆点和 2 个红色三角形，新样本因此被预测为蓝色类别。</figcaption>
+      </figure>
+
+      <p>这里的字母 <strong>K</strong> 表示“要参考几个邻居”。如果 <code>K = 1</code>，只听最近那个人的；如果 <code>K = 5</code>，就听最近五个人的多数意见。KNN 的核心因此可以压缩成一句话：</p>
+
+      <blockquote class="knn-principle">离我最近的 K 个已知样本，多数属于哪一类，我就预测为哪一类。</blockquote>
+
+      <h2>二、先不写代码，手算一次</h2>
+
+      <p>我们用一个只有两个特征的小例子。现在有 6 个已经分类的样本，每个样本都可以画成平面上的一个点。A 类和 B 类各有 3 个，新样本 X 的坐标是 <code>(3, 3)</code>。</p>
+
+      <div class="knn-table-wrap" role="region" aria-label="手算示例数据" tabindex="0">
+        <table class="knn-table">
+          <thead>
+            <tr>
+              <th scope="col">样本</th>
+              <th scope="col">横坐标 x</th>
+              <th scope="col">纵坐标 y</th>
+              <th scope="col">已知标签</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>A1</td><td>1.0</td><td>1.0</td><td><span class="knn-label knn-label-a">A 类</span></td></tr>
+            <tr><td>A2</td><td>1.5</td><td>2.0</td><td><span class="knn-label knn-label-a">A 类</span></td></tr>
+            <tr><td>A3</td><td>2.0</td><td>1.5</td><td><span class="knn-label knn-label-a">A 类</span></td></tr>
+            <tr><td>B1</td><td>4.0</td><td>4.0</td><td><span class="knn-label knn-label-b">B 类</span></td></tr>
+            <tr><td>B2</td><td>4.5</td><td>5.0</td><td><span class="knn-label knn-label-b">B 类</span></td></tr>
+            <tr><td>B3</td><td>5.0</td><td>4.5</td><td><span class="knn-label knn-label-b">B 类</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>第 1 步：算出新样本到每个旧样本的距离</h3>
+
+      <p>平面上两点之间常用<strong>欧氏距离</strong>，也就是直尺量出来的直线距离。新样本 X 是 <code>(3, 3)</code>，A2 是 <code>(1.5, 2)</code>，它们的距离为：</p>
+
+      <p class="knn-formula" aria-label="X 到 A2 的欧氏距离等于根号下 3 减 1.5 的平方加 3 减 2 的平方，约等于 1.80">
+        d(X, A2) = √[(3 − 1.5)² + (3 − 2)²] ≈ 1.80
+      </p>
+
+      <p>对另外 5 个样本重复同样的计算，得到：</p>
+
+      <div class="knn-distance-list" aria-label="距离排序结果">
+        <div><span>1</span><strong>B1</strong><code>1.41</code></div>
+        <div><span>2</span><strong>A2</strong><code>1.80</code></div>
+        <div><span>3</span><strong>A3</strong><code>1.80</code></div>
+        <div><span>4</span><strong>B2</strong><code>2.50</code></div>
+        <div><span>5</span><strong>B3</strong><code>2.50</code></div>
+        <div><span>6</span><strong>A1</strong><code>2.83</code></div>
+      </div>
+
+      <h3>第 2 步：取最近的 K 个邻居</h3>
+
+      <p>设 <code>K = 3</code>，那么只看距离最小的三个样本：B1、A2、A3。</p>
+
+      <h3>第 3 步：投票</h3>
+
+      <p><span>B 类得到 1 票，A 类得到 2 票，所以新样本 X 被预测为 </span><strong>A 类</strong>。到这里，你已经完整执行了一次 KNN 分类。</p>
+
+      <aside class="knn-note knn-note-soft">
+        <strong>一个重要观察：</strong>KNN 没有先总结出一条复杂公式。它只是保存训练数据，等新样本出现时再比较距离。因此它常被叫作“懒惰学习”算法。这里的“懒惰”是计算时机不同，不是说算法不好。
+      </aside>
+
+      <h2>三、把手算过程翻译成 Python</h2>
+
+      <p>下面先安装并导入 NumPy。它能让我们一次计算新样本到所有训练样本的距离。</p>
+
+      <pre data-code-id="python-knn-install-numpy"><code class="language-bash">python -m pip install numpy</code></pre>
+
+      <p>这是一个完整、可直接运行的 KNN 分类器。代码只有四个核心动作：相减、求距离、排序、投票。</p>
+
+      <pre data-code-id="python-knn-from-scratch"><code class="language-python">from collections import Counter
 import numpy as np
-import operator
-from os import listdir
-
-def classify0(inX, dataSet, labels, k):
-    '''
-    KNN 分类函数。
-
-    参数说明：
-    inX：
-        待分类的新样本。
-        例如 [0, 0]，可以理解为“一个还不知道类别的新点”。
-
-    dataSet：
-        已知类别的数据集。
-        每一行是一个已知样本，每一列是一个特征。
-        生活类比：通讯录里已经认识的一群人，每个人有身高、体重、年龄等信息。
-
-    labels：
-        dataSet 中每个样本对应的类别。
-        例如 ['A', 'A', 'B', 'B']。
-        生活类比：每个人身上贴着一个标签，例如“动作片”“爱情片”。
-
-    k：
-        选几个最近的邻居来投票。
-        例如 k=3，就是找距离新样本最近的 3 个样本，看它们多数属于哪一类。
-    '''
-    # dataSet.shape[0] 表示数据集有多少行，也就是有多少个已知样本。
-    # 例如 dataSet 是 4 行 2 列，那么 dataSetSize 就是 4。
-    dataSetSize = dataSet.shape[0]
-
-    # np.tile(inX, (dataSetSize, 1)) 的作用：
-    # 把待分类样本 inX 复制 dataSetSize 行，变成和 dataSet 行数一样的矩阵。
-    #
-    # 生活类比：
-    # 你要把“新同学”的信息，分别和班里每个已知同学的信息做比较。
-    # 为了方便比较，就把新同学的信息复制成很多份，一份对应一个已知同学。
-    #
-    # 例如 inX = [0, 0]，dataSetSize = 4：
-    # np.tile(inX, (4, 1)) 会得到：
-    # [[0, 0],
-    #  [0, 0],
-    #  [0, 0],
-    #  [0, 0]]
-    #
-    # 然后减去 dataSet，就能一次性得到 inX 和所有样本之间每个特征的差值。
-    diffMat = np.tile(inX, (dataSetSize, 1)) - dataSet
-
-    # 差值平方。
-    # 为什么要平方？
-    # 因为距离不关心方向，只关心差多少。
-    # 比如差 +3 和差 -3，远近程度都应该是 3，平方后都是 9。
-    sqDiffMat = diffMat**2
-
-    # axis=1 表示“按行求和”。
-    # 每一行代表一个样本和 inX 的各个特征差值平方，
-    # 把一行加起来，就得到这个样本和 inX 的“平方距离”。
-    #
-    # 例子：
-    # 一个样本和新样本在两个特征上的差值平方是 [4, 9]，
-    # 那么平方距离就是 4 + 9 = 13。
-    sqDistances = sqDiffMat.sum(axis=1)
-
-    # 开方，得到欧氏距离。
-    # 欧氏距离可以理解成平面上两点之间的直线距离。
-    # 如果平方距离是 13，那么真实距离就是 sqrt(13)。
-    distances = sqDistances**0.5
-
-    # argsort() 返回的是“排序后的下标”，不是排序后的距离值。
-    #
-    # 例如 distances = [9, 2, 5]
-    # distances.argsort() 得到 [1, 2, 0]
-    # 意思是：最小的是第 1 个，第二小的是第 2 个，最大的是第 0 个。
-    #
-    # 这样我们就能知道“哪些样本离 inX 最近”。
-    sortedDistIndicies = distances.argsort()
-
-    # classCount 用来统计最近 k 个邻居中，每个类别出现了几次。
-    # 生活类比：
-    # 找到最近的 k 个朋友后，统计他们投票支持哪个类别。
-    classCount = {}
-
-    # 依次查看距离最近的 k 个样本。
-    for i in range(k):
-        # sortedDistIndicies[i] 是第 i 个最近样本在 labels 中的下标。
-        # voteIlabel 就是这个邻居的类别标签。
-        voteIlabel = labels[sortedDistIndicies[i]]
-
-        # classCount.get(voteIlabel, 0) 表示：
-        # 如果这个类别已经出现过，就取出已有次数；
-        # 如果没出现过，就从 0 开始。
-        # 然后 +1，表示这个类别又得到了一票。
-        classCount[voteIlabel] = classCount.get(voteIlabel, 0) + 1
-
-    # 按照投票次数从多到少排序。
-    # operator.itemgetter(1) 表示按字典项中的第 2 个元素排序，也就是按票数排序。
-    # reverse=True 表示从大到小排。
-    sortedClassCount = sorted(classCount.items(), key=operator.itemgetter(1), reverse=True)
-
-    # 返回票数最多的类别。
-    # sortedClassCount[0] 是票数最多的那一项，
-    # sortedClassCount[0][0] 是这一项的类别标签。
-    return sortedClassCount[0][0]
-
-def createDataSet():
-    '''
-    创建一个非常小的测试数据集。
-
-    这里有 4 个点：
-    [1.0, 1.1] -> A
-    [1.0, 1.0] -> A
-    [0, 0]     -> B
-    [0, 0.1]   -> B
-
-    你可以把它想象成地图上的 4 个点，其中两个属于 A 类，两个属于 B 类。
-    新来一个点后，KNN 会看它离哪几个点最近，再根据邻居投票判断类别。
-    '''
-    group = np.array([[1.0, 1.1], [1.0, 1.0], [0, 0], [0, 0.1]])
-    labels = ['A', 'A', 'B', 'B']
-    return group, labels
-
-def file2matrix(filename):
-    '''
-    把约会网站数据文件转换成 NumPy 矩阵和标签列表。
 
-    文件中每一行表示一个人，每个人有 3 个特征：
-    1. 每年获得的飞行常客里程数
-    2. 玩视频游戏所耗时间百分比
-    3. 每周消费冰淇淋公升数
 
-    最后一列是这个人的类别标签：
-    didntLike   -> 不喜欢
-    smallDoses  -> 魅力一般
-    largeDoses  -> 极具魅力
-
-    生活类比：
-    这就像把一张 Excel 表读进程序。
-    前 3 列是“个人特征”，最后 1 列是“评价结果”。
-    '''
-    # 把文字标签转换成数字，方便后面分类和画图。
-    love_dictionary = {'largeDoses':3, 'smallDoses':2, 'didntLike':1}
-
-    # 打开数据文件。
-    fr = open(filename)
-
-    # 一次性读取文件中所有行。
-    arrayOLines = fr.readlines()
-
-    numberOfLines = len(arrayOLines)            # 获取文件中的行数
-
-    # 创建一个 numberOfLines 行、3 列的全零矩阵，用来保存 3 个特征。
-    # 为什么是 3 列？因为每个人有 3 个数值特征。
-    returnMat = np.zeros((numberOfLines, 3))        # 创建返回用的矩阵
-
-    # 用来保存每一行对应的类别标签。
-    classLabelVector = []                       # 创建返回用的标签列表
-
-    index = 0
-    for line in arrayOLines:
-        # 去掉每行开头和结尾的空白字符，比如换行符。
-        line = line.strip()
-
-        # 按制表符 \t 分割一行。
-        # 分割后通常是：[特征1, 特征2, 特征3, 标签]
-        listFromLine = line.split('\t')
-
-        # 前 3 个元素放进特征矩阵。
-        returnMat[index, :] = listFromLine[0:3]
-
-        # 如果最后一列本身就是数字标签，就直接转成 int。
-        if(listFromLine[-1].isdigit()):
-            classLabelVector.append(int(listFromLine[-1]))
-        else:
-            # 如果最后一列是英文标签，就用 love_dictionary 转成数字。
-            classLabelVector.append(love_dictionary.get(listFromLine[-1]))
-        index += 1
-
-    return returnMat, classLabelVector
-
-
-def autoNorm(dataSet):
-    '''
-    对数据集做归一化。
-
-    为什么需要归一化？
-    KNN 是靠“距离”判断相似程度的。
-    如果某个特征数值特别大，它会在距离计算里占主导地位。
-
-    生活类比：
-    比如判断两个人是否相似，你同时看：
-    - 年收入：几十万
-    - 年龄：二十几
-    - 每周运动次数：个位数
-
-    如果不归一化，年收入这个数字太大，会把年龄和运动次数的影响“淹没”。
-    归一化就是把不同量纲的数据都压到 0 到 1 附近，让它们更公平地参与比较。
-
-    公式：
-    newValue = (oldValue - minValue) / (maxValue - minValue)
-    '''
-    # 每一列的最小值。
-    minVals = dataSet.min(0)
-
-    # 每一列的最大值。
-    maxVals = dataSet.max(0)
-
-    # 每一列的取值范围。
-    ranges = maxVals - minVals
-
-    # 创建一个和 dataSet 形状相同的全零矩阵。
-    normDataSet = np.zeros(np.shape(dataSet))
-
-    # m 是样本数量，也就是数据有多少行。
-    m = dataSet.shape[0]
-
-    # 每个样本都减去对应特征列的最小值。
-    normDataSet = dataSet - np.tile(minVals, (m, 1))
-
-    # 再除以每个特征列的取值范围，完成归一化。
-    normDataSet = normDataSet/np.tile(ranges, (m, 1))   # 按元素相除
-
-    return normDataSet, ranges, minVals
-
-def datingClassTest():
-    '''
-    测试约会网站分类器。
-
-    基本流程：
-    1. 从文件读取数据。
-    2. 对特征做归一化。
-    3. 拿前一部分样本当测试集。
-    4. 拿后一部分样本当训练集。
-    5. 用 KNN 预测测试样本类别。
-    6. 和真实标签比较，统计错误率。
-
-    生活类比：
-    你先拿一部分“已经知道答案”的题目盖住答案，让算法去做。
-    做完后再对答案，看它错了多少题。
-    错误率越低，说明算法在这个数据集上表现越好。
-    '''
-    hoRatio = 0.50      # 测试集比例
-    datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')       # 从文件中加载数据集
-
-    # KNN 用距离判断相似度，所以先做归一化。
-    normMat, ranges, minVals = autoNorm(datingDataMat)
-
-    # m 是样本总数。
-    m = normMat.shape[0]
-
-    # numTestVecs 是测试样本数量。
-    numTestVecs = int(m*hoRatio)
-
-    # 错误计数器。
-    errorCount = 0.0
-
-    for i in range(numTestVecs):
-        # normMat[i, :] 是当前要测试的样本。
-        # normMat[numTestVecs:m, :] 是训练集。
-        # datingLabels[numTestVecs:m] 是训练集对应的标签。
-        # 这里 k=3，表示找最近的 3 个邻居投票。
-        classifierResult = classify0(normMat[i, :], normMat[numTestVecs:m, :], datingLabels[numTestVecs:m], 3)
-
-        # 打印预测结果和真实答案。
-        print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, datingLabels[i]))
-
-        # 如果预测结果和真实答案不一样，错误数量加 1。
-        if (classifierResult != datingLabels[i]): errorCount += 1.0
-
-    # 错误率 = 错误数量 / 测试样本数量。
-    print("the total error rate is: %f" % (errorCount / float(numTestVecs)))
-    print(errorCount)
-
-def classifyPerson():
-    '''
-    手动输入一个人的信息，然后预测你对这个人的喜欢程度。
-
-    这个函数运行时会要求你在控制台输入 3 个数：
-    1. 玩视频游戏时间占比
-    2. 每年飞行里程数
-    3. 每年消费冰淇淋公升数
-
-    然后程序会把这个人和已有数据中的人做比较，
-    找最近的 3 个邻居投票，最后输出预测结果。
-    '''
-    resultList = ['not at all', 'in small doses', 'in large doses']
-
-    # input() 用来从键盘读取用户输入。
-    # float(...) 把输入的字符串转换成小数。
-    percentTats = float(input(\
-                                  "percentage of time spent playing video games?"))
-    ffMiles = float(input("frequent flier miles earned per year?"))
-    iceCream = float(input("liters of ice cream consumed per year?"))
-
-    # 读取已有约会数据。
-    datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
-
-    # 对已有数据归一化，同时得到 ranges 和 minVals。
-    normMat, ranges, minVals = autoNorm(datingDataMat)
-
-    # 把用户输入的 3 个特征组合成一个数组。
-    inArr = np.array([ffMiles, percentTats, iceCream, ])
-
-    # 用户输入的数据也必须用同样的 minVals 和 ranges 做归一化，
-    # 否则它和训练数据就不在同一个尺度上，距离计算会不公平。
-    classifierResult = classify0((inArr - \
-                                  minVals)/ranges, normMat, datingLabels, 3)
-
-    print("You will probably like this person: %s" % resultList[classifierResult - 1])
-
-def img2vector(filename):
-    '''
-    把 32x32 的文本图像转换成 1x1024 的向量。
-
-    书中的手写数字图片不是 jpg/png，而是 txt 文件。
-    每个文件有 32 行，每行 32 个字符，字符是 0 或 1。
-
-    例如可以把它想象成一个 32x32 的黑白方格图：
-    - 0 表示空白
-    - 1 表示有笔迹
-
-    机器学习算法通常更喜欢一行数字向量，
-    所以这里把 32x32 的二维图像“拉直”成 1x1024。
-
-    生活类比：
-    就像把一张 32 行 32 列的表格，从第一行开始一格一格读，
-    全部接到同一行里，变成长度为 1024 的长列表。
-    '''
-    # 创建一个 1 行 1024 列的全零向量。
-    returnVect = np.zeros((1, 1024))
-
-    # 打开一个手写数字 txt 文件。
-    fr = open(filename)
-
-    for i in range(32):
-        # 每次读取一行，一共读 32 行。
-        lineStr = fr.readline()
-        for j in range(32):
-            # 把第 i 行第 j 列的字符放到向量中的第 32*i+j 个位置。
-            # 例如：
-            # 第 0 行第 0 列 -> 第 0 个位置
-            # 第 0 行第 1 列 -> 第 1 个位置
-            # 第 1 行第 0 列 -> 第 32 个位置
-            returnVect[0, 32*i+j] = int(lineStr[j])
-
-    return returnVect
-
-def handwritingClassTest():
-    '''
-    测试手写数字识别。
-
-    基本流程：
-    1. 读取 trainingDigits 文件夹中的训练图片。
-    2. 把每张 32x32 图片转换成 1x1024 向量。
-    3. 从文件名中提取真实数字标签。
-    4. 读取 testDigits 文件夹中的测试图片。
-    5. 对每张测试图片用 KNN 分类。
-    6. 比较预测数字和真实数字，计算错误率。
-
-    生活类比：
-    训练集就像“带答案的字帖”，算法先拿它作为参照；
-    测试集就像“新看到的字”，算法看它最像字帖里的哪些数字，
-    再由最近的几个样本投票判断它到底是几。
-    '''
-    # 保存训练集中每张图片的真实数字标签。
-    hwLabels = []
-
-    trainingFileList = listdir('trainingDigits')           # 加载训练集
-
-    # 训练文件数量。
-    m = len(trainingFileList)
-
-    # 创建训练矩阵。
-    # 每一行是一张图片，每张图片被拉平成 1024 个数字。
-    trainingMat = np.zeros((m, 1024))
-
-    for i in range(m):
-        fileNameStr = trainingFileList[i]
-        fileStr = fileNameStr.split('.')[0]     # 去掉 .txt 后缀
-
-        # 文件名类似 3_45.txt。
-        # split('_')[0] 取到的是真实数字类别，例如 3。
-        classNumStr = int(fileStr.split('_')[0])
-
-        # 保存这张训练图片的标签。
-        hwLabels.append(classNumStr)
-
-        # 把这张训练图片转换成向量，放到训练矩阵的第 i 行。
-        trainingMat[i, :] = img2vector('trainingDigits/%s' % fileNameStr)
-
-    testFileList = listdir('testDigits')        # 遍历测试集
-
-    # 错误计数器。
-    errorCount = 0.0
-
-    # 测试文件数量。
-    mTest = len(testFileList)
-
-    for i in range(mTest):
-        fileNameStr = testFileList[i]
-        fileStr = fileNameStr.split('.')[0]     # 去掉 .txt 后缀
-
-        # 从测试文件名中取出真实数字标签。
-        classNumStr = int(fileStr.split('_')[0])
-
-        # 把当前测试图片转换成 1x1024 向量。
-        vectorUnderTest = img2vector('testDigits/%s' % fileNameStr)
-
-        # 用 KNN 判断当前测试图片属于哪个数字。
-        classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
-
-        # 打印预测结果和真实结果。
-        print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr))
-
-        # 如果预测错了，错误数量加 1。
-        if (classifierResult != classNumStr): errorCount += 1.0
-
-    # 输出错误数量和错误率。
-    print("\nthe total number of errors is: %d" % errorCount)
-    print("\nthe total error rate is: %f" % (errorCount/float(mTest)))</code></pre>
+def knn_predict(train_features, train_labels, new_sample, k=3):
+    """根据最近的 k 个训练样本，预测 new_sample 的类别。"""
+    features = np.asarray(train_features, dtype=float)
+    sample = np.asarray(new_sample, dtype=float)
+
+    if features.ndim != 2:
+        raise ValueError("train_features 必须是二维数据")
+    if len(features) != len(train_labels):
+        raise ValueError("每个训练样本都必须有一个标签")
+    if sample.shape != (features.shape[1],):
+        raise ValueError("新样本的特征数量必须和训练数据一致")
+    if not 1 &lt;= k &lt;= len(features):
+        raise ValueError("k 必须在 1 到训练样本数量之间")
+
+    # 1. 新样本分别减去每个训练样本
+    differences = features - sample
+
+    # 2. 对每一行计算欧氏距离
+    distances = np.sqrt(np.sum(differences ** 2, axis=1))
+
+    # 3. 取得距离最小的 k 个样本下标
+    nearest_indices = np.argsort(distances)[:k]
+    nearest_labels = [train_labels[index] for index in nearest_indices]
+
+    # 4. 返回票数最多的标签
+    predicted_label = Counter(nearest_labels).most_common(1)[0][0]
+    return predicted_label
+
+
+train_features = np.array([
+    [1.0, 1.0],
+    [1.5, 2.0],
+    [2.0, 1.5],
+    [4.0, 4.0],
+    [4.5, 5.0],
+    [5.0, 4.5],
+])
+train_labels = ["A", "A", "A", "B", "B", "B"]
+
+result = knn_predict(train_features, train_labels, [3.0, 3.0], k=3)
+print(f"预测结果：{result} 类")</code></pre>
+
+      <p>运行后会得到：</p>
+
+      <pre data-code-id="python-knn-from-scratch-output"><code class="language-code">预测结果：A 类</code></pre>
+
+      <h3>逐行理解最关键的四句</h3>
+
+      <ol class="knn-explain-list">
+        <li><code>features - sample</code>：让每个旧样本分别减去新样本，得到各个特征相差多少。</li>
+        <li><code>np.sum(differences ** 2, axis=1)</code>：先把差值平方，再按行相加。<code>axis=1</code> 可以理解成“每个样本自己算自己的”。</li>
+        <li><code>np.argsort(distances)[:k]</code>：把距离从小到大排序，只取前 K 个样本的下标。</li>
+        <li><code>Counter(...).most_common(1)</code>：统计邻居标签的票数，并取票数最多的类别。</li>
+      </ol>
+
+      <p>真实项目里还需要约定“票数相同时怎么办”。常见做法是让距离更近的邻居优先，或者给越近的邻居越高的投票权重。后面的 <code>scikit-learn</code> 示例可以直接使用距离加权。</p>
+
+      <h2>四、K 应该选多大</h2>
+
+      <p>K 没有一个适合所有数据集的固定答案。它决定算法听多少人的意见，也决定模型是更敏感还是更平滑。</p>
+
+      <figure class="knn-figure">
+        <img src="../assets/knn-k-choice.svg" alt="不同 K 值的效果对比：K 等于 1 时容易受噪声影响，K 等于 5 时边界较平衡，K 等于 15 时可能忽略局部规律" width="1200" height="620" loading="lazy">
+        <figcaption>图 2：K 太小容易被单个异常点带偏；K 太大又可能把真正的局部差异抹平。</figcaption>
+      </figure>
+
+      <div class="knn-comparison" aria-label="K 值大小比较">
+        <section>
+          <h3>K 太小</h3>
+          <p>模型非常相信最近的少数样本。边界会很曲折，对噪声和错误标签敏感，容易<strong>过拟合</strong>。</p>
+        </section>
+        <section>
+          <h3>K 太大</h3>
+          <p>很远的样本也加入投票，局部规律可能被多数类淹没，容易<strong>欠拟合</strong>。</p>
+        </section>
+      </div>
+
+      <h3>适合初学者的选择方法</h3>
+
+      <ol>
+        <li>先从较小的奇数开始，例如 <code>3、5、7、9</code>。二分类时用奇数可以减少平票。</li>
+        <li>把数据分成训练集和验证集。训练集用来提供邻居，验证集用来模拟未见过的数据。</li>
+        <li>让多个 K 值分别预测验证集，记录准确率。</li>
+        <li>选择验证效果好、同时不过分大的 K，而不是挑训练集上最好的 K。</li>
+      </ol>
+
+      <p>常见经验是先尝试不超过训练样本数平方根附近的若干奇数，但这只是搜索起点，不是定律。最终要以验证结果为准。</p>
+
+      <h2>五、为什么必须注意数据尺度</h2>
+
+      <p>假设我们用“年龄”和“年收入”判断用户类型。年龄通常是几十，年收入可能是几十万。两个人年龄差 10 岁、收入差 10 万元，直接计算距离时，收入这一列会完全压过年龄这一列。</p>
+
+      <p class="knn-formula">原始距离 ≈ √(10² + 100000²)</p>
+
+      <p><span>这不代表收入一定比年龄重要，只是它的数字单位更大。解决方法是</span><strong>特征缩放</strong>，把不同列变到可比较的范围。最常见的两种方式是：</p>
+
+      <ul>
+        <li><strong>标准化：</strong>每列减去平均值，再除以标准差。多数 KNN 场景优先尝试它。</li>
+        <li><strong>最小最大归一化：</strong>把每列压缩到 0 到 1 之间。</li>
+      </ul>
+
+      <aside class="knn-note knn-note-warning">
+        <strong>不要偷看测试集：</strong>平均值、标准差等参数只能从训练集计算，再用同一组参数转换验证集、测试集和未来的新数据。否则测试集的信息会泄漏到训练过程，得到虚高的成绩。
+      </aside>
+
+      <h2>六、用 scikit-learn 完成一次正规训练</h2>
+
+      <p>从零实现适合理解原理；实际项目更建议使用成熟库。下面用鸢尾花数据集完成一个完整流程：划分数据、标准化、训练、预测、评价。</p>
+
+      <pre data-code-id="python-knn-install-sklearn"><code class="language-bash">python -m pip install scikit-learn</code></pre>
+
+      <pre data-code-id="python-knn-sklearn-pipeline"><code class="language-python">from sklearn.datasets import load_iris
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+
+# 1. 读取数据：X 是花朵特征，y 是花的品种
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# 2. 留出 20% 作为测试集；stratify 保持各类别比例接近
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y,
+)
+
+# 3. Pipeline 保证先用训练集完成标准化，再训练 KNN
+model = make_pipeline(
+    StandardScaler(),
+    KNeighborsClassifier(n_neighbors=5, weights="distance"),
+)
+
+# 4. 训练、预测、评价
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+print(f"准确率：{accuracy_score(y_test, y_pred):.2%}")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+
+# 5. 预测一朵新花；四个数字依次对应四项花朵特征
+new_flower = [[5.1, 3.5, 1.4, 0.2]]
+predicted_index = model.predict(new_flower)[0]
+print("预测品种：", iris.target_names[predicted_index])</code></pre>
+
+      <p>这里有三个容易忽略的细节：</p>
+
+      <ul>
+        <li><code>random_state=42</code> 固定随机划分，方便你下次运行时复现结果；数字 42 换成别的整数也可以。</li>
+        <li><code>make_pipeline</code> 把标准化和模型绑在一起，能减少数据泄漏和漏做预处理的风险。</li>
+        <li><code>weights="distance"</code> 让更近的邻居拥有更大权重，不再是每个邻居都只有一票。</li>
+      </ul>
+
+      <h2>七、怎样找到更合适的 K</h2>
+
+      <p>只试一个 K 不够可靠。下面用 5 折交叉验证比较 <code>1</code> 到 <code>20</code>。所谓 5 折，就是把训练数据轮流分成 5 份：每次用其中 4 份训练、1 份验证，最后取 5 次成绩的平均值。</p>
+
+      <pre data-code-id="python-knn-cross-validation"><code class="language-python">from sklearn.model_selection import cross_val_score
+
+
+best_k = None
+best_score = 0.0
+
+for k in range(1, 21):
+    candidate = make_pipeline(
+        StandardScaler(),
+        KNeighborsClassifier(n_neighbors=k),
+    )
+    scores = cross_val_score(candidate, X_train, y_train, cv=5)
+    mean_score = scores.mean()
+
+    print(f"K={k:2d}，平均验证准确率={mean_score:.3f}")
+
+    if mean_score &gt; best_score:
+        best_k = k
+        best_score = mean_score
+
+print(f"推荐 K={best_k}，平均验证准确率={best_score:.3f}")</code></pre>
+
+      <p>数据量更大、参数更多时，可以使用 <code>GridSearchCV</code> 自动搜索。无论用哪种工具，原则都一样：<strong>用验证过程选参数，测试集只留到最后做一次客观检查。</strong></p>
+
+      <h2>八、KNN 能做什么，不能做什么</h2>
+
+      <div class="knn-pros-cons">
+        <section>
+          <p class="knn-eyebrow">适合它的情况</p>
+          <ul>
+            <li>数据量不大，特征含义清楚</li>
+            <li>相近样本通常拥有相近答案</li>
+            <li>需要一个容易解释的入门基线</li>
+            <li>分类边界不一定是直线</li>
+          </ul>
+        </section>
+        <section>
+          <p class="knn-eyebrow">需要谨慎的情况</p>
+          <ul>
+            <li>样本很多，预测时逐个算距离会变慢</li>
+            <li>特征特别多，距离会逐渐失去区分度</li>
+            <li>无关特征多，噪声会干扰邻居关系</li>
+            <li>类别极不平衡，多数类容易占据投票优势</li>
+          </ul>
+        </section>
+      </div>
+
+      <p><span>KNN 也能做</span><strong>回归</strong>。分类时邻居投票；回归时不投类别，而是把邻居的数值答案求平均。例如根据附近房屋的面积、楼龄和位置，估计一套房子的价格。</p>
+
+      <h2>九、新手最常踩的 6 个坑</h2>
+
+      <ol class="knn-mistakes">
+        <li><strong>忘记标准化。</strong>数字范围最大的特征主导了距离，模型学到的不是你想表达的重要性。</li>
+        <li><strong>直接在测试集上挑 K。</strong>测试集就不再客观。应该在训练集内部用验证集或交叉验证选 K。</li>
+        <li><strong>K 比训练样本还大。</strong>邻居根本不够，程序应提前检查并报出清楚的错误。</li>
+        <li><strong>认为 K 越小越精确。</strong><code>K = 1</code> 虽然能记住训练数据，却可能被噪声轻易带偏。</li>
+        <li><strong>只看总体准确率。</strong>类别不平衡时，还要看每一类的精确率、召回率和混淆矩阵。</li>
+        <li><strong>把类别编号当连续数值。</strong>邮编、商品编号等只是标识，数字差值通常没有距离意义，不能直接放进欧氏距离。</li>
+      </ol>
+
+      <h2>十、用一张清单完成自己的 KNN 项目</h2>
+
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>定义问题</strong><p>要预测的是类别还是连续数值？哪些旧数据带有可靠答案？</p></div></li>
+        <li><span>02</span><div><strong>准备特征</strong><p>删除明显无关的信息，把文字类别正确编码，并处理缺失值。</p></div></li>
+        <li><span>03</span><div><strong>划分数据</strong><p>先保留测试集；调参只在训练集内部进行。</p></div></li>
+        <li><span>04</span><div><strong>统一尺度</strong><p>只在训练集上拟合标准化器，并用同一规则转换其余数据。</p></div></li>
+        <li><span>05</span><div><strong>选择 K</strong><p>用验证集或交叉验证比较一组候选值。</p></div></li>
+        <li><span>06</span><div><strong>最终评价</strong><p>在从未参与调参的测试集上检查模型，并记录完整流程。</p></div></li>
+      </ol>
+
+      <h2>最后，把 KNN 记成四个词</h2>
+
+      <p class="knn-summary-words"><span>距离</span><span>排序</span><span>邻居</span><span>投票</span></p>
+
+      <p>看到新样本，先算它和所有旧样本的<strong>距离</strong>；把距离从近到远<strong>排序</strong>；取前 K 个<strong>邻居</strong>；最后让邻居<strong>投票</strong>。KNN 的全部骨架就在这里。</p>
+
+      <p>建议你接下来亲手改动示例中的新样本坐标，再把 K 从 1 改到 3、5，观察预测何时发生变化。能预测变化方向，比只复制一次代码更接近真正学会。</p>
     </article>
 
     <nav class="article-pagination" aria-label="文章导航">

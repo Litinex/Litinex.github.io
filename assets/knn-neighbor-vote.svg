@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">KNN 邻居投票示意图</title>
+  <desc id="desc">新样本周围最近的五个邻居中有三个蓝色圆点和两个红色三角形，因此预测为蓝色类别。</desc>
+  <rect width="1200" height="720" fill="#f7f9fc"/>
+  <rect x="78" y="66" width="1044" height="560" rx="8" fill="#ffffff" stroke="#d9e0e8" stroke-width="2"/>
+  <path d="M156 560H1048M156 560V124" fill="none" stroke="#8793a1" stroke-width="3"/>
+  <path d="M352 124V560M548 124V560M744 124V560M940 124V560M156 451H1048M156 342H1048M156 233H1048" fill="none" stroke="#e9edf2" stroke-width="2"/>
+  <text x="602" y="680" text-anchor="middle" fill="#495565" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="24">特征 1</text>
+  <text x="38" y="345" text-anchor="middle" fill="#495565" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="24" transform="rotate(-90 38 345)">特征 2</text>
+
+  <circle cx="374" cy="405" r="18" fill="#2878b8"/>
+  <circle cx="452" cy="472" r="18" fill="#2878b8"/>
+  <circle cx="505" cy="350" r="18" fill="#2878b8"/>
+  <circle cx="322" cy="296" r="18" fill="#2878b8"/>
+  <circle cx="439" cy="238" r="18" fill="#2878b8"/>
+  <circle cx="276" cy="492" r="18" fill="#2878b8"/>
+
+  <path d="M721 250l21 38h-42z" fill="#df664f"/>
+  <path d="M794 331l21 38h-42z" fill="#df664f"/>
+  <path d="M842 210l21 38h-42z" fill="#df664f"/>
+  <path d="M900 386l21 38h-42z" fill="#df664f"/>
+  <path d="M756 468l21 38h-42z" fill="#df664f"/>
+  <path d="M967 278l21 38h-42z" fill="#df664f"/>
+
+  <circle cx="626" cy="354" r="183" fill="#2878b8" fill-opacity="0.045" stroke="#586574" stroke-width="3" stroke-dasharray="12 11"/>
+  <circle cx="626" cy="354" r="25" fill="#ffffff" stroke="#17202a" stroke-width="5"/>
+  <path d="M614 342l24 24M638 342l-24 24" stroke="#17202a" stroke-width="5" stroke-linecap="round"/>
+  <text x="626" y="397" text-anchor="middle" fill="#17202a" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="20" font-weight="700">新样本</text>
+
+  <circle cx="548" cy="291" r="18" fill="#2878b8" stroke="#ffffff" stroke-width="4"/>
+  <circle cx="573" cy="455" r="18" fill="#2878b8" stroke="#ffffff" stroke-width="4"/>
+  <circle cx="676" cy="483" r="18" fill="#2878b8" stroke="#ffffff" stroke-width="4"/>
+  <path d="M690 277l21 38h-42z" fill="#df664f" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M748 380l21 38h-42z" fill="#df664f" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"/>
+
+  <g font-family="Arial, 'Noto Sans SC', sans-serif" font-size="22" fill="#283341">
+    <circle cx="817" cy="92" r="12" fill="#2878b8"/>
+    <text x="840" y="100">蓝色类别</text>
+    <path d="M990 78l14 25h-28z" fill="#df664f"/>
+    <text x="1015" y="100">红色类别</text>
+  </g>
+
+  <g transform="translate(806 537)">
+    <rect width="274" height="65" rx="7" fill="#17202a"/>
+    <text x="137" y="41" text-anchor="middle" fill="#ffffff" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="22" font-weight="700">3 : 2 → 预测为蓝色</text>
+  </g>
+</svg>

@@ -4,15 +4,15 @@
   "python-knn-basic-algorithm": [
     {
       "id": "python-tuple-basic",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
+      "reason": "同属“Python 入门”系列 · 共同标签：Python"
     },
     {
       "id": "python-string-container-basic",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
+      "reason": "同属“Python 入门”系列 · 共同标签：Python"
     },
     {
       "id": "python-list-basic",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
+      "reason": "同属“Python 入门”系列 · 共同标签：Python"
     }
   ],
   "python-tuple-basic": [
@@ -22,7 +22,7 @@
     },
     {
       "id": "python-knn-basic-algorithm",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
+      "reason": "同属“Python 入门”系列 · 共同标签：Python"
     },
     {
       "id": "python-list-basic",
@@ -67,7 +67,7 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     },
     {
-      "id": "python-knn-basic-algorithm",
+      "id": "python-tuple-basic",
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     }
   ],
@@ -81,7 +81,7 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     },
     {
-      "id": "python-knn-basic-algorithm",
+      "id": "python-tuple-basic",
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     }
   ],
@@ -95,7 +95,7 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     },
     {
-      "id": "python-knn-basic-algorithm",
+      "id": "python-tuple-basic",
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     }
   ],
@@ -119,11 +119,11 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     },
     {
-      "id": "python-knn-basic-algorithm",
+      "id": "python-tuple-basic",
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     },
     {
-      "id": "python-tuple-basic",
+      "id": "python-string-container-basic",
       "reason": "同属“Python 入门”系列 · 共同标签：Python、基础"
     }
   ],

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">K 值大小对 KNN 的影响</title>
+  <desc id="desc">三个面板分别展示 K 等于 1、5、15 时，从容易受噪声影响到较平衡，再到过度平滑的变化。</desc>
+  <rect width="1200" height="620" fill="#f7f9fc"/>
+
+  <g transform="translate(54 58)">
+    <rect width="334" height="470" rx="8" fill="#ffffff" stroke="#d9e0e8" stroke-width="2"/>
+    <text x="28" y="50" fill="#17202a" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="27" font-weight="700">K = 1</text>
+    <text x="28" y="82" fill="#697585" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="18">对单个噪声很敏感</text>
+    <path d="M26 242c45-60 73-86 120-39 41 41 45-37 88-18 43 20 14 85 73 100" fill="none" stroke="#17202a" stroke-width="5"/>
+    <path d="M26 112h282v274H26z" fill="#2878b8" fill-opacity="0.07"/>
+    <path d="M26 242c45-60 73-86 120-39 41 41 45-37 88-18 43 20 14 85 73 100v101H26z" fill="#df664f" fill-opacity="0.12"/>
+    <circle cx="73" cy="157" r="11" fill="#2878b8"/><circle cx="134" cy="140" r="11" fill="#2878b8"/><circle cx="188" cy="160" r="11" fill="#2878b8"/><circle cx="256" cy="140" r="11" fill="#2878b8"/>
+    <circle cx="172" cy="265" r="11" fill="#2878b8" stroke="#17202a" stroke-width="3"/>
+    <path d="M70 304l13 23H57zM128 334l13 23h-26zM215 303l13 23h-26zM267 347l13 23h-26z" fill="#df664f"/>
+    <text x="167" y="430" text-anchor="middle" fill="#b34b38" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="21" font-weight="700">容易过拟合</text>
+  </g>
+
+  <g transform="translate(433 58)">
+    <rect width="334" height="470" rx="8" fill="#ffffff" stroke="#d9e0e8" stroke-width="2"/>
+    <text x="28" y="50" fill="#17202a" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="27" font-weight="700">K = 5</text>
+    <text x="28" y="82" fill="#697585" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="18">兼顾局部与整体</text>
+    <path d="M26 112h282v274H26z" fill="#2878b8" fill-opacity="0.07"/>
+    <path d="M26 244c83-35 160-26 282 36v106H26z" fill="#df664f" fill-opacity="0.12"/>
+    <path d="M26 244c83-35 160-26 282 36" fill="none" stroke="#17202a" stroke-width="5"/>
+    <circle cx="69" cy="157" r="11" fill="#2878b8"/><circle cx="128" cy="143" r="11" fill="#2878b8"/><circle cx="184" cy="167" r="11" fill="#2878b8"/><circle cx="257" cy="145" r="11" fill="#2878b8"/><circle cx="173" cy="262" r="11" fill="#2878b8"/>
+    <path d="M70 307l13 23H57zM129 338l13 23h-26zM215 305l13 23h-26zM267 348l13 23h-26z" fill="#df664f"/>
+    <text x="167" y="430" text-anchor="middle" fill="#24725f" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="21" font-weight="700">通常更平衡</text>
+  </g>
+
+  <g transform="translate(812 58)">
+    <rect width="334" height="470" rx="8" fill="#ffffff" stroke="#d9e0e8" stroke-width="2"/>
+    <text x="28" y="50" fill="#17202a" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="27" font-weight="700">K = 15</text>
+    <text x="28" y="82" fill="#697585" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="18">局部规律被整体淹没</text>
+    <path d="M26 112h282v274H26z" fill="#2878b8" fill-opacity="0.07"/>
+    <path d="M26 290h282v96H26z" fill="#df664f" fill-opacity="0.12"/>
+    <path d="M26 290H308" fill="none" stroke="#17202a" stroke-width="5"/>
+    <circle cx="69" cy="157" r="11" fill="#2878b8"/><circle cx="128" cy="143" r="11" fill="#2878b8"/><circle cx="184" cy="167" r="11" fill="#2878b8"/><circle cx="257" cy="145" r="11" fill="#2878b8"/><circle cx="173" cy="262" r="11" fill="#2878b8"/>
+    <path d="M70 307l13 23H57zM129 338l13 23h-26zM215 305l13 23h-26zM267 348l13 23h-26z" fill="#df664f"/>
+    <text x="167" y="430" text-anchor="middle" fill="#9c6330" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="21" font-weight="700">可能欠拟合</text>
+  </g>
+
+  <g transform="translate(420 566)" font-family="Arial, 'Noto Sans SC', sans-serif" font-size="20" fill="#465363">
+    <circle cx="0" cy="0" r="10" fill="#2878b8"/><text x="20" y="7">蓝色类别</text>
+    <path d="M168-12l12 22h-24z" fill="#df664f"/><text x="193" y="7">红色类别</text>
+    <path d="M346 0h42" stroke="#17202a" stroke-width="4"/><text x="401" y="7">预测边界</text>
+  </g>
+</svg>
