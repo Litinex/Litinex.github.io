@@ -32,13 +32,13 @@
 /* KNN long-form guide */
 .knn-article-page .article-header {
   width: 100%;
-  max-width: 860px;
+  max-width: var(--content-width);
   min-width: 0;
 }
 
 .knn-article-page .article-header h1 {
   width: 100%;
-  max-width: 850px;
+  max-width: none;
   font-size: clamp(2.25rem, 5vw, 3.9rem);
   overflow-wrap: anywhere;
 }
@@ -401,7 +401,8 @@ html[data-theme="dark"] .knn-summary-words span {
 .resume-reading-card,
 .article-learning-card,
 .article-recommendations {
-  margin: 24px 0;
+  width: min(var(--content-width), 100%);
+  margin: 24px auto;
   border: 1px solid var(--line);
   border-radius: 22px;
   background: color-mix(in srgb, var(--surface) 92%, transparent);
