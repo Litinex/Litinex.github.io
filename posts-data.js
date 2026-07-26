@@ -2,6 +2,19 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "python-decision-tree-beginner-guide",
+      href: "posts/python-decision-tree-beginner-guide.html",
+      title: "像玩猜谜一样做预测：零基础彻底学会决策树",
+      date: "2026-07-26",
+      updated: "2026-07-26",
+      category: "Python 入门",
+      excerpt: "从连续提问和基尼不纯度讲起，手算最佳切分，再用 Python 与 scikit-learn 完成训练、剪枝、可视化和评估。",
+      tags: ["Python", "机器学习", "决策树", "算法", "数据分析"],
+      words: 7200,
+      readTime: 24,
+      series: { id: "python-intro", name: "Python 入门", index: 11 },
+    },
+    {
       id: "python-knn-basic-algorithm",
       href: "posts/python-knn-basic-algorithm.html",
       title: "让邻居替你做决定：零基础学会 K 近邻算法（KNN）",

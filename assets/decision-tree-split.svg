@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">决策树寻找最佳切分示意图</title>
+  <desc id="desc">同一组十个样本分别按两个候选问题切分。左侧切分后类别仍混杂，右侧切分后两组更纯，因此右侧问题更适合作为节点。</desc>
+  <defs><linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101b2f"/><stop offset="1" stop-color="#172840"/></linearGradient><style>.card{fill:#1d304a;stroke:#3a5575;stroke-width:2}.title{fill:#f2f7ff;font:800 29px system-ui,sans-serif;text-anchor:middle}.label{fill:#b9c9de;font:600 21px system-ui,sans-serif;text-anchor:middle}.bad{fill:#ff9db7;font:800 22px system-ui,sans-serif;text-anchor:middle}.good{fill:#77e1bb;font:800 22px system-ui,sans-serif;text-anchor:middle}.dot-a{fill:#64b5ff}.dot-b{fill:#ff789f}.divider{stroke:#d7e5f6;stroke-width:4;stroke-dasharray:10 9}</style></defs>
+  <rect width="1200" height="650" rx="32" fill="url(#bg2)"/><text class="title" x="600" y="58">训练的核心：比较候选问题，选择“分得最干净”的一个</text>
+  <rect class="card" x="45" y="95" width="530" height="475" rx="28"/><rect class="card" x="625" y="95" width="530" height="475" rx="28"/>
+  <text class="label" x="310" y="140">候选 A：年龄 ≤ 30 岁？</text><text class="label" x="890" y="140">候选 B：收入 ≤ 6 千元？</text>
+  <line class="divider" x1="310" y1="175" x2="310" y2="465"/><line class="divider" x1="890" y1="175" x2="890" y2="465"/>
+  <text class="label" x="177" y="195">是</text><text class="label" x="443" y="195">否</text><text class="label" x="757" y="195">是</text><text class="label" x="1023" y="195">否</text>
+  <g class="dot-a"><circle cx="130" cy="245" r="18"/><circle cx="200" cy="310" r="18"/><circle cx="145" cy="390" r="18"/><circle cx="390" cy="265" r="18"/><circle cx="450" cy="370" r="18"/></g>
+  <g class="dot-b"><circle cx="210" cy="245" r="18"/><circle cx="120" cy="325" r="18"/><circle cx="420" cy="310" r="18"/><circle cx="390" cy="410" r="18"/><circle cx="475" cy="235" r="18"/></g>
+  <g class="dot-a"><circle cx="710" cy="240" r="18"/><circle cx="785" cy="285" r="18"/><circle cx="730" cy="350" r="18"/><circle cx="800" cy="405" r="18"/><circle cx="755" cy="465" r="18"/></g>
+  <g class="dot-b"><circle cx="960" cy="240" r="18"/><circle cx="1035" cy="285" r="18"/><circle cx="980" cy="350" r="18"/><circle cx="1050" cy="405" r="18"/><circle cx="1005" cy="465" r="18"/></g>
+  <text class="bad" x="310" y="525">两边仍然红蓝混杂：较差</text><text class="good" x="890" y="525">两边几乎各是一类：更好</text>
+  <circle class="dot-a" cx="410" cy="610" r="12"/><text x="432" y="617" fill="#cbd7e7" font-family="system-ui,sans-serif" font-size="19">批准</text><circle class="dot-b" cx="580" cy="610" r="12"/><text x="602" y="617" fill="#cbd7e7" font-family="system-ui,sans-serif" font-size="19">拒绝</text>
+</svg>

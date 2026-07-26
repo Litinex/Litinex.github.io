@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>像玩猜谜一样做预测：零基础彻底学会决策树 | 风迁夏回</title>
+  <meta name="description" content="面向零基础读者的决策树图文教程：从生活中的连续提问讲起，手算基尼不纯度与最佳切分，从零实现分类树，再用 scikit-learn 完成训练、剪枝、可视化和评估。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-decision-tree-beginner-guide.html">
+  <meta property="og:title" content="像玩猜谜一样做预测：零基础彻底学会决策树 | 风迁夏回">
+  <meta property="og:description" content="从连续提问、基尼不纯度到剪枝，亲手训练一棵真正能做预测的决策树。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-decision-tree-beginner-guide.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/decision-tree-loan.svg">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260726-1">
+  <script src="../posts-data.js?v=20260726-1" defer></script>
+  <script src="../related-posts-data.js?v=20260726-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"像玩猜谜一样做预测：零基础彻底学会决策树","description":"面向零基础读者的决策树图文教程：从生活中的连续提问讲起，手算基尼不纯度与最佳切分，从零实现分类树，再用 scikit-learn 完成训练、剪枝、可视化和评估。","image":"https://yezizhuang.top/assets/decision-tree-loan.svg","url":"https://yezizhuang.top/posts/python-decision-tree-beginner-guide.html","datePublished":"2026-07-26","dateModified":"2026-07-26","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="python-decision-tree-beginner-guide">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.07.26 · Python 入门 · 约 24 分钟</p>
+      <h1>像玩猜谜一样做预测：零基础彻底学会决策树</h1>
+      <p class="article-deck">不用先啃公式。我们从一次贷款审批开始，亲手比较两个问题的好坏，再把“连续提问”写成能训练、能预测、能画出来的 Python 模型。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">你大概玩过“二十个问题”：心里想一个动物，别人只能问“会飞吗”“生活在水里吗”这类问题。每得到一个答案，候选范围就缩小一点。决策树也是如此——它把一个难判断的问题，拆成一串简单的“是或否”。</p>
+
+      <div class="knn-at-a-glance" aria-label="本文学习目标">
+        <p class="knn-eyebrow">读完你会做到</p>
+        <ul>
+          <li>认清根节点、内部节点、分支和叶节点</li>
+          <li>手算基尼不纯度，判断哪个问题分得更好</li>
+          <li>理解训练、预测、停止生长和剪枝的完整过程</li>
+          <li>用 Python 与 scikit-learn 训练、画出并评价决策树</li>
+        </ul>
+      </div>
+
+      <h2>一、决策树到底是什么</h2>
+      <p><strong>决策树（Decision Tree）</strong>是一种监督学习算法。训练数据不只有特征，还带着正确答案，也就是标签。算法观察许多已知案例，自动学会“先问什么、后问什么”，最后用这套规则判断新数据。</p>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/decision-tree-loan.svg" alt="贷款审批决策树：先判断是否有稳定收入，再根据负债率或信用记录判断批准或拒绝" width="1200" height="720">
+        <figcaption>图 1：新申请人从顶部出发，每回答一个问题就沿一条分支向下，走到叶节点时得到预测结果。</figcaption>
+      </figure>
+      <p>一棵树有四种重要部件：</p>
+      <ul>
+        <li><strong>根节点：</strong>最上面的第一个问题，所有样本都从这里开始。</li>
+        <li><strong>内部节点：</strong>中途继续提出的问题，例如“负债率是否不超过 30%”。</li>
+        <li><strong>分支：</strong>问题的答案，例如“是”和“否”。</li>
+        <li><strong>叶节点：</strong>不再提问，直接给出“批准”或“拒绝”等最终预测。</li>
+      </ul>
+      <aside class="knn-note"><strong>分类与回归都能做：</strong>预测“批准/拒绝”“猫/狗”属于分类；预测房价、温度等连续数字属于回归。本文先讲分类树，回归树的结构相同，只是衡量切分好坏的方法不同。</aside>
+
+      <h2>二、模型怎么知道先问什么</h2>
+      <p>人可以凭经验挑问题，算法却要把“这个问题很好”变成一个可计算的分数。核心目标只有一句：</p>
+      <blockquote class="knn-principle">每次都选择一个切分，让分开后的各组尽可能“纯”。</blockquote>
+      <p>“纯”是指一组中的样本尽量属于同一类别。10 个样本全是“批准”非常纯；5 个批准、5 个拒绝则非常混乱。好的问题能让混在一起的数据分到更清楚的两边。</p>
+      <figure class="knn-figure">
+        <img src="../assets/decision-tree-split.svg" alt="比较两个候选问题：按年龄切分后类别仍混杂，按收入切分后类别几乎完全分开" width="1200" height="650" loading="lazy">
+        <figcaption>图 2：算法会尝试很多“特征 + 阈值”组合，并选择让子节点最纯的那一个。</figcaption>
+      </figure>
+
+      <h2>三、用基尼不纯度手算一次</h2>
+      <p><strong>基尼不纯度（Gini impurity）</strong>是分类树常用的混乱程度指标。假设一组数据里各类别的比例是 <code>p₁、p₂……</code>，公式是：</p>
+      <p class="knn-formula">Gini = 1 − (p₁² + p₂² + …)</p>
+      <p>不用被符号吓到。我们只是在做三步：算每类占比、把占比分别平方、用 1 减去平方和。</p>
+      <h3>场景：8 位贷款申请人</h3>
+      <div class="knn-table-wrap" role="region" aria-label="贷款申请训练数据" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>编号</th><th>月收入（千元）</th><th>信用记录</th><th>结果</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>3</td><td>良好</td><td><span class="knn-label knn-label-b">拒绝</span></td></tr>
+            <tr><td>2</td><td>4</td><td>较差</td><td><span class="knn-label knn-label-b">拒绝</span></td></tr>
+            <tr><td>3</td><td>5</td><td>良好</td><td><span class="knn-label knn-label-b">拒绝</span></td></tr>
+            <tr><td>4</td><td>6</td><td>良好</td><td><span class="knn-label knn-label-a">批准</span></td></tr>
+            <tr><td>5</td><td>7</td><td>较差</td><td><span class="knn-label knn-label-b">拒绝</span></td></tr>
+            <tr><td>6</td><td>8</td><td>良好</td><td><span class="knn-label knn-label-a">批准</span></td></tr>
+            <tr><td>7</td><td>9</td><td>良好</td><td><span class="knn-label knn-label-a">批准</span></td></tr>
+            <tr><td>8</td><td>10</td><td>较差</td><td><span class="knn-label knn-label-a">批准</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>第 1 步：计算切分前的混乱程度</h3>
+      <p>8 人中有 4 人批准、4 人拒绝，两类比例都是 <code>4/8 = 0.5</code>：</p>
+      <p class="knn-formula">Gini(全部) = 1 − 0.5² − 0.5² = 0.5</p>
+      <p>二分类时，Gini 为 0 表示全是一类；0.5 表示两类各占一半，是最混乱的状态。</p>
+      <h3>第 2 步：尝试“月收入 ≤ 5.5 千元”</h3>
+      <p>左边有 3 人，全部拒绝，所以 <code>Gini(左) = 0</code>。右边有 5 人，其中 4 人批准、1 人拒绝：</p>
+      <p class="knn-formula">Gini(右) = 1 − (4/5)² − (1/5)² = 0.32</p>
+      <p>两个子节点大小不同，不能简单求平均，要按样本数量加权：</p>
+      <p class="knn-formula">切分后 Gini = (3/8) × 0 + (5/8) × 0.32 = 0.20</p>
+      <p>混乱程度从 <code>0.50</code> 降到 <code>0.20</code>，降低了 <code>0.30</code>。这个降低量也叫<strong>基尼增益</strong>。算法会继续比较收入的其他阈值、信用记录等候选问题，挑选增益最大的那个。</p>
+      <aside class="knn-note knn-note-soft"><strong>阈值从哪里来？</strong>数值特征通常先排序，再把相邻不同值的中点作为候选。收入 5 和 6 之间的候选阈值就是 <code>(5 + 6) / 2 = 5.5</code>，没有必要盲试每一个小数。</aside>
+
+      <h2>四、一棵树具体是怎样长出来的</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>把全部训练样本放在根节点</strong><p>此时所有类别混在一起，先计算当前不纯度。</p></div></li>
+        <li><span>02</span><div><strong>枚举候选切分</strong><p>逐个尝试特征和阈值，计算每种切法的加权不纯度。</p></div></li>
+        <li><span>03</span><div><strong>采用最佳问题</strong><p>选择不纯度下降最多的切分，把样本送往左右子节点。</p></div></li>
+        <li><span>04</span><div><strong>对子节点重复以上过程</strong><p>每个子节点只处理分到自己这里的样本，这就是递归。</p></div></li>
+        <li><span>05</span><div><strong>满足停止条件</strong><p>节点已经纯净、样本太少、树达到最大深度，或继续切分收益太小时停止。</p></div></li>
+      </ol>
+      <p>预测时不需要重新计算所有训练样本。新数据只需从根节点依次回答问题，直到叶节点；叶节点中数量最多的类别就是预测类别。</p>
+
+      <h2>五、从零写一个只有一层的决策树</h2>
+      <p>完整决策树需要递归，第一次学习可以先实现<strong>决策树桩</strong>：它只有一个问题和两个叶节点，却包含训练的核心——搜索最佳切分。</p>
+      <pre data-code-id="decision-tree-stump-from-scratch"><code class="language-python">from collections import Counter
+
+
+def gini(labels):
+    """计算一组分类标签的基尼不纯度。"""
+    total = len(labels)
+    if total == 0:
+        return 0.0
+
+    counts = Counter(labels)
+    return 1.0 - sum((count / total) ** 2 for count in counts.values())
+
+
+def candidate_thresholds(values):
+    """返回排序后相邻不同值的中点。"""
+    unique_values = sorted(set(values))
+    return [
+        (left + right) / 2
+        for left, right in zip(unique_values, unique_values[1:])
+    ]
+
+
+def find_best_split(features, labels):
+    """搜索所有特征和阈值，返回加权 Gini 最小的切分。"""
+    sample_count = len(labels)
+    feature_count = len(features[0])
+    best_split = None
+
+    for feature_index in range(feature_count):
+        values = [row[feature_index] for row in features]
+
+        for threshold in candidate_thresholds(values):
+            left_labels = [
+                label
+                for row, label in zip(features, labels)
+                if row[feature_index] &lt;= threshold
+            ]
+            right_labels = [
+                label
+                for row, label in zip(features, labels)
+                if row[feature_index] &gt; threshold
+            ]
+
+            weighted_gini = (
+                len(left_labels) / sample_count * gini(left_labels)
+                + len(right_labels) / sample_count * gini(right_labels)
+            )
+
+            if best_split is None or weighted_gini &lt; best_split["gini"]:
+                best_split = {
+                    "feature_index": feature_index,
+                    "threshold": threshold,
+                    "gini": weighted_gini,
+                    "left_label": Counter(left_labels).most_common(1)[0][0],
+                    "right_label": Counter(right_labels).most_common(1)[0][0],
+                }
+
+    return best_split
+
+
+def predict_stump(tree, sample):
+    if sample[tree["feature_index"]] &lt;= tree["threshold"]:
+        return tree["left_label"]
+    return tree["right_label"]
+
+
+# 两列特征依次是：月收入（千元）、信用是否良好（1 是，0 否）
+X = [[3, 1], [4, 0], [5, 1], [6, 1],
+     [7, 0], [8, 1], [9, 1], [10, 0]]
+y = ["拒绝", "拒绝", "拒绝", "批准", "拒绝", "批准", "批准", "批准"]
+
+tree = find_best_split(X, y)
+print(tree)
+print("新申请人的预测：", predict_stump(tree, [8.5, 1]))</code></pre>
+      <p>这段代码会发现第 0 个特征（收入）上的某个阈值拥有较低的加权 Gini。真正的树会把左右两组继续送回类似的函数，直到触发停止条件。</p>
+
+      <h2>六、用 scikit-learn 完成正规训练</h2>
+      <pre data-code-id="decision-tree-install-sklearn"><code class="language-bash">python -m pip install scikit-learn matplotlib</code></pre>
+      <p>下面使用自带的鸢尾花数据集。每朵花有 4 个特征，目标是判断 3 种品种。</p>
+      <pre data-code-id="decision-tree-sklearn-training"><code class="language-python">import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+
+
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# stratify 保持训练集和测试集中的类别比例接近
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y,
+)
+
+# 限制深度，避免树把训练样本的细枝末节全部记住
+model = DecisionTreeClassifier(
+    criterion="gini",
+    max_depth=3,
+    min_samples_leaf=3,
+    random_state=42,
+)
+
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+print(f"测试集准确率：{accuracy_score(y_test, y_pred):.2%}")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+
+# 把学到的问题画出来
+plt.figure(figsize=(14, 8))
+plot_tree(
+    model,
+    feature_names=iris.feature_names,
+    class_names=iris.target_names,
+    filled=True,
+    rounded=True,
+)
+plt.tight_layout()
+plt.show()
+
+# 预测一朵新花
+new_flower = [[5.1, 3.5, 1.4, 0.2]]
+predicted_class = model.predict(new_flower)[0]
+print("预测品种：", iris.target_names[predicted_class])</code></pre>
+      <p>图中的每个节点通常会显示：</p>
+      <ul>
+        <li><code>feature &lt;= threshold</code>：当前要回答的问题；成立走左边，不成立走右边。</li>
+        <li><code>gini</code>：该节点的混乱程度，越接近 0 越纯。</li>
+        <li><code>samples</code>：训练时到达这个节点的样本数量。</li>
+        <li><code>value</code>：各类别分别有多少个样本。</li>
+        <li><code>class</code>：该节点当前会预测的多数类别。</li>
+      </ul>
+      <aside class="knn-note knn-note-soft"><strong>为什么没有 StandardScaler？</strong>决策树只比较“某个值是否小于阈值”，不会像 KNN 那样计算不同特征之间的距离。因此通常不需要标准化，厘米换成米只会改变阈值数字，不会改变样本的左右顺序。</aside>
+
+      <h2>七、决策树最大的敌人：过拟合</h2>
+      <p>如果不限制生长，树可以不断提出越来越细的问题，甚至让每个叶节点只剩一个训练样本。训练准确率可能达到 100%，遇到新数据却表现变差——它记住了练习册，而不是学会规律，这就是<strong>过拟合</strong>。</p>
+      <div class="knn-comparison" aria-label="控制决策树复杂度的参数">
+        <section><h3>生长前限制</h3><p><code>max_depth</code> 限制最大深度；<code>min_samples_split</code> 规定节点至少有多少样本才允许再分；<code>min_samples_leaf</code> 规定每个叶节点至少保留多少样本。</p></section>
+        <section><h3>生长后剪枝</h3><p><code>ccp_alpha</code> 会给复杂分支增加代价。值越大，剪掉的分支通常越多，树越简单；最合适的值应通过交叉验证选择。</p></section>
+      </div>
+      <p>不要只比较训练集准确率。正确方法是在训练数据内部用交叉验证选择复杂度，最后再用从未参与调参的测试集做一次客观评价。</p>
+      <pre data-code-id="decision-tree-cross-validation"><code class="language-python">from sklearn.model_selection import GridSearchCV
+
+
+parameter_grid = {
+    "max_depth": [2, 3, 4, 5, None],
+    "min_samples_leaf": [1, 2, 3, 5, 10],
+    "ccp_alpha": [0.0, 0.001, 0.005, 0.01],
+}
+
+search = GridSearchCV(
+    DecisionTreeClassifier(random_state=42),
+    parameter_grid,
+    cv=5,
+    scoring="accuracy",
+)
+search.fit(X_train, y_train)
+
+print("最佳参数：", search.best_params_)
+print("平均验证准确率：", search.best_score_)
+print("最终测试准确率：", search.score(X_test, y_test))</code></pre>
+
+      <h2>八、信息熵是什么，和 Gini 有何不同</h2>
+      <p>有些教材用<strong>信息熵（Entropy）</strong>衡量混乱，再选择信息增益最大的切分。它和 Gini 的目标相同：纯节点得分低，类别混杂得分高。scikit-learn 中把 <code>criterion="gini"</code> 改为 <code>criterion="entropy"</code> 即可。</p>
+      <p class="knn-formula">Entropy = −Σ pᵢ × log₂(pᵢ)</p>
+      <p>实践中两者常得到相近的树。Gini 计算稍简单，也是默认选择。初学阶段更重要的是理解“比较切分前后纯度”，不必纠结哪一个永远更好——不存在对所有数据都稳赢的指标。</p>
+
+      <h2>九、优点、局限与适用场景</h2>
+      <div class="knn-pros-cons">
+        <section><p class="knn-eyebrow">它为什么受欢迎</p><ul><li>规则可以画出来，预测路径容易解释</li><li>能处理非线性关系和特征之间的组合</li><li>通常不需要特征标准化</li><li>数值特征和经过编码的类别特征都能使用</li></ul></section>
+        <section><p class="knn-eyebrow">什么时候要谨慎</p><ul><li>深树容易过拟合，必须控制复杂度</li><li>数据稍有变化，树的结构可能明显改变</li><li>贪心地选择当前最佳切分，不保证得到全局最优树</li><li>类别极不平衡时，准确率可能掩盖少数类表现</li></ul></section>
+      </div>
+      <p>单棵树不够稳定时，可以了解<strong>随机森林</strong>和<strong>梯度提升树</strong>。它们把许多树组合起来，通常换取更强的预测能力；代价是模型不再像单棵树那样一眼就能完整解释。</p>
+
+      <h2>十、新手最常踩的 7 个坑</h2>
+      <ol class="knn-mistakes">
+        <li><strong>用完整数据训练后，又用同一批数据评价。</strong>这只能说明记得好，不能证明对新数据有效。</li>
+        <li><strong>不限制树的深度和叶节点大小。</strong>树会追逐噪声，训练分数很高而测试分数下降。</li>
+        <li><strong>直接把“红、黄、蓝”写成 1、2、3。</strong>普通决策树会把它当成有大小顺序的数字；应使用合适的类别编码。</li>
+        <li><strong>把编号当成有意义的特征。</strong>用户 ID、订单号通常没有可推广的规律，反而可能制造虚假切分。</li>
+        <li><strong>只看准确率。</strong>类别不平衡时还应检查混淆矩阵、精确率、召回率和 F1。</li>
+        <li><strong>把特征重要性当成因果关系。</strong>模型发现的是预测关联，不能仅凭一棵树断言“收入导致批准”。</li>
+        <li><strong>逐字解释很小的分支。</strong>只覆盖两三个样本的规则往往不稳定，解释时要同时查看 <code>samples</code>。</li>
+      </ol>
+
+      <h2>十一、完成自己的决策树项目</h2>
+      <ol>
+        <li><strong>定义目标：</strong>明确一行数据代表什么，要预测哪一个标签。</li>
+        <li><strong>清理数据：</strong>处理缺失值、类别特征、无意义编号和可能泄露答案的字段。</li>
+        <li><strong>先划测试集：</strong>测试集留到最后，避免在调参时偷看。</li>
+        <li><strong>训练简单基线：</strong>先用较小的 <code>max_depth</code>，画树并检查规则是否合理。</li>
+        <li><strong>交叉验证调参：</strong>比较深度、叶节点最小样本数和剪枝强度。</li>
+        <li><strong>多指标评价：</strong>结合业务代价判断假阳性和假阴性哪个更严重。</li>
+        <li><strong>记录与复现：</strong>保存特征处理方式、参数、随机种子和库版本。</li>
+      </ol>
+
+      <h2>最后，把决策树记成一句话</h2>
+      <p class="knn-summary-words"><span>提问</span><span>比较</span><span>分组</span><span>重复</span></p>
+      <p>决策树训练时，枚举许多候选<strong>问题</strong>，用 Gini 或熵<strong>比较</strong>切分好坏，把数据分成更纯的<strong>小组</strong>，再对子节点<strong>重复</strong>这个过程。预测时，新样本沿着学好的问题一路走到叶节点即可。</p>
+      <p>最好的练习不是复制代码，而是把示例中的 <code>max_depth</code> 依次改为 1、2、3 和 <code>None</code>，观察树形、训练分数与测试分数怎样变化。当你能解释“树为什么变复杂、测试表现为什么不一定更好”，就真正理解了决策树。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-knn-basic-algorithm.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：零基础学会 K 近邻算法（KNN）</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

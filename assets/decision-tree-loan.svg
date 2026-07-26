@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">贷款审批决策树示意图</title>
+  <desc id="desc">从是否有稳定收入开始，根据负债率和信用记录继续判断，最终得到批准或拒绝贷款的结果。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101b2f"/><stop offset="1" stop-color="#172840"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity=".25"/></filter>
+    <style>
+      .line{fill:none;stroke:#8aa4c4;stroke-width:5;stroke-linecap:round}.node{fill:#203754;stroke:#75bfff;stroke-width:3}.leaf-ok{fill:#153f38;stroke:#63dfb0;stroke-width:3}.leaf-no{fill:#4a2935;stroke:#ff8cab;stroke-width:3}.q{fill:#f4f8ff;font:700 27px system-ui,sans-serif;text-anchor:middle}.small{fill:#b9c9de;font:500 20px system-ui,sans-serif;text-anchor:middle}.yes{fill:#76e2bb;font:700 20px system-ui,sans-serif;text-anchor:middle}.no{fill:#ff9db7;font:700 20px system-ui,sans-serif;text-anchor:middle}.leaf{fill:#fff;font:800 27px system-ui,sans-serif;text-anchor:middle}.sub{fill:#cbd7e7;font:500 18px system-ui,sans-serif;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="1200" height="720" rx="32" fill="url(#bg)"/>
+  <text x="600" y="58" fill="#eef5ff" font-family="system-ui,sans-serif" font-size="30" font-weight="800" text-anchor="middle">一棵决策树，就是一连串有顺序的问题</text>
+  <path class="line" d="M600 179V235M600 235H315V295M600 235H885V295M315 393V455M315 455H155V525M315 455H475V525M885 393V455M885 455H725V525M885 455H1045V525"/>
+  <text class="no" x="450" y="222">否</text><text class="yes" x="750" y="222">是</text>
+  <text class="yes" x="225" y="442">低</text><text class="no" x="405" y="442">高</text>
+  <text class="yes" x="795" y="442">良好</text><text class="no" x="975" y="442">较差</text>
+  <g filter="url(#shadow)"><rect class="node" x="420" y="90" width="360" height="90" rx="20"/><text class="q" x="600" y="130">有稳定收入吗？</text><text class="small" x="600" y="160">根节点：先问最能区分类别的问题</text></g>
+  <g filter="url(#shadow)"><rect class="node" x="155" y="295" width="320" height="100" rx="20"/><text class="q" x="315" y="338">负债率 ≤ 30%？</text><text class="small" x="315" y="370">继续缩小判断范围</text></g>
+  <g filter="url(#shadow)"><rect class="node" x="725" y="295" width="320" height="100" rx="20"/><text class="q" x="885" y="338">信用记录良好吗？</text><text class="small" x="885" y="370">同一路径只看相关问题</text></g>
+  <g filter="url(#shadow)"><rect class="leaf-ok" x="45" y="525" width="220" height="110" rx="25"/><text class="leaf" x="155" y="574">批准</text><text class="sub" x="155" y="606">叶节点：最终答案</text></g>
+  <g filter="url(#shadow)"><rect class="leaf-no" x="365" y="525" width="220" height="110" rx="25"/><text class="leaf" x="475" y="574">拒绝</text><text class="sub" x="475" y="606">风险较高</text></g>
+  <g filter="url(#shadow)"><rect class="leaf-ok" x="615" y="525" width="220" height="110" rx="25"/><text class="leaf" x="725" y="574">批准</text><text class="sub" x="725" y="606">条件较好</text></g>
+  <g filter="url(#shadow)"><rect class="leaf-no" x="935" y="525" width="220" height="110" rx="25"/><text class="leaf" x="1045" y="574">拒绝</text><text class="sub" x="1045" y="606">信用风险</text></g>
+  <text x="600" y="684" fill="#8fa6c3" font-family="system-ui,sans-serif" font-size="18" text-anchor="middle">示意规则仅用于讲解；真实模型的规则由训练数据自动学习</text>
+</svg>
