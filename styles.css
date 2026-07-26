@@ -3440,7 +3440,7 @@ html[data-theme="light"] .music-dock {
   --radius-sm: 10px;
   --page-width: 1200px;
   --max-width: 1200px;
-  --content-width: 780px;
+  --content-width: clamp(900px, 55vw, 1080px);
   --font-sans: "Manrope", "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
   --font-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
   --font-display: "Cormorant Garamond", "Noto Serif SC", serif;
@@ -4349,7 +4349,7 @@ html[data-theme="light"] .post-card:focus-within .post-card-arrow {
 }
 
 .article-shell {
-  width: min(980px, calc(100% - 32px));
+  width: min(var(--page-width), calc(100% - 32px));
   padding: 24px 0 76px;
 }
 
