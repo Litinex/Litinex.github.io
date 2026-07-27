@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>让单词自己投票：零基础学会朴素贝叶斯与垃圾邮件过滤 | 风迁夏回</title>
+  <meta name="description" content="结合《机器学习实战》第四章源码，从词表、词集和词袋讲到贝叶斯公式、拉普拉斯平滑与对数概率，最后用50封真实邮件完成朴素贝叶斯垃圾邮件过滤。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-naive-bayes-spam-filter.html">
+  <meta property="og:title" content="让单词自己投票：零基础学会朴素贝叶斯与垃圾邮件过滤 | 风迁夏回">
+  <meta property="og:description" content="把邮件变成数字，让单词提供证据，再亲手训练一个能识别垃圾邮件的朴素贝叶斯分类器。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-naive-bayes-spam-filter.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/naive-bayes-spam-pipeline.svg">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260727-1">
+  <script src="../posts-data.js?v=20260727-1" defer></script>
+  <script src="../related-posts-data.js?v=20260727-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"让单词自己投票：零基础学会朴素贝叶斯与垃圾邮件过滤","description":"结合《机器学习实战》第四章源码，从词表、词集和词袋讲到贝叶斯公式、拉普拉斯平滑与对数概率，最后用50封真实邮件完成朴素贝叶斯垃圾邮件过滤。","image":"https://yezizhuang.top/assets/naive-bayes-spam-pipeline.svg","url":"https://yezizhuang.top/posts/python-naive-bayes-spam-filter.html","datePublished":"2026-07-27","dateModified":"2026-07-27","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="python-naive-bayes-spam-filter">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.07.27 · Python 入门 · 约 25 分钟</p>
+      <h1>让单词自己投票：零基础学会朴素贝叶斯与垃圾邮件过滤</h1>
+      <p class="article-deck">从《机器学习实战》第四章的真实代码出发，把邮件拆成单词、把单词变成数字、把概率变成分类结果，最终训练一个可以识别垃圾邮件的小模型。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">看到“免费、折扣、立即购买”，你会更怀疑一封邮件是垃圾邮件；看到“会议、项目、明天见”，你又会更倾向于把它当作正常邮件。朴素贝叶斯做的事情，就是从已有邮件里统计这些词分别在哪一类中更常见，再综合整封邮件给出的证据。</p>
+
+      <aside class="knn-note"><strong>本文代码来源：</strong>文章基于本地《机器学习实战》第四章源码整理。项目包含 6 条短文本入门数据，以及 <strong>25 封垃圾邮件、25 封正常邮件</strong>。我会沿着源码真实执行路径讲解，而不是只罗列公式。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文学习目标">
+        <p class="knn-eyebrow">读完你会做到</p>
+        <ul>
+          <li>理解先验概率、条件概率和贝叶斯公式的直觉</li>
+          <li>把自然语言转换成词集或词袋向量</li>
+          <li>看懂拉普拉斯平滑和对数概率为什么必不可少</li>
+          <li>从读取 50 封邮件开始，完成训练、测试和错误率计算</li>
+        </ul>
+      </div>
+
+      <h2>一、先看最终任务：过滤垃圾邮件</h2>
+      <p>这是一个典型的<strong>二分类</strong>问题：输入是一封邮件，输出只有两个类别。</p>
+      <ul>
+        <li><code>1</code>：垃圾邮件（spam）。</li>
+        <li><code>0</code>：正常邮件（ham）。</li>
+      </ul>
+      <p>机器不能直接理解一段英文，所以完整流程要经过五步：</p>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/naive-bayes-spam-pipeline.svg" alt="朴素贝叶斯邮件分类流程：原始邮件经过分词、词袋向量化、两类概率得分计算，最终输出垃圾或正常" width="1200" height="650">
+        <figcaption>图 1：训练阶段学出每个词在两类中的概率；预测阶段把新邮件转换成同样的向量，再比较两类总得分。</figcaption>
+      </figure>
+      <ol>
+        <li>读取邮件并切成单词。</li>
+        <li>建立一个包含所有不同单词的词表。</li>
+        <li>按照词表把每封邮件转换成数字向量。</li>
+        <li>从训练邮件中统计每一类的词语概率。</li>
+        <li>计算新邮件更像垃圾邮件还是正常邮件。</li>
+      </ol>
+
+      <h2>二、贝叶斯公式到底在问什么</h2>
+      <p>我们真正想知道的是：</p>
+      <blockquote class="knn-principle">已经看到邮件里的这些词，它属于垃圾邮件的概率有多大？</blockquote>
+      <p>这叫<strong>后验概率</strong>，写作 <code>P(垃圾 | 这些词)</code>。竖线可以读成“在已经知道……的条件下”。贝叶斯公式把这个难直接统计的问题，转换成更容易从训练数据中计算的形式：</p>
+      <p class="knn-formula">P(垃圾 | 词语) = P(词语 | 垃圾) × P(垃圾) ÷ P(词语)</p>
+      <p>每一部分的意思是：</p>
+      <ul>
+        <li><strong><code>P(垃圾)</code>：</strong>还没看内容之前，一封邮件本来有多大概率是垃圾邮件，叫先验概率。</li>
+        <li><strong><code>P(词语 | 垃圾)</code>：</strong>已知它是垃圾邮件，出现这些词的可能性。</li>
+        <li><strong><code>P(词语)</code>：</strong>不区分类别时，看到这些词的可能性。</li>
+        <li><strong><code>P(垃圾 | 词语)</code>：</strong>看完这些词之后，对“它是垃圾邮件”的更新判断。</li>
+      </ul>
+      <p>分类时，我们还会计算 <code>P(正常 | 词语)</code>。两边的分母 <code>P(词语)</code> 完全相同，只比较大小时可以同时删掉，因此代码实际比较：</p>
+      <p class="knn-formula">垃圾得分 ∝ P(词语 | 垃圾) × P(垃圾)</p>
+      <p class="knn-formula">正常得分 ∝ P(词语 | 正常) × P(正常)</p>
+
+      <h2>三、为什么名字里有“朴素”</h2>
+      <p>一封邮件可能有很多词。直接统计某一整套词同时出现的概率，需要海量数据。朴素贝叶斯做了一个大胆简化：</p>
+      <blockquote class="knn-principle">假设给定类别之后，各个词是否出现彼此独立。</blockquote>
+      <p>于是，“免费”和“购买”同时出现的概率，可以拆成两个概率相乘：</p>
+      <p class="knn-formula">P(免费, 购买 | 垃圾) ≈ P(免费 | 垃圾) × P(购买 | 垃圾)</p>
+      <p>现实里单词显然不是完全独立的，“机器”和“学习”经常一起出现。这个假设看起来很“天真”，所以叫<strong>朴素</strong>。但它把几乎算不动的问题变得简单，而且在文本分类、小数据和高维稀疏特征中常常表现很好。</p>
+      <figure class="knn-figure">
+        <img src="../assets/naive-bayes-word-evidence.svg" alt="单词像证据一样改变垃圾邮件和正常邮件的相对得分" width="1200" height="650" loading="lazy">
+        <figcaption>图 2：先验概率决定起点；每个词根据训练中学到的条件概率，为垃圾或正常一侧增加证据。</figcaption>
+      </figure>
+
+      <h2>四、第一道门槛：怎样把文字变成数字</h2>
+      <p>源码先准备了 6 条已经标注的短文本，其中 3 条正常、3 条带侮辱性：</p>
+      <pre data-code-id="naive-bayes-load-small-dataset"><code class="language-python">def loadDataSet():
+    documents = [
+        ["my", "dog", "has", "flea", "problems", "help", "please"],
+        ["maybe", "not", "take", "him", "to", "dog", "park", "stupid"],
+        ["my", "dalmation", "is", "so", "cute", "I", "love", "him"],
+        ["stop", "posting", "stupid", "worthless", "garbage"],
+        ["mr", "licks", "ate", "my", "steak", "how", "to", "stop", "him"],
+        ["quit", "buying", "worthless", "dog", "food", "stupid"],
+    ]
+    labels = [0, 1, 0, 1, 0, 1]
+    return documents, labels</code></pre>
+
+      <h3>第 1 步：建立词表</h3>
+      <p>把所有文档中的单词合并，并且删除重复项，就得到词表。可以把它想成全班花名册：同一个名字只登记一次。</p>
+      <pre data-code-id="naive-bayes-create-vocabulary"><code class="language-python">def createVocabList(dataSet):
+    vocabulary = set()
+    for document in dataSet:
+        vocabulary = vocabulary | set(document)
+    return list(vocabulary)</code></pre>
+      <p>这 6 条文本会产生 32 个不同单词。集合转列表后的顺序可能变化，所以每次运行时某个单词的下标不一定相同；只要训练和预测使用<strong>同一个词表</strong>，结果就不受影响。</p>
+
+      <h3>第 2 步：转换为词集向量</h3>
+      <p>假设词表前三项是 <code>["dog", "love", "stupid", ...]</code>，文本 <code>["love", "dog"]</code> 就可以表示为 <code>[1, 1, 0, ...]</code>。每个位置只回答：这个词出现过吗？</p>
+      <pre data-code-id="naive-bayes-set-of-words"><code class="language-python">def setOfWords2Vec(vocabList, inputWords):
+    vector = [0] * len(vocabList)
+
+    for word in inputWords:
+        if word in vocabList:
+            vector[vocabList.index(word)] = 1
+
+    return vector</code></pre>
+      <p>源码运行结果显示，第一条文本被转换为一个长度 32 的 0/1 向量。原来的句子已经消失，但“哪些词出现过”被保留下来。</p>
+
+      <h2>五、词集模型和词袋模型有什么区别</h2>
+      <div class="knn-comparison" aria-label="词集模型和词袋模型对比">
+        <section><h3>词集模型</h3><p>只记录有没有出现。同一个词出现 1 次或 10 次，数值都是 <code>1</code>。适合强调词语存在与否。</p></section>
+        <section><h3>词袋模型</h3><p>记录出现次数。同一个词出现 3 次，数值就是 <code>3</code>。它保留了更多频率信息。</p></section>
+      </div>
+      <p>第四章代码故意测试 <code>["my", "dog", "dog", "dog", "help"]</code>，运行结果是：</p>
+      <div class="knn-distance-list" aria-label="词集和词袋结果">
+        <div><span>词集</span><strong>dog 的数值</strong><code>1</code></div>
+        <div><span>词袋</span><strong>dog 的数值</strong><code>3</code></div>
+      </div>
+      <p>垃圾邮件案例使用的是词袋模型：</p>
+      <pre data-code-id="naive-bayes-bag-of-words"><code class="language-python">def bagOfWords2Vec(vocabList, inputWords):
+    vector = [0] * len(vocabList)
+
+    for word in inputWords:
+        if word in vocabList:
+            vector[vocabList.index(word)] += 1
+
+    return vector</code></pre>
+      <aside class="knn-note knn-note-soft"><strong>注意“词袋”这个名字：</strong>模型像把句子里的词全倒进袋子，只数每种词有几个，不保留语序。因此“狗咬人”和“人咬狗”可能得到同一个向量。这是简单高效的代价。</aside>
+
+      <h2>六、训练阶段到底统计了什么</h2>
+      <p>训练函数接收所有邮件向量和类别标签，要计算三样东西：</p>
+      <ul>
+        <li><code>pSpam</code>：训练集中垃圾邮件所占比例。</li>
+        <li><code>pWordGivenSpam</code>：每个词在垃圾邮件中的条件概率。</li>
+        <li><code>pWordGivenHam</code>：每个词在正常邮件中的条件概率。</li>
+      </ul>
+      <p>如果 40 封训练邮件中有 21 封垃圾邮件，那么先验概率就是 <code>21 / 40</code>。某个词在垃圾邮件中出现越多，它就越能把新邮件推向垃圾类别。</p>
+
+      <h2>七、为什么不能直接从 0 开始计数</h2>
+      <p>假设训练数据中的正常邮件从未出现过 <code>discount</code>，那么：</p>
+      <p class="knn-formula">P(discount | 正常) = 0</p>
+      <p>多项概率需要相乘，只要其中一个是 0，整封邮件属于正常类的得分就会立刻变成 0。一个从未见过的词就拥有“一票否决权”，这显然太武断。</p>
+      <p>源码使用<strong>拉普拉斯平滑</strong>：所有词的初始计数设为 1，两类的初始总数设为 2。</p>
+      <pre data-code-id="naive-bayes-laplace-smoothing"><code class="language-python">word_count_ham = np.ones(number_of_words)
+word_count_spam = np.ones(number_of_words)
+total_ham = 2.0
+total_spam = 2.0</code></pre>
+      <p>这相当于统计前先给每个候选词一张很小的“基础票”。没有真实观察时，概率仍然很小，但不会是毁掉整次计算的 0。</p>
+
+      <h2>八、为什么代码要对概率取对数</h2>
+      <p>一封邮件可能有几十甚至几百个词，每个条件概率都小于 1。许多小数连续相乘，结果会小得超出浮点数可表示范围，最终被计算机当成 0，这叫<strong>数值下溢</strong>。</p>
+      <p>对数有一个非常实用的性质：</p>
+      <p class="knn-formula">log(a × b × c) = log(a) + log(b) + log(c)</p>
+      <p>因此可以把“小概率连乘”改成“对数相加”。对数函数保持大小顺序：原来谁的概率更大，取完对数后仍然谁更大，所以分类结果不会改变。</p>
+      <pre data-code-id="naive-bayes-training-core"><code class="language-python">def trainNB(trainMatrix, trainLabels):
+    document_count = len(trainMatrix)
+    word_count = len(trainMatrix[0])
+    p_spam = sum(trainLabels) / float(document_count)
+
+    ham_counts = np.ones(word_count)
+    spam_counts = np.ones(word_count)
+    ham_total = 2.0
+    spam_total = 2.0
+
+    for index in range(document_count):
+        if trainLabels[index] == 1:
+            spam_counts += trainMatrix[index]
+            spam_total += sum(trainMatrix[index])
+        else:
+            ham_counts += trainMatrix[index]
+            ham_total += sum(trainMatrix[index])
+
+    log_p_word_given_spam = np.log(spam_counts / spam_total)
+    log_p_word_given_ham = np.log(ham_counts / ham_total)
+    return log_p_word_given_ham, log_p_word_given_spam, p_spam</code></pre>
+
+      <h2>九、新邮件是怎样完成分类的</h2>
+      <p>新邮件先转换成词向量。代码将向量中每个词的次数乘以对应的对数条件概率，再加上类别先验概率的对数：</p>
+      <pre data-code-id="naive-bayes-classification"><code class="language-python">def classifyNB(vector, log_ham, log_spam, p_spam):
+    spam_score = sum(vector * log_spam) + np.log(p_spam)
+    ham_score = sum(vector * log_ham) + np.log(1.0 - p_spam)
+
+    if spam_score > ham_score:
+        return 1
+    return 0</code></pre>
+      <p>短文本测试的实际结果是：</p>
+      <pre data-code-id="naive-bayes-small-test-output"><code class="language-code">['love', 'my', 'dalmation'] classified as: 0
+['stupid', 'garbage'] classified as: 1</code></pre>
+      <p>模型并不是看到 <code>stupid</code> 就写死返回 1，而是因为这个词在训练数据的类别 1 中更常见，给该类别增加了更强的概率证据。</p>
+
+      <h2>十、实战：读取 50 封真实邮件</h2>
+      <p>项目数据目录包含：</p>
+      <ul>
+        <li><code>email/spam/1.txt</code> 到 <code>25.txt</code>：25 封垃圾邮件。</li>
+        <li><code>email/ham/1.txt</code> 到 <code>25.txt</code>：25 封正常邮件。</li>
+      </ul>
+      <p>每封邮件先经过分词函数。它用非字母数字字符切分，统一转成小写，并过滤长度不超过 2 的短词：</p>
+      <pre data-code-id="naive-bayes-tokenizer"><code class="language-python">import re
+
+
+def textParse(text):
+    tokens = re.split(r"\W+", text)
+    return [token.lower() for token in tokens if len(token) > 2]</code></pre>
+      <p>过滤短词能去掉一部分信息量较低的内容，但它只是本案例的简单规则，不是普遍真理。中文文本还需要专门的分词工具，因为中文单词之间通常没有空格。</p>
+
+      <h3>数据集怎样划分</h3>
+      <p>50 封邮件中随机抽 10 封作为测试集，剩下 40 封用于训练。测试邮件不能同时进入训练集，否则模型已经见过答案，错误率会虚假地变低。</p>
+      <pre data-code-id="naive-bayes-train-test-split"><code class="language-python">training_indices = list(range(50))
+test_indices = []
+
+for _ in range(10):
+    random_position = int(np.random.uniform(0, len(training_indices)))
+    test_indices.append(training_indices[random_position])
+    del training_indices[random_position]</code></pre>
+      <aside class="knn-note knn-note-warning"><strong>这里有一个关键兼容修正：</strong>书中 Python 2 的 <code>range(50)</code> 会直接产生列表；新版 Python 的 <code>range</code> 不可删除元素，所以必须写成 <code>list(range(50))</code>。有些移植代码使用 <code>del(list(trainingSet)[index])</code>，那只删除临时列表里的元素，原训练集没有改变，会造成测试数据泄漏。</aside>
+
+      <h3>完整训练与测试流程</h3>
+      <pre data-code-id="naive-bayes-spam-test"><code class="language-python">from pathlib import Path
+import numpy as np
+
+
+def spamTest(data_directory):
+    documents = []
+    labels = []
+
+    for number in range(1, 26):
+        spam_text = (data_directory / "spam" / f"{number}.txt").read_text(
+            encoding="ISO-8859-1"
+        )
+        ham_text = (data_directory / "ham" / f"{number}.txt").read_text(
+            encoding="ISO-8859-1"
+        )
+
+        documents.append(textParse(spam_text))
+        labels.append(1)
+        documents.append(textParse(ham_text))
+        labels.append(0)
+
+    vocabulary = createVocabList(documents)
+    training_indices = list(range(50))
+    test_indices = []
+
+    for _ in range(10):
+        position = int(np.random.uniform(0, len(training_indices)))
+        test_indices.append(training_indices[position])
+        del training_indices[position]
+
+    train_matrix = [
+        bagOfWords2Vec(vocabulary, documents[index])
+        for index in training_indices
+    ]
+    train_labels = [labels[index] for index in training_indices]
+    log_ham, log_spam, p_spam = trainNB(
+        np.array(train_matrix), np.array(train_labels)
+    )
+
+    errors = 0
+    for index in test_indices:
+        vector = np.array(bagOfWords2Vec(vocabulary, documents[index]))
+        prediction = classifyNB(vector, log_ham, log_spam, p_spam)
+        if prediction != labels[index]:
+            errors += 1
+
+    return errors / len(test_indices)</code></pre>
+
+      <h2>十一、项目代码跑出了什么结果</h2>
+      <p>入口脚本使用 <code>np.random.seed(0)</code> 固定随机种子，保证初学者重复运行时抽到相同的测试邮件。实际执行结果为：</p>
+      <pre data-code-id="naive-bayes-spam-result"><code class="language-code">classification error [...被分错的邮件单词...]
+the error rate is: 0.1</code></pre>
+      <div class="knn-distance-list" aria-label="垃圾邮件测试结果">
+        <div><span>训练</span><strong>邮件数量</strong><code>40</code></div>
+        <div><span>测试</span><strong>邮件数量</strong><code>10</code></div>
+        <div><span>错误</span><strong>邮件数量</strong><code>1</code></div>
+        <div><span>结果</span><strong>本次错误率</strong><code>10%</code></div>
+      </div>
+      <p>这个结果只能说明本次固定划分中 10 封测试邮件错了 1 封。数据集很小，换一个随机种子可能得到不同错误率。因此不能把 10% 当成稳定的真实性能，更合理的做法是重复多次划分或使用交叉验证，并同时查看垃圾邮件的精确率和召回率。</p>
+
+      <h2>十二、这个案例还可以怎样做得更正规</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>使用分层划分</strong><p>确保训练集和测试集中的垃圾、正常邮件比例接近。</p></div></li>
+        <li><span>02</span><div><strong>只用训练集建立词表</strong><p>严格避免测试集词汇影响特征空间，杜绝信息泄漏。</p></div></li>
+        <li><span>03</span><div><strong>加入未知词策略</strong><p>明确处理训练阶段从未见过的新词，而不是悄悄忽略所有信息。</p></div></li>
+        <li><span>04</span><div><strong>评价多个指标</strong><p>垃圾邮件漏判和正常邮件误杀的代价不同，不能只看总体准确率。</p></div></li>
+        <li><span>05</span><div><strong>比较不同表示</strong><p>尝试词集、词袋、TF-IDF、二元词组和停用词处理。</p></div></li>
+      </ol>
+
+      <h2>十三、用 scikit-learn 写一个现代版本</h2>
+      <p><code>CountVectorizer</code> 可以完成分词、建词表和词袋向量化；<code>MultinomialNB</code> 是适合词频特征的多项式朴素贝叶斯。</p>
+      <pre data-code-id="naive-bayes-sklearn-version"><code class="language-python">from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+
+
+X_train, X_test, y_train, y_test = train_test_split(
+    email_texts,
+    email_labels,
+    test_size=0.2,
+    random_state=42,
+    stratify=email_labels,
+)
+
+model = make_pipeline(
+    CountVectorizer(lowercase=True, token_pattern=r"(?u)\b\w\w\w+\b"),
+    MultinomialNB(alpha=1.0),
+)
+
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+print(classification_report(y_test, predictions, target_names=["正常", "垃圾"]))</code></pre>
+      <p><code>alpha=1.0</code> 对应常见的拉普拉斯平滑。Pipeline 把文字处理和分类器绑定在一起，预测新邮件时不容易忘记使用相同的词表与预处理规则。</p>
+
+      <h2>十四、朴素贝叶斯的优点与局限</h2>
+      <div class="knn-pros-cons">
+        <section><p class="knn-eyebrow">适合它的情况</p><ul><li>文本分类、情感判断和初步垃圾信息检测</li><li>特征很多但每条数据只出现少量特征</li><li>训练数据不算多，需要快速建立基线</li><li>需要训练快、预测快、实现简单的模型</li></ul></section>
+        <section><p class="knn-eyebrow">需要谨慎的情况</p><ul><li>词序和上下文决定含义时，词袋会丢失关键信息</li><li>特征之间依赖很强，独立假设偏离现实</li><li>训练中没见过的新词无法提供有效证据</li><li>概率值常不够校准，不能直接当作可靠置信度</li></ul></section>
+      </div>
+
+      <h2>十五、新手最常踩的 7 个坑</h2>
+      <ol class="knn-mistakes">
+        <li><strong>训练集和测试集发生重叠。</strong>模型提前见过测试邮件，评价结果失去意义。</li>
+        <li><strong>概率从 0 开始计数。</strong>一个未见词会把整类概率乘成 0，应使用平滑。</li>
+        <li><strong>直接连乘大量小概率。</strong>容易数值下溢，应比较对数概率之和。</li>
+        <li><strong>训练和预测使用不同词表。</strong>相同下标代表了不同单词，模型得到的输入彻底错位。</li>
+        <li><strong>把测试集用于建立词表或调参。</strong>测试信息泄漏后，成绩会偏乐观。</li>
+        <li><strong>认为“朴素”代表效果一定差。</strong>独立假设虽不真实，但文本分类中往往是很强的基线。</li>
+        <li><strong>只报告一次随机划分结果。</strong>小数据波动很大，应重复实验或使用交叉验证。</li>
+      </ol>
+
+      <h2>最后，把第四章记成五个动作</h2>
+      <p class="knn-summary-words"><span>分词</span><span>建表</span><span>向量</span><span>统计</span><span>比较</span></p>
+      <p>先把邮件<strong>分词</strong>，用训练文本<strong>建立词表</strong>，把每封邮件转换成词集或词袋<strong>向量</strong>；再分别<strong>统计</strong>词语在垃圾和正常邮件中的条件概率，最后<strong>比较</strong>两类的对数得分。</p>
+      <p>建议你下一步把入口脚本中的随机种子从 <code>0</code> 改成 <code>1、2、3</code>，记录每次错误率和被分错的邮件。你会直观看到：模型的数学公式没有改变，但小数据集的评价结果会随测试样本变化——这正是为什么正规机器学习实验必须认真划分数据。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-decision-tree-beginner-guide.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：零基础彻底学会决策树</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

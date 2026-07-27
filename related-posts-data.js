@@ -1,7 +1,11 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
-  "python-decision-tree-beginner-guide": [
+  "python-naive-bayes-spam-filter": [
+    {
+      "id": "python-decision-tree-beginner-guide",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
+    },
     {
       "id": "python-knn-basic-algorithm",
       "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
@@ -9,9 +13,19 @@
     {
       "id": "python-tuple-basic",
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
+    }
+  ],
+  "python-decision-tree-beginner-guide": [
+    {
+      "id": "python-naive-bayes-spam-filter",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
     },
     {
-      "id": "python-string-container-basic",
+      "id": "python-knn-basic-algorithm",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
+    },
+    {
+      "id": "python-tuple-basic",
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
     }
   ],
@@ -21,11 +35,11 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
     },
     {
-      "id": "python-tuple-basic",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python"
+      "id": "python-naive-bayes-spam-filter",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
     },
     {
-      "id": "python-string-container-basic",
+      "id": "python-tuple-basic",
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
     }
   ],
@@ -147,11 +161,11 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
     },
     {
-      "id": "python-decision-tree-beginner-guide",
+      "id": "python-naive-bayes-spam-filter",
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
     },
     {
-      "id": "python-knn-basic-algorithm",
+      "id": "python-decision-tree-beginner-guide",
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
     }
   ],

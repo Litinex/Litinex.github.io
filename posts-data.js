@@ -2,6 +2,19 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "python-naive-bayes-spam-filter",
+      href: "posts/python-naive-bayes-spam-filter.html",
+      title: "让单词自己投票：零基础学会朴素贝叶斯与垃圾邮件过滤",
+      date: "2026-07-27",
+      updated: "2026-07-27",
+      category: "Python 入门",
+      excerpt: "结合《机器学习实战》第四章源码，从词表、词袋和贝叶斯公式讲起，用50封真实邮件完成垃圾邮件分类。",
+      tags: ["Python", "机器学习", "朴素贝叶斯", "文本分类", "算法", "数据分析"],
+      words: 7600,
+      readTime: 25,
+      series: { id: "python-intro", name: "Python 入门", index: 12 },
+    },
+    {
       id: "python-decision-tree-beginner-guide",
       href: "posts/python-decision-tree-beginner-guide.html",
       title: "像玩猜谜一样做预测：零基础彻底学会决策树",
