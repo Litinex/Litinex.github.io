@@ -1,18 +1,32 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "python-logistic-regression-sigmoid-classification": [
+    {
+      "id": "python-naive-bayes-spam-filter",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、数据分析"
+    },
+    {
+      "id": "python-decision-tree-beginner-guide",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、数据分析"
+    },
+    {
+      "id": "python-knn-basic-algorithm",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、数据分析"
+    }
+  ],
   "python-naive-bayes-spam-filter": [
     {
       "id": "python-decision-tree-beginner-guide",
       "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
     },
     {
-      "id": "python-knn-basic-algorithm",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
+      "id": "python-logistic-regression-sigmoid-classification",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、数据分析"
     },
     {
-      "id": "python-tuple-basic",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python"
+      "id": "python-knn-basic-algorithm",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
     }
   ],
   "python-decision-tree-beginner-guide": [
@@ -25,8 +39,8 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
     },
     {
-      "id": "python-tuple-basic",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python"
+      "id": "python-logistic-regression-sigmoid-classification",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、数据分析"
     }
   ],
   "python-knn-basic-algorithm": [
@@ -39,8 +53,8 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、算法"
     },
     {
-      "id": "python-tuple-basic",
-      "reason": "同属“Python 入门”系列 · 共同标签：Python"
+      "id": "python-logistic-regression-sigmoid-classification",
+      "reason": "同属“Python 入门”系列 · 共同标签：Python、机器学习、数据分析"
     }
   ],
   "python-tuple-basic": [
@@ -161,11 +175,11 @@
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
     },
     {
-      "id": "python-naive-bayes-spam-filter",
+      "id": "python-logistic-regression-sigmoid-classification",
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
     },
     {
-      "id": "python-decision-tree-beginner-guide",
+      "id": "python-naive-bayes-spam-filter",
       "reason": "同属“Python 入门”系列 · 共同标签：Python"
     }
   ],

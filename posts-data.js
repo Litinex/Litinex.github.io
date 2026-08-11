@@ -2,6 +2,19 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "python-logistic-regression-sigmoid-classification",
+      href: "posts/python-logistic-regression-sigmoid-classification.html",
+      title: "从打分到概率：零基础学会 Logistic 回归与 Sigmoid 分类",
+      date: "2026-08-11",
+      updated: "2026-08-11",
+      category: "Python 入门",
+      excerpt: "结合《机器学习实战》第五章源码，图解 Sigmoid、决策边界、对数似然和梯度更新，并完成二维分类与病马生存预测。",
+      tags: ["Python", "机器学习", "Logistic回归", "Sigmoid", "分类算法", "梯度下降", "数据分析"],
+      words: 8100,
+      readTime: 26,
+      series: { id: "python-intro", name: "Python 入门", index: 13 },
+    },
+    {
       id: "python-naive-bayes-spam-filter",
       href: "posts/python-naive-bayes-spam-filter.html",
       title: "让单词自己投票：零基础学会朴素贝叶斯与垃圾邮件过滤",

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Sigmoid 函数曲线</title>
+  <desc id="desc">Sigmoid 把任意实数映射到零和一之间。输入为零时输出零点五，输入越大越接近一，越小越接近零。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101b2f"/><stop offset="1" stop-color="#172840"/></linearGradient>
+    <linearGradient id="curve" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#65b8ff"/><stop offset="1" stop-color="#74e0b8"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>.grid{stroke:#324761;stroke-width:1}.axis{stroke:#94aac5;stroke-width:3}.tick{fill:#aebed2;font:500 18px system-ui,sans-serif;text-anchor:middle}.title{fill:#f4f8ff;font:800 31px system-ui,sans-serif;text-anchor:middle}.label{fill:#d5e2f2;font:700 21px system-ui,sans-serif}.hint{fill:#b9c9de;font:500 18px system-ui,sans-serif}.callout{fill:#213753;stroke:#6ebaf5;stroke-width:2}.callout-text{fill:#f5f8ff;font:700 19px system-ui,sans-serif;text-anchor:middle}</style>
+  </defs>
+  <rect width="1200" height="680" rx="32" fill="url(#bg)"/>
+  <text class="title" x="600" y="55">Sigmoid：把“任意分数”平滑压缩成 0 到 1</text>
+  <g opacity=".9"><line class="grid" x1="120" y1="130" x2="1080" y2="130"/><line class="grid" x1="120" y1="350" x2="1080" y2="350"/><line class="grid" x1="120" y1="570" x2="1080" y2="570"/><line class="grid" x1="280" y1="100" x2="280" y2="585"/><line class="grid" x1="440" y1="100" x2="440" y2="585"/><line class="grid" x1="600" y1="100" x2="600" y2="585"/><line class="grid" x1="760" y1="100" x2="760" y2="585"/><line class="grid" x1="920" y1="100" x2="920" y2="585"/></g>
+  <line class="axis" x1="120" y1="570" x2="1095" y2="570"/><path fill="#94aac5" d="M1095 570l-18-10v20z"/><line class="axis" x1="120" y1="590" x2="120" y2="105"/><path fill="#94aac5" d="M120 105l-10 18h20z"/>
+  <path d="M120 566 C245 563 345 547 420 500 C505 447 548 378 600 350 C652 322 695 253 780 200 C855 153 955 137 1080 134" fill="none" stroke="url(#curve)" stroke-width="10" stroke-linecap="round" filter="url(#glow)"/>
+  <line x1="600" y1="350" x2="600" y2="570" stroke="#ffd36e" stroke-width="3" stroke-dasharray="9 8"/><line x1="120" y1="350" x2="600" y2="350" stroke="#ffd36e" stroke-width="3" stroke-dasharray="9 8"/><circle cx="600" cy="350" r="11" fill="#ffd36e"/>
+  <text class="tick" x="120" y="615">−6</text><text class="tick" x="280" y="615">−4</text><text class="tick" x="440" y="615">−2</text><text class="tick" x="600" y="615">0</text><text class="tick" x="760" y="615">2</text><text class="tick" x="920" y="615">4</text><text class="tick" x="1080" y="615">6</text>
+  <text class="tick" x="80" y="576">0</text><text class="tick" x="80" y="356">0.5</text><text class="tick" x="80" y="136">1</text><text class="label" x="1100" y="620">z</text><text class="label" x="45" y="115">σ(z)</text>
+  <rect class="callout" x="645" y="375" width="260" height="72" rx="18"/><text class="callout-text" x="775" y="405">z = 0 → 概率 = 0.5</text><text class="hint" x="775" y="431" text-anchor="middle">默认分类阈值所在的位置</text>
+  <text class="hint" x="245" y="655" text-anchor="middle">负分数越小 → 越接近类别 0</text><text class="hint" x="955" y="655" text-anchor="middle">正分数越大 → 越接近类别 1</text>
+</svg>

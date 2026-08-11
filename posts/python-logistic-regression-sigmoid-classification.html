@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>从打分到概率：零基础学会 Logistic 回归与 Sigmoid 分类 | 风迁夏回</title>
+  <meta name="description" content="结合《机器学习实战》第五章源码，图解 Sigmoid、线性打分、决策边界、对数似然和梯度更新，并用 NumPy 从零实现 Logistic 回归，完成二维分类与病马生存预测。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/python-logistic-regression-sigmoid-classification.html">
+  <meta property="og:title" content="从打分到概率：零基础学会 Logistic 回归与 Sigmoid 分类 | 风迁夏回">
+  <meta property="og:description" content="先线性打分，再用 Sigmoid 变成概率；从公式、梯度更新到病马预测，完整学会 Logistic 二分类。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/python-logistic-regression-sigmoid-classification.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/logistic-sigmoid-curve.svg">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260811-1">
+  <script src="../posts-data.js?v=20260811-1" defer></script>
+  <script src="../related-posts-data.js?v=20260811-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"从打分到概率：零基础学会 Logistic 回归与 Sigmoid 分类","description":"结合《机器学习实战》第五章源码，图解 Sigmoid、线性打分、决策边界、对数似然和梯度更新，并用 NumPy 从零实现 Logistic 回归，完成二维分类与病马生存预测。","image":"https://yezizhuang.top/assets/logistic-sigmoid-curve.svg","url":"https://yezizhuang.top/posts/python-logistic-regression-sigmoid-classification.html","datePublished":"2026-08-11","dateModified":"2026-08-11","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="python-logistic-regression-sigmoid-classification">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.08.11 · Python 入门 · 约 26 分钟</p>
+      <h1>从打分到概率：零基础学会 Logistic 回归与 Sigmoid 分类</h1>
+      <p class="article-deck">为什么名字叫“回归”却用来分类？我们从一道及格判断题出发，亲手算出概率、画出决策边界，再用梯度更新训练模型，最后完成病马生存预测。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">假设你要判断一名学生能否通过考试。学习时间越长，通过的可能性通常越大，但现实不是“学 3.9 小时一定挂科、4 小时突然 100% 通过”。我们更希望模型给出“通过概率 82%”这样的平滑判断，再用一个阈值把概率变成类别。Logistic 回归正是为这种任务设计的。</p>
+
+      <aside class="knn-note"><strong>本文代码来源：</strong>文章沿着本地《机器学习实战》第五章源码的真实执行路径展开，包括 Sigmoid 实验、100 个二维样本、批量与随机梯度上升，以及 21 个特征的病马生存预测。所有结果均使用项目自己的虚拟环境实际运行。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文学习目标">
+        <p class="knn-eyebrow">读完你会做到</p>
+        <ul>
+          <li>理解 Logistic 回归为什么是分类算法</li>
+          <li>看懂 Sigmoid、线性分数、概率和决策边界的关系</li>
+          <li>从零实现批量与随机梯度训练</li>
+          <li>正确解读准确率、阈值、损失函数和病马测试结果</li>
+        </ul>
+      </div>
+
+      <h2>一、Logistic 回归到底在做什么</h2>
+      <p><strong>Logistic 回归（Logistic Regression）</strong>是一种监督学习算法。它最常用于二分类，也就是答案只有两类的问题，例如：</p>
+      <ul>
+        <li>邮件是垃圾邮件还是正常邮件。</li>
+        <li>顾客会购买还是不会购买。</li>
+        <li>患者有病还是无病。</li>
+        <li>一匹病马最终存活还是死亡。</li>
+      </ul>
+      <p>它不直接从特征跳到类别，而是分成三步：</p>
+      <ol>
+        <li>把每个特征乘上一个权重，再全部相加，得到线性分数 <code>z</code>。</li>
+        <li>用 Sigmoid 函数把任意大小的 <code>z</code> 压缩到 0 和 1 之间。</li>
+        <li>把结果解释为类别 1 的估计概率，再用阈值完成分类。</li>
+      </ol>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/logistic-classification-boundary.svg" alt="Logistic 回归将输入特征加权求和，经过 Sigmoid 得到概率，再以0.5为阈值分类；二维空间中形成直线决策边界" width="1200" height="700">
+        <figcaption>图 1：模型输出的是概率；默认以 0.5 为界时，边界恰好位于线性分数 z = 0 的地方。</figcaption>
+      </figure>
+
+      <h2>二、为什么名字叫“回归”却用来分类</h2>
+      <p>“回归”来自它对特征做的线性组合，形式与线性回归很像：</p>
+      <p class="knn-formula">z = w₀ + w₁x₁ + w₂x₂ + … + wₙxₙ</p>
+      <p>其中：</p>
+      <ul>
+        <li><code>x₁、x₂……</code> 是输入特征，例如学习时间、出勤率。</li>
+        <li><code>w₁、w₂……</code> 是模型要从数据中学到的权重。</li>
+        <li><code>w₀</code> 是截距，也叫偏置项。</li>
+        <li><code>z</code> 是还没有变成概率的原始分数。</li>
+      </ul>
+      <p>线性回归会直接把 <code>z</code> 当作预测值，因此可能输出 −3 或 7.5；概率却必须在 0 到 1 之间。Logistic 回归在后面接上 Sigmoid，把线性分数变成概率，所以最终解决的是分类问题。</p>
+      <aside class="knn-note knn-note-soft"><strong>一句话记忆：</strong>线性部分负责“打分”，Sigmoid 负责“把分数翻译成概率”，阈值负责“把概率变成类别”。</aside>
+
+      <h2>三、Sigmoid 函数：概率转换器</h2>
+      <p>Sigmoid 也叫 Logistic 函数，公式是：</p>
+      <p class="knn-formula">σ(z) = 1 ÷ (1 + e⁻ᶻ)</p>
+      <p>看似复杂，实际只需记住三个性质：</p>
+      <ul>
+        <li>输入 <code>z = 0</code> 时，输出正好是 <code>0.5</code>。</li>
+        <li><code>z</code> 越大，输出越接近 <code>1</code>。</li>
+        <li><code>z</code> 越小，输出越接近 <code>0</code>。</li>
+      </ul>
+      <figure class="knn-figure">
+        <img src="../assets/logistic-sigmoid-curve.svg" alt="Sigmoid S形曲线，将任意实数映射到0和1之间，0对应0.5" width="1200" height="680" loading="lazy">
+        <figcaption>图 2：Sigmoid 是一条平滑的 S 形曲线。它不会真正等于 0 或 1，但在两端会无限接近。</figcaption>
+      </figure>
+
+      <h3>用第五章代码实际观察</h3>
+      <pre data-code-id="logistic-sigmoid-function"><code class="language-python">import numpy as np
+
+
+def sigmoid(value):
+    safe_value = np.clip(value, -500, 500)
+    return 1.0 / (1.0 + np.exp(-safe_value))
+
+
+test_values = np.array([-10.0, -2.0, 0.0, 2.0, 10.0])
+print(sigmoid(test_values))</code></pre>
+      <p>实际输出：</p>
+      <pre data-code-id="logistic-sigmoid-output"><code class="language-code">[0.0000454, 0.1192029, 0.5, 0.8807971, 0.9999546]</code></pre>
+      <p><code>np.clip</code> 把极端输入限制在 −500 到 500。数学上，极大的正负数本来就会让 Sigmoid 无限接近 1 或 0；限制范围只是避免计算 <code>exp</code> 时溢出，不会实质改变分类结果。</p>
+
+      <h2>四、亲手完成一次概率分类</h2>
+      <p>假设模型使用两个特征：</p>
+      <ul>
+        <li><code>x₁</code>：每天学习小时数。</li>
+        <li><code>x₂</code>：出勤率，为了演示先写成 0 到 10 的分数。</li>
+      </ul>
+      <p>训练得到的权重假设为 <code>w₀ = −6、w₁ = 0.8、w₂ = 0.5</code>。某位学生每天学习 5 小时、出勤分数 8：</p>
+      <p class="knn-formula">z = −6 + 0.8 × 5 + 0.5 × 8 = 2</p>
+      <p>再送入 Sigmoid：</p>
+      <p class="knn-formula">p = σ(2) ≈ 0.881</p>
+      <p>模型估计他属于类别 1，也就是“通过”的概率约为 88.1%。若阈值为 0.5，因为 <code>0.881 &gt; 0.5</code>，最终预测为通过。</p>
+      <blockquote class="knn-principle">特征 → 加权求和得到 z → Sigmoid 得到概率 p → 与阈值比较得到类别。</blockquote>
+
+      <h2>五、决策边界为什么是一条直线</h2>
+      <p>默认阈值为 0.5，而 <code>σ(0) = 0.5</code>，因此分类边界满足：</p>
+      <p class="knn-formula">w₀ + w₁x₁ + w₂x₂ = 0</p>
+      <p>解出 <code>x₂</code>：</p>
+      <p class="knn-formula">x₂ = (−w₀ − w₁x₁) ÷ w₂</p>
+      <p>这就是二维平面上的直线。线的一边 <code>z &gt; 0</code>，概率大于 0.5；另一边 <code>z &lt; 0</code>，概率小于 0.5。特征更多时，它会变成高维空间里的一个<strong>超平面</strong>。</p>
+      <aside class="knn-note knn-note-warning"><strong>重要限制：</strong>基础 Logistic 回归学习的是线性边界。如果数据像同心圆那样无法用一条直线分开，就需要构造多项式特征，或改用核 SVM、树模型等能表达非线性边界的方法。</aside>
+
+      <h2>六、模型怎样学会权重</h2>
+      <p>一开始，代码把权重全部设为 1。这个初始模型大概率预测不准，于是要反复执行：</p>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>前向计算</strong><p>用当前权重计算每个样本的分数和预测概率。</p></div></li>
+        <li><span>02</span><div><strong>比较答案</strong><p>用真实标签减去预测概率，得到误差方向和大小。</p></div></li>
+        <li><span>03</span><div><strong>计算梯度</strong><p>判断每个权重应当向哪个方向调整，调整多少。</p></div></li>
+        <li><span>04</span><div><strong>更新权重</strong><p>按学习率迈出一小步，然后重新计算。</p></div></li>
+      </ol>
+      <p>第五章使用<strong>梯度上升</strong>，目标是让训练数据的对数似然越来越大：</p>
+      <p class="knn-formula">weights ← weights + 学习率 × Xᵀ × (真实标签 − 预测概率)</p>
+
+      <h2>七、对数似然和交叉熵是什么</h2>
+      <p>模型需要一个总分来衡量当前权重好不好。对单个样本而言：</p>
+      <ul>
+        <li>真实标签为 1 时，希望预测概率 <code>p</code> 越接近 1 越好。</li>
+        <li>真实标签为 0 时，希望 <code>1 − p</code> 越接近 1 越好。</li>
+      </ul>
+      <p>把两种情况写在一起，单样本似然是：</p>
+      <p class="knn-formula">P(y | x) = pʸ × (1 − p)¹⁻ʸ</p>
+      <p>训练时希望所有样本似然的乘积尽量大。为了避免小概率连乘造成数值问题，也为了把乘法变成加法，通常取对数：</p>
+      <p class="knn-formula">对数似然 = Σ [y log(p) + (1 − y) log(1 − p)]</p>
+      <p>第五章的“梯度上升”是在<strong>最大化对数似然</strong>。现代库常说“梯度下降最小化二元交叉熵”，其中：</p>
+      <p class="knn-formula">二元交叉熵 = −对数似然</p>
+      <p>一个加负号后最大化，另一个最小化，本质是同一件事。不要被“上升”和“下降”两个名字误导。</p>
+
+      <h2>八、从零实现批量梯度上升</h2>
+      <p>批量方法每一轮都用全部训练样本计算一次更新。第五章已经为 NumPy 2 做了兼容：旧代码里的 <code>np.mat</code> 已移除，改用普通数组和 <code>@</code> 做矩阵乘法。</p>
+      <pre data-code-id="logistic-batch-gradient-ascent"><code class="language-python">import numpy as np
+
+
+def gradient_ascent(features, labels, learning_rate=0.001, epochs=500):
+    X = np.asarray(features, dtype=float)
+    y = np.asarray(labels, dtype=float)
+    weights = np.ones(X.shape[1])
+
+    for _ in range(epochs):
+        probabilities = sigmoid(X @ weights)
+        errors = y - probabilities
+        gradient = X.T @ errors
+        weights = weights + learning_rate * gradient
+
+    return weights</code></pre>
+      <h3>四句核心代码</h3>
+      <ol class="knn-explain-list">
+        <li><code>X @ weights</code>：所有样本分别完成加权求和，得到一列线性分数。</li>
+        <li><code>sigmoid(...)</code>：把所有分数转换成类别 1 的预测概率。</li>
+        <li><code>y - probabilities</code>：真实值减预测值。真实为 1 但概率太低时，误差为正；真实为 0 但概率太高时，误差为负。</li>
+        <li><code>X.T @ errors</code>：汇总全部样本对每个权重的修正意见。</li>
+      </ol>
+
+      <h2>九、截距项为什么要在每行前加 1</h2>
+      <p>第五章读取二维数据时，每个样本保存成：</p>
+      <pre data-code-id="logistic-load-intercept"><code class="language-python">sample = [1.0, feature_1, feature_2]</code></pre>
+      <p>前面的 <code>1.0</code> 与权重 <code>w₀</code> 相乘后仍是 <code>w₀</code>，因此可以把截距放进同一次矩阵乘法：</p>
+      <p class="knn-formula">w₀ × 1 + w₁x₁ + w₂x₂</p>
+      <p>如果没有截距，分类直线会被强制经过原点。加入它相当于给边界增加一个可以平移的旋钮。</p>
+
+      <h2>十、二维数据实际训练结果</h2>
+      <p>第五章的 <code>testSet.txt</code> 包含 100 个二维样本。使用学习率 0.001、训练 500 轮后，批量梯度上升实际得到：</p>
+      <pre data-code-id="logistic-batch-result"><code class="language-code">训练得到的权重：[4.12414349, 0.48007329, -0.61684820]
+训练样本数量：100
+训练集分类准确率：0.96</code></pre>
+      <p>对应的分类边界是：</p>
+      <p class="knn-formula">x₂ = (−4.1241 − 0.4801x₁) ÷ (−0.6168)</p>
+      <p><strong>96% 是训练集准确率，不是测试准确率。</strong>它说明模型能用一条直线较好地拟合这 100 个已见样本，但不能单独证明遇到新数据也有 96% 准确率。评价泛化能力必须保留独立测试集或使用交叉验证。</p>
+
+      <h2>十一、批量与随机梯度有什么区别</h2>
+      <div class="knn-comparison" aria-label="批量梯度和随机梯度对比">
+        <section><h3>批量梯度</h3><p>每次更新前查看全部样本，方向较稳定，但数据很大时每一步计算较慢。适合小数据和理解矩阵公式。</p></section>
+        <section><h3>随机梯度</h3><p>每看一个样本就立即更新，单步快、能在线学习，但更新轨迹会抖动，结果受样本顺序影响。</p></section>
+      </div>
+      <p>基础随机梯度只按固定顺序扫一遍数据：</p>
+      <pre data-code-id="logistic-basic-stochastic-gradient"><code class="language-python">def stochastic_gradient_once(X, y, learning_rate=0.01):
+    weights = np.ones(X.shape[1])
+
+    for index in range(len(X)):
+        probability = sigmoid(np.sum(X[index] * weights))
+        error = y[index] - probability
+        weights += learning_rate * error * X[index]
+
+    return weights</code></pre>
+      <p>实际运行时，基础方法训练集准确率只有 72%。第五章的改进版本做了三件事：</p>
+      <ul>
+        <li>训练多轮，而不是只遍历一次。</li>
+        <li>学习率随训练逐渐减小，前期走大步，后期精细调整。</li>
+        <li>每轮随机抽取尚未使用的样本，减弱固定顺序造成的周期性影响。</li>
+      </ul>
+      <pre data-code-id="logistic-improved-stochastic-gradient"><code class="language-python">def improved_stochastic_gradient(X, y, epochs=150):
+    weights = np.ones(X.shape[1])
+
+    for epoch in range(epochs):
+        remaining_indices = list(range(len(X)))
+
+        for step in range(len(X)):
+            learning_rate = 4 / (1.0 + epoch + step) + 0.0001
+            random_position = int(np.random.uniform(0, len(remaining_indices)))
+            sample_index = remaining_indices[random_position]
+
+            probability = sigmoid(np.sum(X[sample_index] * weights))
+            error = y[sample_index] - probability
+            weights += learning_rate * error * X[sample_index]
+            del remaining_indices[random_position]
+
+    return weights</code></pre>
+      <aside class="knn-note knn-note-warning"><strong>容易忽略的下标问题：</strong><code>random_position</code> 是“剩余下标列表中的位置”，真正的数据行是 <code>remaining_indices[random_position]</code>。若删除列表元素却仍用 <code>random_position</code> 读取数据，就没有实现“本轮抽过的样本不再重复抽取”的意图。</aside>
+      <p>固定随机种子为 0 后，改进版本实际训练准确率为 95%。它略低于批量方法的 96%，并不表示算法一定更差；两种训练策略、轮数和学习率不同，而且这里只比较训练集。</p>
+
+      <h2>十二、怎样把概率变成类别</h2>
+      <pre data-code-id="logistic-classify-vector"><code class="language-python">def classify(sample, weights, threshold=0.5):
+    probability = sigmoid(np.sum(sample * weights))
+    return 1 if probability > threshold else 0</code></pre>
+      <p><code>0.5</code> 只是常用默认值，不是自然界规定的标准。阈值决定两类错误之间的权衡：</p>
+      <div class="knn-comparison" aria-label="分类阈值影响">
+        <section><h3>降低阈值</h3><p>更多样本会被判为类别 1，通常提高召回率，但也会带来更多假阳性。例如疾病筛查时宁愿多做复查，也不想漏掉患者。</p></section>
+        <section><h3>提高阈值</h3><p>只有概率很高才判为类别 1，通常提高精确率，但可能漏掉更多真正的类别 1。例如昂贵干预前需要更高把握。</p></section>
+      </div>
+      <p>选择阈值时要看业务代价，并结合混淆矩阵、精确率、召回率、F1、ROC-AUC 或 PR-AUC，而不是永远固定 0.5。</p>
+
+      <h2>十三、实战：预测病马生存结果</h2>
+      <p>第五章使用两个配套文件：</p>
+      <ul>
+        <li><code>horseColicTraining.txt</code>：训练数据。</li>
+        <li><code>horseColicTest.txt</code>：测试数据。</li>
+      </ul>
+      <p>每个样本读取前 21 列作为特征，第 22 列作为标签。模型使用改进随机梯度上升训练 1000 轮，再逐条预测测试集：</p>
+      <pre data-code-id="logistic-horse-colic-core"><code class="language-python">weights = improved_stochastic_gradient(
+    np.array(training_features),
+    training_labels,
+    epochs=1000,
+)
+
+errors = 0
+for features, true_label in zip(test_features, test_labels):
+    prediction = classify(np.array(features), weights)
+    if prediction != true_label:
+        errors += 1
+
+error_rate = errors / len(test_labels)</code></pre>
+      <p>固定随机种子后，单次实际结果为：</p>
+      <pre data-code-id="logistic-horse-single-result"><code class="language-code">the error rate of this test is: 0.447761</code></pre>
+      <p>随机梯度的抽样顺序会影响最终权重，因此第五章又重复测试 10 次。实际错误率依次约为：</p>
+      <pre data-code-id="logistic-horse-multiple-result"><code class="language-code">44.78%, 37.31%, 25.37%, 37.31%, 26.87%,
+41.79%, 28.36%, 34.33%, 29.85%, 31.34%
+
+10 次平均错误率：33.73%</code></pre>
+      <p>这里最值得学的不是“33.73% 好不好”，而是：</p>
+      <ul>
+        <li>随机训练确实会产生波动，单次结果不能代表稳定性能。</li>
+        <li>平均多次随机运行比只挑最好的一次更诚实。</li>
+        <li>固定随机种子让实验可复现，但不会自动让实验设计变得严谨。</li>
+        <li>医疗相关任务不能只看错误率，还要区分漏判和误判。</li>
+      </ul>
+
+      <h2>十四、用 scikit-learn 完成正规流程</h2>
+      <p>真实项目建议使用成熟实现，并把标准化与模型放进同一个 Pipeline。标准化能避免数值范围大的特征在优化过程中主导更新，也能让正则化更公平地作用于各个权重。</p>
+      <pre data-code-id="logistic-sklearn-pipeline"><code class="language-python">from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y,
+)
+
+model = make_pipeline(
+    StandardScaler(),
+    LogisticRegression(
+        C=1.0,
+        max_iter=2000,
+        random_state=42,
+    ),
+)
+
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+probabilities = model.predict_proba(X_test)[:, 1]
+
+print(confusion_matrix(y_test, predictions))
+print(classification_report(y_test, predictions))
+print("ROC-AUC:", roc_auc_score(y_test, probabilities))</code></pre>
+      <p><code>predict</code> 给出最终类别，<code>predict_proba</code> 给出概率。评估排序能力时要使用概率，而不是已经被阈值切成 0/1 的结果。</p>
+
+      <h2>十五、正则化：防止权重过度膨胀</h2>
+      <p>特征很多、数据较少或特征高度相关时，模型可能学出绝对值很大的权重，对训练数据变化非常敏感。<strong>正则化</strong>会对大权重增加代价：</p>
+      <ul>
+        <li><strong>L2 正则化：</strong>让权重整体更平滑，是 scikit-learn 的常见默认选择。</li>
+        <li><strong>L1 正则化：</strong>可能把部分权重压到 0，可用于稀疏特征选择。</li>
+      </ul>
+      <p>在 scikit-learn 中，<code>C</code> 是正则化强度的倒数：<strong>C 越小，约束越强；C 越大，约束越弱。</strong>应使用交叉验证选择，而不是凭感觉把它设得极大。</p>
+
+      <h2>十六、系数能怎样解释</h2>
+      <p>Logistic 回归的线性分数也叫<strong>对数几率（log-odds）</strong>：</p>
+      <p class="knn-formula">log[p ÷ (1 − p)] = w₀ + w₁x₁ + … + wₙxₙ</p>
+      <p>在其他特征不变时，<code>xᵢ</code> 增加 1，会让对数几率增加 <code>wᵢ</code>；对应的几率会乘以 <code>eʷⁱ</code>。不过要谨慎：</p>
+      <ul>
+        <li>系数正负表示预测关联方向，不自动代表因果关系。</li>
+        <li>特征单位不同，系数大小不能直接横向比较。</li>
+        <li>特征相关时，单个系数可能不稳定。</li>
+        <li>概率变化不是固定的，它还取决于样本当前位于 Sigmoid 曲线的哪个位置。</li>
+      </ul>
+
+      <h2>十七、Logistic 回归的优点与局限</h2>
+      <div class="knn-pros-cons">
+        <section><p class="knn-eyebrow">它为什么常被当作基线</p><ul><li>训练和预测速度快，适合大规模稀疏数据</li><li>直接输出概率，方便调整分类阈值</li><li>加入正则化后通常比较稳定</li><li>线性关系下系数相对容易解释</li></ul></section>
+        <section><p class="knn-eyebrow">什么时候要谨慎</p><ul><li>默认只能学习线性决策边界</li><li>对异常值和特征尺度较敏感</li><li>严重类别不平衡时，准确率和0.5阈值可能误导</li><li>强相关特征会让系数解释不稳定</li></ul></section>
+      </div>
+
+      <h2>十八、新手最常踩的 8 个坑</h2>
+      <ol class="knn-mistakes">
+        <li><strong>因为名字里有“回归”就把它当连续值预测。</strong>基础 Logistic 回归的主要用途是分类和概率估计。</li>
+        <li><strong>忘记截距。</strong>分类边界被强制经过原点，表达能力无端受限。</li>
+        <li><strong>直接计算极端指数。</strong><code>exp</code> 可能溢出，应使用稳定实现或成熟库。</li>
+        <li><strong>特征尺度相差巨大却不标准化。</strong>优化会变慢，正则化对各特征也不公平。</li>
+        <li><strong>只看训练准确率。</strong>训练集表现不能代替独立测试或交叉验证。</li>
+        <li><strong>永远使用 0.5 阈值。</strong>阈值应结合类别比例和错误代价选择。</li>
+        <li><strong>把概率当作天然可靠的置信度。</strong>概率可能需要用独立数据检查校准情况。</li>
+        <li><strong>把系数解释成因果效应。</strong>预测关联不等于“这个特征导致了结果”。</li>
+      </ol>
+
+      <h2>十九、完成自己的 Logistic 分类项目</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>定义正类</strong><p>明确标签 1 代表什么，以及漏判、误判分别有什么代价。</p></div></li>
+        <li><span>02</span><div><strong>划分数据</strong><p>在任何调参和预处理拟合之前保留测试集，分类时尽量分层抽样。</p></div></li>
+        <li><span>03</span><div><strong>处理特征</strong><p>处理缺失值、类别编码和异常值，并只在训练数据上拟合标准化器。</p></div></li>
+        <li><span>04</span><div><strong>训练基线</strong><p>先使用带 L2 正则化的 Logistic 回归，检查是否收敛。</p></div></li>
+        <li><span>05</span><div><strong>多指标评价</strong><p>同时查看混淆矩阵、精确率、召回率、F1 和概率指标。</p></div></li>
+        <li><span>06</span><div><strong>选择阈值</strong><p>在验证数据上按实际代价调整阈值，不要用测试集反复试。</p></div></li>
+        <li><span>07</span><div><strong>解释与记录</strong><p>记录特征单位、系数、版本、随机种子和数据划分方式。</p></div></li>
+      </ol>
+
+      <h2>最后，把 Logistic 回归记成五个词</h2>
+      <p class="knn-summary-words"><span>特征</span><span>加权</span><span>概率</span><span>阈值</span><span>更新</span></p>
+      <p>模型把输入<strong>特征</strong>乘以各自权重并相加，用 Sigmoid 把<strong>加权</strong>分数变成类别 1 的<strong>概率</strong>，再与<strong>阈值</strong>比较得到类别；训练则根据真实答案反复<strong>更新</strong>权重。</p>
+      <p>建议你接下来把二维数据的学习率从 <code>0.001</code> 改成 <code>0.0001、0.01、0.1</code>，同时记录对数损失和训练准确率，而不只是看最终权重。你会直观看到：步子太小收敛很慢，步子太大可能震荡；理解这个现象，就理解了梯度方法最核心的训练节奏。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-naive-bayes-spam-filter.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：朴素贝叶斯与垃圾邮件过滤</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>
