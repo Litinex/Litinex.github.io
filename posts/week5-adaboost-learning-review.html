@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第五周学习复盘：从一棵会犯错的树桩，到一群会纠错的分类器 | 风迁夏回</title>
+  <meta name="description" content="第五周机器学习实战总结：从单层决策树、样本权重和 alpha 加权投票出发，复现 AdaBoost 三轮训练、病马生存预测和 ROC-AUC 计算，并记录尚待解决的问题。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week5-adaboost-learning-review.html">
+  <meta property="og:title" content="第五周学习复盘：从一棵会犯错的树桩，到一群会纠错的分类器 | 风迁夏回">
+  <meta property="og:description" content="用 AdaBoost 把会犯错的树桩组合成强分类器：样本权重、alpha、病马预测与 ROC-AUC 的第五周学习复盘。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week5-adaboost-learning-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/adaboost-week5-flow.svg">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260816-1">
+  <script src="../posts-data.js?v=20260816-1" defer></script>
+  <script src="../related-posts-data.js?v=20260816-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第五周学习复盘：从一棵会犯错的树桩，到一群会纠错的分类器","description":"第五周机器学习实战总结：从单层决策树、样本权重和 alpha 加权投票出发，复现 AdaBoost 三轮训练、病马生存预测和 ROC-AUC 计算，并记录尚待解决的问题。","image":"https://yezizhuang.top/assets/adaboost-week5-flow.svg","url":"https://yezizhuang.top/posts/week5-adaboost-learning-review.html","datePublished":"2026-08-16","dateModified":"2026-08-16","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week5-adaboost-learning-review">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.08.16 · 学习札记 · 约 22 分钟</p>
+      <h1>第五周学习复盘：从一棵会犯错的树桩，到一群会纠错的分类器</h1>
+      <p class="article-deck">这周最重要的收获，不是又认识了一个分类算法，而是第一次真正看到：一个模型犯过的错，可以被变成下一轮学习的重点。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">第五周完成了《机器学习实战》第 7 章 AdaBoost 的源码复现。从 5 个简单样本开始，我先寻找一棵只有一个判断条件的决策树桩，再调整样本权重、训练下一棵树，最后让多棵树按可靠程度加权投票。这个过程把“集成学习”从一句抽象定义，变成了一套可以逐行跟踪的纠错机制。</p>
+
+      <aside class="knn-note"><strong>本周成果概览：</strong>简单数据经过 3 轮训练后组合错误率从 20% 降到 0；病马数据使用 299 条训练、67 条测试和 10 个弱分类器，测试错误率为 23.8806%；训练集预测强度对应的 ROC-AUC 为 0.858668。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇复盘会讲清楚</p>
+        <ul>
+          <li>一棵只会问一个问题的树桩怎样分类</li>
+          <li>错分样本为什么会在下一轮变得更重要</li>
+          <li>alpha 怎样决定每棵弱分类器的投票权</li>
+          <li>病马预测、ROC 和 AUC 的结果应该怎样解读</li>
+        </ul>
+      </div>
+
+      <h2>一、本周技术主线：让错误成为下一轮的教材</h2>
+      <p>AdaBoost 的全称是 <span lang="en">Adaptive Boosting</span>，可以翻译为“自适应提升”。它不要求一次训练出一个非常复杂、非常强的模型，而是反复训练多个能力一般的<strong>弱分类器</strong>：</p>
+      <ol>
+        <li>第一轮让所有训练样本同样重要。</li>
+        <li>找到当前加权错误率最低的弱分类器。</li>
+        <li>提高被分错样本的权重，降低被分对样本的相对权重。</li>
+        <li>下一轮重点处理上一轮的难题。</li>
+        <li>最终让所有弱分类器按可靠程度加权投票。</li>
+      </ol>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/adaboost-week5-flow.svg" alt="AdaBoost 三轮训练流程：第一轮样本同权，之后提高错分样本权重，最终三棵树桩按 alpha 加权投票" width="1200" height="720">
+        <figcaption>图 1：AdaBoost 的关键不是“堆很多模型”，而是后一轮会根据前一轮的错误改变学习重点。</figcaption>
+      </figure>
+      <blockquote class="knn-principle">一个弱分类器负责解决一部分问题；被它忽略的难题，会被下一位分类器放大并重新学习。</blockquote>
+
+      <h2>二、弱分类器有多弱：只问一个问题</h2>
+      <p>本章使用的弱分类器是<strong>单层决策树</strong>，也叫决策树桩。它不像普通决策树那样连续分裂，而是只选择：</p>
+      <ul>
+        <li>一个特征。</li>
+        <li>一个阈值。</li>
+        <li>一个不等号方向。</li>
+      </ul>
+      <p>例如：</p>
+      <blockquote class="knn-principle">如果第 0 个特征 ≤ 1.3，就预测为 −1；否则预测为 +1。</blockquote>
+      <p>实现只需要生成一列初始为 <code>+1</code> 的结果，再按条件把一部分改成 <code>−1</code>：</p>
+      <pre data-code-id="adaboost-decision-stump-classify"><code class="language-python">def stump_classify(data, feature_index, threshold, inequality):
+    predictions = np.ones((len(data), 1))
+
+    if inequality == "lt":
+        predictions[data[:, feature_index] &lt;= threshold] = -1.0
+    else:
+        predictions[data[:, feature_index] &gt; threshold] = -1.0
+
+    return predictions</code></pre>
+      <p>它表达能力有限，却有两个优点：训练快，而且每条规则都能直接读懂。AdaBoost 要做的，就是把多条这种简单规则组合起来。</p>
+
+      <h2>三、第一棵树桩是怎样找到的</h2>
+      <p>简单数据集只有 5 个二维样本：</p>
+      <div class="knn-table-wrap" role="region" aria-label="AdaBoost 简单数据集" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>样本</th><th>特征 0</th><th>特征 1</th><th>标签</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>1.0</td><td>2.1</td><td><span class="knn-label knn-label-a">+1</span></td></tr>
+            <tr><td>2</td><td>2.0</td><td>1.1</td><td><span class="knn-label knn-label-a">+1</span></td></tr>
+            <tr><td>3</td><td>1.3</td><td>1.0</td><td><span class="knn-label knn-label-b">−1</span></td></tr>
+            <tr><td>4</td><td>1.0</td><td>1.0</td><td><span class="knn-label knn-label-b">−1</span></td></tr>
+            <tr><td>5</td><td>2.0</td><td>1.0</td><td><span class="knn-label knn-label-a">+1</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>训练函数遍历每个特征、若干候选阈值以及 <code>lt/gt</code> 两种方向。第一轮所有样本权重相同，都是 <code>1/5</code>，因此分错任何一个样本都增加 0.2 的错误。</p>
+      <p>实际找到的第一棵最佳树桩为：</p>
+      <pre data-code-id="adaboost-first-stump-result"><code class="language-code">特征下标：0
+阈值：1.3
+判断方向：小于等于阈值时预测为 -1
+加权错误率：0.2000
+预测结果：[-1, +1, -1, -1, +1]</code></pre>
+      <p>第一条样本真实标签为 <code>+1</code>，却被预测为 <code>−1</code>，所以这棵树桩分错了 1 个样本。AdaBoost 不会把它丢掉，而是把这次错误变成下一轮的训练重点。</p>
+
+      <h2>四、普通错误率为什么不够</h2>
+      <p>如果每轮都只计算“错了几个”，后面的分类器仍会用相同方式看待所有数据，就谈不上重点纠错。AdaBoost 为每个样本维护一个权重 <code>Dᵢ</code>：</p>
+      <p class="knn-formula">加权错误率 ε = Σ Dᵢ × [预测ᵢ ≠ 标签ᵢ]</p>
+      <p>方括号内的判断分错时为 1，分对时为 0。于是：</p>
+      <ul>
+        <li>高权重样本分错，会带来很大的加权错误。</li>
+        <li>低权重样本分错，对当前树桩评分影响较小。</li>
+        <li>寻找“最佳树桩”，实际是在当前权重分布下找加权错误率最低的规则。</li>
+      </ul>
+      <pre data-code-id="adaboost-weighted-error"><code class="language-python">errors = np.ones((sample_count, 1))
+errors[predictions == labels] = 0
+weighted_error = float(D.T @ errors)</code></pre>
+      <p>同一组数据在不同轮次拥有不同的 <code>D</code>，因此每轮选出的最佳树桩也可能不同。这就是“自适应”的具体含义。</p>
+
+      <h2>五、alpha：分类器说话的分量</h2>
+      <p>每棵树桩还有一个权重 <code>alpha</code>，它决定最终投票时有多少话语权：</p>
+      <p class="knn-formula">alpha = 0.5 × ln[(1 − ε) ÷ ε]</p>
+      <p>先从结果理解公式：</p>
+      <ul>
+        <li>错误率小于 0.5，<code>alpha</code> 为正，分类器比随机猜测可靠。</li>
+        <li>错误率越小，<code>(1−ε)/ε</code> 越大，<code>alpha</code> 越大。</li>
+        <li>错误率接近 0.5，<code>alpha</code> 接近 0，几乎没有投票价值。</li>
+        <li>错误率大于 0.5，<code>alpha</code> 为负，说明判断方向还不如反过来。</li>
+      </ul>
+      <p>第一棵树桩的错误率为 0.2：</p>
+      <p class="knn-formula">alpha = 0.5 × ln(0.8 ÷ 0.2) = 0.6931</p>
+      <p>第二棵树桩的加权错误率为 0.125，因此 <code>alpha = 0.9730</code>，比第一棵更大。它在当前难题分布上更可靠，最终投票时声音也更响。</p>
+
+      <h2>六、为什么错分样本会变重</h2>
+      <p>样本权重的更新公式是本周最难理解的地方：</p>
+      <p class="knn-formula">Dᵢ ← Dᵢ × exp(−alpha × yᵢ × hᵢ) ÷ Z</p>
+      <p>这里 <code>yᵢ</code> 是真实标签，<code>hᵢ</code> 是树桩预测，两者都只能是 <code>+1</code> 或 <code>−1</code>。把情况拆开后，指数公式就不再神秘：</p>
+      <div class="knn-comparison" aria-label="样本权重更新">
+        <section><h3>预测正确</h3><p><code>yᵢ × hᵢ = +1</code>，权重乘以 <code>exp(−alpha)</code>，相对变小。</p></section>
+        <section><h3>预测错误</h3><p><code>yᵢ × hᵢ = −1</code>，权重乘以 <code>exp(+alpha)</code>，相对变大。</p></section>
+      </div>
+      <p><code>Z</code> 是归一化因子，让更新后的所有权重重新加起来等于 1。它不会改变样本之间谁大谁小，只是把权重拉回统一尺度。</p>
+      <pre data-code-id="adaboost-update-sample-weights"><code class="language-python">exponent = -alpha * true_labels * stump_predictions
+D = D * np.exp(exponent)
+D = D / D.sum()</code></pre>
+      <p>指数函数带来对称效果：分对的样本按 <code>e⁻ᵅ</code> 缩小，分错的样本按 <code>eᵅ</code> 放大。<code>alpha</code> 越大的可靠分类器，它的对错对下一轮影响也越强。</p>
+
+      <h2>七、三轮训练：弱分类器怎样变强</h2>
+      <p>简单数据的真实训练过程为：</p>
+      <div class="knn-table-wrap" role="region" aria-label="AdaBoost 三轮训练结果" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>轮次</th><th>树桩加权错误率</th><th>alpha</th><th>组合训练错误率</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>0.2000</td><td>0.6931</td><td>0.2000</td></tr>
+            <tr><td>2</td><td>0.1250</td><td>0.9730</td><td>0.2000</td></tr>
+            <tr><td>3</td><td>0.1429</td><td>0.8959</td><td>0.0000</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>这里有一个容易误读的地方：第二、三棵树桩的错误率是按照当轮样本权重计算的，不能简单理解成“5 个样本错了 12.5%”。权重已经不再平均。</p>
+      <p>单独看，每棵树桩都没有把所有样本分对；三棵树按 <code>alpha</code> 加权投票后，组合训练错误率降到 0。代码检测到全部训练样本分类正确，就提前结束，不再盲目训练到预设的 9 轮。</p>
+
+      <h2>八、最终分类：不是少数服从多数</h2>
+      <p>AdaBoost 不是每棵树一人一票，而是可靠者拥有更大的投票权：</p>
+      <p class="knn-formula">F(x) = Σ alphaₜ × hₜ(x)</p>
+      <p class="knn-formula">最终类别 = sign[F(x)]</p>
+      <pre data-code-id="adaboost-weighted-voting"><code class="language-python">aggregate_score = np.zeros((len(samples), 1))
+
+for classifier in weak_classifiers:
+    result = stump_classify(
+        samples,
+        classifier["dim"],
+        classifier["thresh"],
+        classifier["ineq"],
+    )
+    aggregate_score += classifier["alpha"] * result
+
+predictions = np.sign(aggregate_score)</code></pre>
+      <p>简单测试得到：</p>
+      <pre data-code-id="adaboost-new-sample-result"><code class="language-code">样本 [0, 0] 的预测类别：-1
+样本 [5, 5] 的预测类别：+1</code></pre>
+      <p><code>aggregate_score</code> 不只是临时变量。它的正负决定类别，绝对值则反映当前加权投票离边界有多远，后面的 ROC 曲线正是利用这组预测强度进行排序。</p>
+
+      <h2>九、病马数据：从 5 个样本走向真实测试集</h2>
+      <p>小样本适合理解公式，但不能说明模型面对真实数据的表现。本周继续使用作者配套的病马数据：</p>
+      <div class="knn-distance-list" aria-label="病马数据实验规模">
+        <div><span>训练</span><strong>样本数量</strong><code>299</code></div>
+        <div><span>测试</span><strong>样本数量</strong><code>67</code></div>
+        <div><span>模型</span><strong>弱分类器数量</strong><code>10</code></div>
+        <div><span>标签</span><strong>类别取值</strong><code>−1 / +1</code></div>
+      </div>
+      <pre data-code-id="adaboost-horse-experiment"><code class="language-python">train_data, train_labels = load_data("horseColicTraining2.txt")
+test_data, test_labels = load_data("horseColicTest2.txt")
+
+classifiers, train_scores = train_adaboost(
+    train_data,
+    train_labels,
+    iterations=10,
+)
+
+train_predictions = classify(train_data, classifiers)
+test_predictions = classify(test_data, classifiers)</code></pre>
+      <p>实际运行结果：</p>
+      <pre data-code-id="adaboost-horse-result"><code class="language-code">训练样本数：299
+测试样本数：67
+弱分类器数量：10
+训练集错误率：0.230769
+测试集错误率：0.238806</code></pre>
+      <p>测试错误率 23.8806%，也就是 67 条测试数据中约有 16 条分错。训练和测试错误率接近，至少这一次没有出现“训练集极好、测试集明显恶化”的巨大落差。</p>
+      <aside class="knn-note knn-note-warning"><strong>不能过度解读：</strong>训练与测试错误率接近不等于已经证明模型没有过拟合，也不等于 10 个弱分类器一定最佳。还需要改变弱分类器数量，比较训练错误、测试错误和 AUC 的完整变化曲线。</aside>
+
+      <h2>十、为什么还要画 ROC 曲线</h2>
+      <p>错误率只观察最终阈值下“分对多少”。ROC 曲线不固定在一个阈值，而是让阈值从严格到宽松移动，观察两个比例：</p>
+      <ul>
+        <li><strong>真正率（TPR）：</strong>所有真实正类中，被成功找出的比例。</li>
+        <li><strong>假阳性率（FPR）：</strong>所有真实负类中，被误判为正类的比例。</li>
+      </ul>
+      <p>模型先按 <code>aggregate_score</code> 从小到大排序，从坐标 <code>(1,1)</code> 开始移动：</p>
+      <ul>
+        <li>遇到一个正样本，纵向向下走一步。</li>
+        <li>遇到一个负样本，横向向左走一步。</li>
+        <li>走完全部样本后到达 <code>(0,0)</code>。</li>
+      </ul>
+      <figure class="knn-figure">
+        <img src="../assets/adaboost-horse-roc.png" alt="AdaBoost 病马训练结果 ROC 曲线，蓝色曲线明显高于随机猜测对角线，AUC 为0.858668" width="1024" height="832" loading="lazy">
+        <figcaption>图 2：本次 ROC 使用的是 299 条训练数据的组合预测强度；蓝线越靠近左上角，排序区分能力越强。</figcaption>
+      </figure>
+
+      <h2>十一、AUC = 0.858668 应该怎样理解</h2>
+      <p><strong>AUC</strong> 是 ROC 曲线下的面积。它也可以直观理解为：随机抽一个正样本和一个负样本，模型把正样本排在负样本前面的概率。</p>
+      <ul>
+        <li><code>AUC = 0.5</code>：排序能力接近随机猜测。</li>
+        <li><code>AUC = 1.0</code>：所有正样本都排在所有负样本前面。</li>
+        <li>本次 <code>AUC = 0.858668</code>：当前组合分数具有较好的正负类排序能力。</li>
+      </ul>
+      <p>但必须把边界说清楚：这张 ROC 使用的是<strong>训练集</strong>预测强度，不是独立测试集分数，所以它更适合验证绘图和理解算法流程，不能作为最终泛化能力的无偏估计。更正规的下一步是保留测试集组合分数，在测试集上单独计算 ROC-AUC。</p>
+      <p>另外，AUC 不是准确率。23.8806% 测试错误率回答“当前分类规则错了多少”，0.858668 的训练 AUC 回答“模型在不同阈值下区分正负样本的排序能力怎样”，两者观察角度不同。</p>
+
+      <h2>十二、本周完成的不只是算法，还有兼容性整理</h2>
+      <p>源码复现过程中还完成了几项工程性处理：</p>
+      <ul>
+        <li>把数据路径改成相对于 <code>adaboost.py</code> 定位，从项目根目录或 IDE 启动都能找到数据。</li>
+        <li>明确使用新版 NumPy 可运行的矩阵接口，并处理标量提取。</li>
+        <li>让 ROC 图保存为文件，不依赖必须手动关闭的弹窗。</li>
+        <li>为中文标题和坐标轴寻找可用字体，避免保存图片时出现方框或缺字。</li>
+        <li>增加回归测试，验证图片能生成、中文标签存在且没有缺字警告。</li>
+      </ul>
+      <pre data-code-id="adaboost-roc-regression-test"><code class="language-python">def test_roc_image_preserves_chinese_labels(self):
+    plot_roc(scores, labels, save_path=output_path, show=False)
+
+    self.assertTrue(output_path.exists())
+    self.assertEqual("AdaBoost病马预测ROC曲线", axis.get_title())
+    self.assertEqual("假阳性率", axis.get_xlabel())
+    self.assertEqual("真正率", axis.get_ylabel())
+    self.assertEqual([], missing_glyph_warnings)</code></pre>
+      <p>实际测试通过。这个部分提醒我：算法得到正确数字只是第一步，路径、字体、图片输出和可重复验证同样属于一次完整实验。</p>
+
+      <h2>十三、本周真正卡住的三个问题</h2>
+      <ol class="knn-mistakes">
+        <li><strong>样本权重更新公式为什么使用指数。</strong>现在已经能通过 <code>y × h</code> 的正负解释分对缩小、分错放大，但还需要从指数损失最小化的角度理解推导。</li>
+        <li><strong>alpha 公式中的 0.5 从哪里来。</strong>已经理解错误率越低投票权越大，但推导仍不熟，不能只停留在背公式。</li>
+        <li><strong>ROC 的移动和面积计算。</strong>现在能顺着排序代码解释正样本纵向、负样本横向，但仍需手算一个更小例子，把矩形面积累加与 AUC 对应起来。</li>
+      </ol>
+      <p>把“会运行”和“会解释”分开记录，是这份周报很有价值的地方。代码跑通不代表概念完全掌握；明确写下知识缺口，比用一句“基本掌握”更容易指导下一周。</p>
+
+      <h2>十四、从上周 SVM 到本周 AdaBoost</h2>
+      <p>上周学习简化版 SMO 时，难点集中在为什么要同时选择并更新两个 <code>alpha</code>。本周重新按函数顺序梳理后，对那条训练主线比之前清楚了一些，但 RBF 核参数对比仍未完成。</p>
+      <div class="knn-comparison" aria-label="SVM 与 AdaBoost 学习视角">
+        <section><h3>上周的 SVM</h3><p>寻找能最大化间隔的边界，重点是支持向量、alpha 配对更新和核函数。</p></section>
+        <section><h3>本周的 AdaBoost</h3><p>组合多条简单规则，重点是错分样本权重、弱分类器投票权和逐轮纠错。</p></section>
+      </div>
+      <p>两个算法路线不同，却都在说明同一件事：模型训练不是一次性“算出答案”，而是围绕目标函数不断调整哪些样本、参数或边界更重要。</p>
+
+      <h2>十五、下周计划：从复现走向对比实验</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>手工复盘三轮 AdaBoost</strong><p>记录每轮树桩、样本权重、alpha 和累计分数，真正算清更新过程。</p></div></li>
+        <li><span>02</span><div><strong>改变弱分类器数量</strong><p>比较 1、5、10、20、40 轮下的训练错误、测试错误和测试集 AUC。</p></div></li>
+        <li><span>03</span><div><strong>补做 SVM 参数实验</strong><p>完成 RBF 核参数对比，不让上周遗留问题继续悬空。</p></div></li>
+        <li><span>04</span><div><strong>进入第 8 章回归</strong><p>学习标准线性回归、局部加权线性回归和误差计算。</p></div></li>
+      </ol>
+
+      <h2>十六、第五周最值得保留的认识</h2>
+      <p class="knn-summary-words"><span>弱规则</span><span>错题</span><span>权重</span><span>投票</span><span>复盘</span></p>
+      <p>一棵树桩只是一个<strong>弱规则</strong>；AdaBoost 把上一轮的<strong>错题</strong>放大，用样本<strong>权重</strong>改变下一轮学习重点，再让可靠的分类器拥有更大的<strong>投票</strong>权。最后的<strong>复盘</strong>则提醒我，实验结果、公式理解和工程复现是三条需要同时推进的线。</p>
+      <p>如果只用一句话总结第五周，那就是：我不再把集成学习理解成“多训练几个模型”，而是开始理解多个弱模型怎样围绕彼此的错误形成协作。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="python-logistic-regression-sigmoid-classification.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：Logistic 回归与 Sigmoid 分类</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

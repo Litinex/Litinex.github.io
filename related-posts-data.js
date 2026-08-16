@@ -1,6 +1,20 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "week5-adaboost-learning-review": [
+    {
+      "id": "python-logistic-regression-sigmoid-classification",
+      "reason": "共同标签：Python、机器学习"
+    },
+    {
+      "id": "python-naive-bayes-spam-filter",
+      "reason": "共同标签：Python、机器学习"
+    },
+    {
+      "id": "python-decision-tree-beginner-guide",
+      "reason": "共同标签：Python、机器学习"
+    }
+  ],
   "python-logistic-regression-sigmoid-classification": [
     {
       "id": "python-naive-bayes-spam-filter",
@@ -187,6 +201,10 @@
     {
       "id": "life-fragments-writing",
       "reason": "共同标签：写作"
+    },
+    {
+      "id": "week5-adaboost-learning-review",
+      "reason": "同属“学习札记”分类"
     }
   ],
   "life-fragments-writing": [

@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week5-adaboost-learning-review",
+      href: "posts/week5-adaboost-learning-review.html",
+      title: "第五周学习复盘：从一棵会犯错的树桩，到一群会纠错的分类器",
+      date: "2026-08-16",
+      updated: "2026-08-16",
+      category: "学习札记",
+      excerpt: "从单层决策树、样本权重和 alpha 加权投票出发，复现 AdaBoost 三轮训练、病马预测与 ROC-AUC，并记录尚待解决的问题。",
+      tags: ["Python", "机器学习", "AdaBoost", "集成学习", "ROC", "AUC", "周报"],
+      words: 6800,
+      readTime: 22,
+    },
+    {
       id: "python-logistic-regression-sigmoid-classification",
       href: "posts/python-logistic-regression-sigmoid-classification.html",
       title: "从打分到概率：零基础学会 Logistic 回归与 Sigmoid 分类",
