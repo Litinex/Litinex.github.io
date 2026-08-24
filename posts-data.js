@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week6-regression-learning-review",
+      href: "posts/week6-regression-learning-review.html",
+      title: "第六周学习复盘：从一条直线开始理解回归",
+      date: "2026-08-24",
+      updated: "2026-08-24",
+      category: "学习札记",
+      excerpt: "复现标准线性回归、局部加权线性回归、岭回归和前向逐步回归，用真实运行结果理解 RSS、k、lambda 与交叉验证。",
+      tags: ["Python", "机器学习", "回归", "线性回归", "岭回归", "交叉验证", "周报"],
+      words: 4100,
+      readTime: 14,
+    },
+    {
       id: "week5-adaboost-learning-review",
       href: "posts/week5-adaboost-learning-review.html",
       title: "第五周学习复盘：从一棵会犯错的树桩，到一群会纠错的分类器",
