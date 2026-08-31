@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第七周学习复盘：让决策树也能预测连续数值 | 风迁夏回</title>
+  <meta name="description" content="第七周机器学习实战总结：复现回归树、预剪枝、后剪枝、模型树和预测函数，并比较三种回归方法的实际结果。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week7-regression-tree-learning-review.html">
+  <meta property="og:title" content="第七周学习复盘：让决策树也能预测连续数值 | 风迁夏回">
+  <meta property="og:description" content="从递归切分到剪枝与模型树，用真实运行结果理解树模型怎样预测连续数值。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week7-regression-tree-learning-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/regression-tree-week7-curves.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260816-1">
+  <script src="../posts-data.js?v=20260831-1" defer></script>
+  <script src="../related-posts-data.js?v=20260831-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第七周学习复盘：让决策树也能预测连续数值","description":"第七周机器学习实战总结：复现回归树、预剪枝、后剪枝、模型树和预测函数，并比较三种回归方法的实际结果。","image":"https://yezizhuang.top/assets/regression-tree-week7-curves.png","url":"https://yezizhuang.top/posts/week7-regression-tree-learning-review.html","datePublished":"2026-08-31","dateModified":"2026-08-31","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week7-regression-tree-learning-review">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.08.31 · 学习札记 · 约 13 分钟</p>
+      <h1>第七周学习复盘：让决策树也能预测连续数值</h1>
+      <p class="article-deck">分类树在叶节点给出一个类别，回归树则给出一个数值。这周我把第3章熟悉的“不断提问”，重新用在了回归问题上。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">第七周复现了《机器学习实战》第 9 章的树回归源码，包括数据二元切分、回归树、预剪枝、后剪枝、模型树、预测函数和 Tkinter 交互界面。代码主线仍然是递归建树，但叶节点不再保存类别，而是保存一个平均值或一条线性模型。</p>
+
+      <aside class="knn-note"><strong>本周成果概览：</strong>简单回归树的根阈值为 0.48813；不同预剪枝参数得到 83、399 和 3 个节点；后剪枝把节点从 399 减少到 281；自行车测试集上模型树的相关系数为 0.976041。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇复盘会讲清楚</p>
+        <ul>
+          <li>回归树与分类树的叶节点有什么不同</li>
+          <li>tolS、tolN 怎样控制树的复杂度</li>
+          <li>预剪枝和后剪枝分别在什么时候发生</li>
+          <li>为什么模型树的拟合曲线比回归树平滑</li>
+        </ul>
+      </div>
+
+      <h2>一、把“选择类别”改成“预测数值”</h2>
+      <p>第 3 章的分类树会连续提出问题，最后在叶节点给出“是”或“否”等类别。回归树的结构相似，只是叶节点换成连续数值。书中最简单的叶节点直接使用所在区域目标值的平均数：</p>
+      <pre data-code-id="regression-tree-leaf-error"><code class="language-python">def regLeaf(dataSet):
+    return float(np.mean(dataSet[:, -1]))
+
+def regErr(dataSet):
+    return float(np.var(dataSet[:, -1]) * np.shape(dataSet)[0])</code></pre>
+      <p><code>方差 × 样本数</code>正好对应目标值相对均值的残差平方和。建树时要寻找能够让左右两部分总误差下降最多的特征和阈值。</p>
+      <blockquote class="knn-principle">像先按照某条规则把顾客分组，再用每组的平均消费金额作为组内所有人的预测。</blockquote>
+
+      <h2>二、一次切分到底做了什么</h2>
+      <p><code>binSplitDataSet</code>把数据分成“大于阈值”和“小于等于阈值”两部分：</p>
+      <pre data-code-id="regression-tree-binary-split"><code class="language-python">def binSplitDataSet(dataSet, feature, value):
+    matrix0 = dataSet[np.nonzero(dataSet[:, feature] &gt; value)[0], :]
+    matrix1 = dataSet[np.nonzero(dataSet[:, feature] &lt;= value)[0], :]
+    return matrix0, matrix1</code></pre>
+      <p>在 <code>ex00.txt</code> 的 200 个样本上，按第 0 列和 0.5 切分后，左右分别有 116 和 84 个样本。最终简单回归树为：</p>
+      <pre data-code-id="regression-tree-simple-result"><code class="language-code">根节点：第0个特征 &gt; 0.48813
+左叶节点：1.0180968
+右叶节点：-0.0446503</code></pre>
+      <p>新样本大于 0.48813 就走左边，得到约 1.0181；否则走右边，得到约 -0.0447。</p>
+
+      <h2>三、为什么回归树的曲线是阶梯</h2>
+      <p>普通回归树的每个叶节点只返回一个常数。同一区域内，无论输入发生多小的变化，预测值都保持不变；跨过某个切分阈值时，预测值才突然跳到另一个叶节点的常数。</p>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/regression-tree-week7-curves.png" alt="回归树的阶梯拟合曲线与模型树的分段线性拟合曲线" width="2160" height="864">
+        <figcaption>图 1：左边的回归树在每个区域输出常数，所以呈阶梯状；右边的模型树在叶节点内继续使用线性模型。</figcaption>
+      </figure>
+      <p>阶梯状不是绘图错误，而是回归树叶节点定义决定的。树越复杂，台阶越多，也越可能追随训练数据中的噪声。</p>
+
+      <h2>四、chooseBestSplit 的三个停止条件</h2>
+      <p>递归不能无限继续。书中的 <code>chooseBestSplit</code> 有三个主要停止条件：</p>
+      <ol>
+        <li>当前区域内所有目标值都相同，不需要再切分。</li>
+        <li>最佳切分带来的误差下降小于 <code>tolS</code>。</li>
+        <li>切分后任意一个子集的样本数小于 <code>tolN</code>。</li>
+      </ol>
+      <p><code>tolS</code>像“这次分组至少要带来多少收益”，<code>tolN</code>像“每组至少要有多少人”。前者太小、后者太小时，树会不断细分；限制太强时，树又可能没有足够表达能力。</p>
+
+      <h2>五、预剪枝参数对树大小的影响</h2>
+      <div class="knn-table-wrap" role="region" aria-label="预剪枝参数与节点数量" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>参数 ops</th><th>含义</th><th>节点数量</th></tr></thead>
+          <tbody>
+            <tr><td><code>(1, 4)</code></td><td>书中默认限制</td><td>83</td></tr>
+            <tr><td><code>(0, 1)</code></td><td>几乎不限制切分</td><td>399</td></tr>
+            <tr><td><code>(10000, 4)</code></td><td>要求很大的误差下降</td><td>3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>这叫<strong>预剪枝</strong>：树在生长过程中就根据规则提前停止。它速度快，但参数如果设得过严，可能把原本有用的分支也阻止掉。</p>
+
+      <h2>六、后剪枝：先长出来，再决定是否合并</h2>
+      <p>后剪枝先使用较宽松的参数生成复杂树，然后使用独立测试数据，从树的底部开始判断两个叶节点是否应该合并：</p>
+      <p class="knn-formula">不合并误差 = 左侧误差 + 右侧误差</p>
+      <p class="knn-formula">合并误差 = 所有测试样本相对两个叶节点平均值的误差</p>
+      <p>只有合并误差更小时才合并。本次在 <code>ex2test.txt</code> 上剪枝后，节点数由 399 减少到 281。</p>
+      <aside class="knn-note knn-note-warning"><strong>节点少不自动等于更好：</strong>剪枝的依据应是测试数据上的误差是否降低，而不是单纯追求更小的树。本周先复现了书中合并流程，下周还要补做剪枝前后的测试 RSS 对比。</aside>
+
+      <h2>七、模型树：叶节点里不再只有一个数字</h2>
+      <p>模型树的叶节点保存一条线性模型。进入某个叶节点后，不是直接返回平均值，而是继续计算：</p>
+      <p class="knn-formula">ŷ = w₀ + w₁x₁ + ... + wₙxₙ</p>
+      <p>在 <code>exp2.txt</code> 上生成的模型树只有 3 个节点，两个叶节点分别为：</p>
+      <pre data-code-id="regression-model-tree-result"><code class="language-code">左叶节点：[0.001699, 11.964774]
+右叶节点：[3.468779, 1.185217]</code></pre>
+      <p>每个叶节点的第一项是截距，第二项是一次项系数。因为区域内部仍能随输入变化，所以图中的模型树曲线是分段直线，而不是水平台阶。</p>
+
+      <h2>八、三种回归方法的实际比较</h2>
+      <p>书中使用自行车速度与智商数据比较回归树、模型树和标准线性回归。训练集和测试集各有 200 条数据，预测值与真实值的相关系数为：</p>
+      <div class="knn-table-wrap" role="region" aria-label="三种回归方法相关系数" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>方法</th><th>测试相关系数</th></tr></thead>
+          <tbody>
+            <tr><td>回归树</td><td>0.964085</td></tr>
+            <tr><td>模型树</td><td>0.976041</td></tr>
+            <tr><td>标准线性回归</td><td>0.943468</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>这一次模型树最高，说明分段线性关系比较适合这组数据。但相关系数只描述共同变化程度，不等于所有样本的预测误差都最小，也不能据此断言模型树在任何数据上都更好。</p>
+
+      <h2>九、作者 Notebook 中的一处笔误</h2>
+      <p>作者 Notebook 计算标准线性回归预测时写成了：</p>
+      <pre data-code-id="regression-notebook-typo"><code class="language-python">yHat[i] = testMat[i, 0] + ws[0, 0]</code></pre>
+      <p>这行只把输入与截距相加，漏掉了斜率。根据前面求出的权重，正确的线性模型应为：</p>
+      <pre data-code-id="regression-linear-corrected"><code class="language-python">yHat[i] = ws[0, 0] + testMat[i, 0] * ws[1, 0]</code></pre>
+      <p>本次按照后一种方式计算，并在案例代码中用中文注明。核心树回归函数仍按作者源码的结构复现。</p>
+
+      <h2>十、新版环境中的兼容处理</h2>
+      <ul>
+        <li>新版 NumPy 已移除 <code>np.mat</code>，改用 <code>np.matrix</code>保留书中矩阵乘法语义。</li>
+        <li>单元素矩阵改用 <code>item()</code>提取标量，避免新版 NumPy 的弃用警告。</li>
+        <li>数据路径相对于 <code>regTrees.py</code>定位，PyCharm 直接运行也能找到数据。</li>
+        <li>书中 <code>FigureCanvasTkAgg.show()</code>已经移除，交互界面改用新版 <code>draw()</code>。</li>
+      </ul>
+      <p>这些地方都在源码中有中文注释，算法的切分规则、字典结构和递归流程没有改成其他实现。</p>
+
+      <h2>十一、目前还没有真正弄懂的问题</h2>
+      <ol class="knn-mistakes">
+        <li><strong>三个停止条件的配合。</strong>单独看懂了每个判断，但面对较深递归时还不容易判断最终会在哪里停止。</li>
+        <li><strong>后剪枝的返回过程。</strong>知道它从底部尝试合并，但复杂树中每次返回到哪一层仍容易看乱。</li>
+        <li><strong>参数选择。</strong>现在只比较了节点数量，还没有用验证集系统选择 tolS 和 tolN。</li>
+        <li><strong>评价指标。</strong>相关系数方便比较趋势，但还需要同时计算测试 RSS 或 RMSE。</li>
+      </ol>
+
+      <h2>十二、下周计划</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>手画一遍递归树</strong><p>记录每次切分的数据范围、误差变化和停止原因。</p></div></li>
+        <li><span>02</span><div><strong>比较剪枝前后测试误差</strong><p>除节点数量外，再计算测试 RSS，确认合并确实有价值。</p></div></li>
+        <li><span>03</span><div><strong>补做上周遗留实验</strong><p>继续用独立测试数据比较局部加权回归的不同 k 值。</p></div></li>
+        <li><span>04</span><div><strong>进入第 10 章 K 均值聚类</strong><p>学习距离计算、质心更新和误差平方和。</p></div></li>
+      </ol>
+
+      <h2>十三、第七周最值得保留的认识</h2>
+      <p class="knn-summary-words"><span>切分</span><span>递归</span><span>台阶</span><span>剪枝</span><span>局部模型</span></p>
+      <p>回归树通过不断<strong>切分</strong>和<strong>递归</strong>建立区域，每个叶节点输出常数，因此形成<strong>台阶</strong>；为了避免树追随噪声，需要预剪枝或后<strong>剪枝</strong>；模型树再把叶节点升级成<strong>局部模型</strong>，让每个区域内部继续保持线性变化。</p>
+      <p>如果只用一句话总结第七周，那就是：树模型不是只会做分类，它也可以把复杂的回归关系拆成多个容易处理的小区域。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week6-regression-learning-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：第六周回归学习复盘</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

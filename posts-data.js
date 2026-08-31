@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week7-regression-tree-learning-review",
+      href: "posts/week7-regression-tree-learning-review.html",
+      title: "第七周学习复盘：让决策树也能预测连续数值",
+      date: "2026-08-31",
+      updated: "2026-08-31",
+      category: "学习札记",
+      excerpt: "复现回归树、预剪枝、后剪枝和模型树，用节点数量、拟合曲线与相关系数理解树模型怎样处理连续数值。",
+      tags: ["Python", "机器学习", "回归树", "模型树", "剪枝", "决策树", "周报"],
+      words: 3900,
+      readTime: 13,
+    },
+    {
       id: "week6-regression-learning-review",
       href: "posts/week6-regression-learning-review.html",
       title: "第六周学习复盘：从一条直线开始理解回归",
