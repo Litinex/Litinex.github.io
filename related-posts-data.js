@@ -1,7 +1,11 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
-  "week7-regression-tree-learning-review": [
+  "week8-kmeans-clustering-learning-review": [
+    {
+      "id": "week7-regression-tree-learning-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
     {
       "id": "week6-regression-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
@@ -9,27 +13,41 @@
     {
       "id": "week5-adaboost-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
+    }
+  ],
+  "week7-regression-tree-learning-review": [
+    {
+      "id": "week8-kmeans-clustering-learning-review",
+      "reason": "共同标签：Python、机器学习、周报"
     },
     {
-      "id": "python-decision-tree-beginner-guide",
-      "reason": "共同标签：Python、机器学习、决策树"
+      "id": "week6-regression-learning-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
+    {
+      "id": "week5-adaboost-learning-review",
+      "reason": "共同标签：Python、机器学习、周报"
     }
   ],
   "week6-regression-learning-review": [
     {
+      "id": "week8-kmeans-clustering-learning-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
+    {
       "id": "week7-regression-tree-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
     },
     {
       "id": "week5-adaboost-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
-    },
-    {
-      "id": "python-logistic-regression-sigmoid-classification",
-      "reason": "共同标签：Python、机器学习"
     }
   ],
   "week5-adaboost-learning-review": [
+    {
+      "id": "week8-kmeans-clustering-learning-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
     {
       "id": "week7-regression-tree-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
@@ -37,10 +55,6 @@
     {
       "id": "week6-regression-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
-    },
-    {
-      "id": "python-logistic-regression-sigmoid-classification",
-      "reason": "共同标签：Python、机器学习"
     }
   ],
   "python-logistic-regression-sigmoid-classification": [
@@ -231,11 +245,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "week7-regression-tree-learning-review",
+      "id": "week8-kmeans-clustering-learning-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week6-regression-learning-review",
+      "id": "week7-regression-tree-learning-review",
       "reason": "同属“学习札记”分类"
     }
   ],

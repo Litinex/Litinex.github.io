@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week8-kmeans-clustering-learning-review",
+      href: "posts/week8-kmeans-clustering-learning-review.html",
+      title: "第八周学习复盘：从一堆点到几个簇",
+      date: "2026-09-07",
+      updated: "2026-09-07",
+      category: "学习札记",
+      excerpt: "复现标准K均值、二分K均值和地图地点聚类，用真实结果理解簇、质心、SSE与随机初始化。",
+      tags: ["Python", "机器学习", "K均值", "聚类", "无监督学习", "SSE", "周报"],
+      words: 3100,
+      readTime: 10,
+    },
+    {
       id: "week7-regression-tree-learning-review",
       href: "posts/week7-regression-tree-learning-review.html",
       title: "第七周学习复盘：让决策树也能预测连续数值",

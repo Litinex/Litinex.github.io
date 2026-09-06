@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第八周学习复盘：从一堆点到几个簇 | 风迁夏回</title>
+  <meta name="description" content="第八周机器学习实战总结：复现标准K均值、二分K均值、球面距离和地图地点聚类，用真实结果理解质心、簇与SSE。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week8-kmeans-clustering-learning-review.html">
+  <meta property="og:title" content="第八周学习复盘：从一堆点到几个簇 | 风迁夏回">
+  <meta property="og:description" content="从最近质心到误差平方和，记录标准K均值、二分K均值和地图地点聚类的源码复现。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week8-kmeans-clustering-learning-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/kmeans-week8-comparison.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260816-1">
+  <script src="../posts-data.js?v=20260907-1" defer></script>
+  <script src="../related-posts-data.js?v=20260907-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第八周学习复盘：从一堆点到几个簇","description":"第八周机器学习实战总结：复现标准K均值、二分K均值、球面距离和地图地点聚类，用真实结果理解质心、簇与SSE。","image":"https://yezizhuang.top/assets/kmeans-week8-comparison.png","url":"https://yezizhuang.top/posts/week8-kmeans-clustering-learning-review.html","datePublished":"2026-09-07","dateModified":"2026-09-07","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week8-kmeans-clustering-learning-review">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.09.07 · 学习札记 · 约 10 分钟</p>
+      <h1>第八周学习复盘：从一堆点到几个簇</h1>
+      <p class="article-deck">这一周第一次学习无监督聚类：不给标准答案，只根据样本之间的距离，把相近的数据放到一起。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">本周复现了《机器学习实战》第 10 章的标准 K 均值、二分 K 均值、球面距离和地图地点聚类。代码主线不长，但和前面的分类算法不同：训练数据没有类别标签，算法需要自己寻找数据中的分组结构。</p>
+
+      <aside class="knn-note"><strong>本周实际结果：</strong>标准 K 均值将 80 条数据分为 4 簇，最终 SSE 为 149.954305；二分 K 均值将另一组数据分为 3 簇，最终 SSE 为 106.749499；地点案例使用 69 条数据分成 5 簇。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇复盘主要记录</p>
+        <ul>
+          <li>簇、质心和 K 分别是什么</li>
+          <li>标准 K 均值为什么要反复分配和更新</li>
+          <li>SSE 能说明什么，不能说明什么</li>
+          <li>二分 K 均值与普通 K 均值有什么区别</li>
+        </ul>
+      </div>
+
+      <h2>一、K均值在解决什么问题</h2>
+      <p>假设桌上混放着很多红豆、绿豆和黄豆，但颜色标签被遮住了。可以先随便选几个代表，再把每颗豆子放到离它最近的代表旁边，接着根据每堆豆子的平均位置重新选择代表。反复几次后，相近的豆子就会聚到一起。</p>
+      <p>在 K 均值中，每一堆叫作<strong>簇</strong>，代表位置叫作<strong>质心</strong>，K 表示最终想分成多少簇。算法只根据特征和距离工作，并不知道每簇在现实中应该叫什么名字。</p>
+      <blockquote class="knn-principle">分类是“根据已有答案学习怎样判断”，聚类是“没有答案时先看看数据自然分成了哪些组”。</blockquote>
+
+      <h2>二、标准K均值的四个步骤</h2>
+      <ol>
+        <li>在每个特征的取值范围内随机生成 K 个质心。</li>
+        <li>计算每个样本到所有质心的距离，把它分给最近的质心。</li>
+        <li>对每一簇中的样本求平均，得到新的质心。</li>
+        <li>如果样本所属的簇发生变化，就继续重复分配和更新。</li>
+      </ol>
+      <p>核心循环可以概括为：</p>
+      <pre data-code-id="kmeans-main-loop"><code class="language-python">while clusterChanged:
+    clusterChanged = False
+    # 先把每个样本分到距离最近的质心
+    # 再用每一簇样本的平均值更新质心</code></pre>
+      <p>这和“分小组后重新选每组中心位置”很像。第一次代表是随机的，所以不同的初始质心可能走向不同的最终结果。</p>
+
+      <h2>三、距离为什么要平方</h2>
+      <p>书中使用欧氏距离，也就是平面上两点之间的直线距离：</p>
+      <p class="knn-formula">distance = √((x₁-x₂)² + (y₁-y₂)²)</p>
+      <p>每个样本分簇后，代码还会保存它到所属质心的<strong>距离平方</strong>。所有距离平方相加就是 SSE：</p>
+      <p class="knn-formula">SSE = Σ(样本到所属质心的距离²)</p>
+      <p>SSE 越小，说明样本整体上离各自质心越近，簇内更加紧凑。但 SSE 不能单独决定 K，因为增加簇数通常就能降低 SSE。若把每个样本都单独看成一簇，SSE 甚至会变为 0，却没有多少分析价值。</p>
+
+      <h2>四、标准K均值的运行结果</h2>
+      <p>在 <code>testSet.txt</code> 的 80 条二维数据上，设置 <code>K=4</code>、随机种子为 10。最终每簇正好有 20 条数据，SSE 为 149.954305，四个质心为：</p>
+      <pre data-code-id="kmeans-standard-result"><code class="language-code">[ 2.802931, -2.731515]
+[-3.382370, -2.947336]
+[ 2.626530,  3.108680]
+[-2.461543,  2.787376]</code></pre>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/kmeans-week8-comparison.png" alt="标准K均值与二分K均值的聚类结果比较" width="1600" height="640">
+        <figcaption>图 1：左侧为标准 K 均值的 4 簇结果，右侧为二分 K 均值的 3 簇结果。叉号表示质心。</figcaption>
+      </figure>
+
+      <h2>五、普通K均值容易卡在哪里</h2>
+      <p>K 均值每一轮都会让当前 SSE 不再增大，但它找到的可能只是<strong>局部最优</strong>。可以把它想成在有很多山谷的地面上放下一颗球：球会滚到附近的低处，却不一定滚到全局最低处。初始质心落在不同位置，最终簇和 SSE 就可能不同。</p>
+      <aside class="knn-note knn-note-warning"><strong>本周还不能据此判断算法稳定：</strong>当前示例固定随机种子是为了让每次运行结果一致。后续仍要比较不同种子，并尝试多次初始化后选择 SSE 较小的一次。</aside>
+
+      <h2>六、二分K均值怎样工作</h2>
+      <p>二分 K 均值一开始把全部样本看成一个簇，然后每次挑一个现有簇拆成两簇。选择拆分对象时，会同时计算：</p>
+      <p class="knn-formula">拆分后的两簇 SSE + 其他未拆分簇的 SSE</p>
+      <p>哪一种拆法让总 SSE 最小，就采用哪一种。重复拆分，直到达到指定的 K。它不是一次随机生成 K 个质心，而是逐步细分，因此在一些数据上可能比标准 K 均值得到更好的结果。</p>
+      <p>在 <code>testSet2.txt</code> 上设置 <code>K=3</code>、随机种子为 10，最终 SSE 为 106.749499，三个质心为：</p>
+      <pre data-code-id="bisecting-kmeans-result"><code class="language-code">[ 2.933864,  3.127828]
+[-2.947376,  3.326378]
+[-0.459656, -2.778216]</code></pre>
+      <p>这里的 SSE 不能和上一节直接比较高低，因为两个算法使用的不是同一份数据，K 也不同。要公平比较，必须固定数据、K 和评价方式。</p>
+
+      <h2>七、地图上的距离不能直接照搬平面距离</h2>
+      <p>地点数据使用经纬度。书中的 <code>distSLC</code>采用球面余弦定理，先计算两点在地球表面的夹角，再乘以地球半径 6371 千米。这样比直接把经纬度当作普通平面坐标更合理。</p>
+      <p>本次使用作者提供的 <code>places.txt</code>，共 69 个地点，二分 K 均值将它们分成 5 簇并绘制到底图上。球面距离中还对 <code>arccos</code>的输入做了 <code>np.clip</code>，防止浮点误差让略大于 1 的数产生 <code>NaN</code>。</p>
+
+      <h2>八、与书上源码不同的地方</h2>
+      <ul>
+        <li>书中 Python 2 的 <code>print</code>语法改为当前 Python 可运行的写法。</li>
+        <li>新版 NumPy 删除了 <code>np.mat</code>，改用 <code>np.matrix</code>保留原书矩阵语义。</li>
+        <li>数据文件按 <code>kMeans.py</code>所在目录定位，直接运行案例也能找到文件。</li>
+        <li>增加随机种子和最大迭代次数，便于复现实验并避免异常情况下无限循环。</li>
+        <li>增加空簇处理，某个簇暂时没有样本时不会把质心算成 <code>NaN</code>。</li>
+        <li>书中获取地点坐标所依赖的 Yahoo 地理编码接口已经失效，所以直接使用作者仓库提供的 <code>places.txt</code>。</li>
+      </ul>
+      <p>这些调整都在代码中用中文说明；距离计算、质心更新、标准 K 均值和二分 K 均值的算法主线仍跟随作者源码。</p>
+
+      <h2>九、目前还没有真正弄懂的问题</h2>
+      <ol class="knn-mistakes">
+        <li><strong>K 怎样选。</strong>现在只会提前指定 K，还没有实际使用肘部法或轮廓系数。</li>
+        <li><strong>初始化是否可靠。</strong>知道随机质心会影响结果，但还没系统比较多次初始化。</li>
+        <li><strong>数据形状的限制。</strong>K 均值更适合接近球状、大小相近的簇，对弯曲形状的数据可能分得不好。</li>
+        <li><strong>异常点影响。</strong>质心是平均值，离群点可能明显拉动质心位置。</li>
+      </ol>
+
+      <h2>十、下周计划</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>比较不同 K 值</strong><p>记录 K 从 2 到 8 时的 SSE，并画出肘部曲线。</p></div></li>
+        <li><span>02</span><div><strong>比较不同初始化</strong><p>更换随机种子，观察质心、簇大小和 SSE 的变化。</p></div></li>
+        <li><span>03</span><div><strong>整理两种算法</strong><p>用同一份数据比较标准 K 均值和二分 K 均值。</p></div></li>
+        <li><span>04</span><div><strong>进入第 11 章</strong><p>先理解支持度、置信度和 Apriori 的基本思路。</p></div></li>
+      </ol>
+
+      <h2>十一、第八周最值得保留的认识</h2>
+      <p class="knn-summary-words"><span>无标签</span><span>距离</span><span>质心</span><span>SSE</span><span>初始化</span></p>
+      <p>K 均值在<strong>无标签</strong>数据中根据<strong>距离</strong>分组，通过反复更新<strong>质心</strong>降低<strong>SSE</strong>；但结果会受到 K 和随机<strong>初始化</strong>影响，所以一次运行得到的图不能自动代表唯一正确的分组。</p>
+      <p>如果只用一句话总结第八周，那就是：聚类不是给数据找到标准答案，而是提供一种观察数据结构的方法。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week7-regression-tree-learning-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：第七周树回归学习复盘</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>
