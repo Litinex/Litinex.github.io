@@ -1,7 +1,11 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
-  "week8-kmeans-clustering-learning-review": [
+  "week9-association-analysis-fp-growth-review": [
+    {
+      "id": "week8-kmeans-clustering-learning-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
     {
       "id": "week7-regression-tree-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
@@ -9,51 +13,61 @@
     {
       "id": "week6-regression-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
+    }
+  ],
+  "week8-kmeans-clustering-learning-review": [
+    {
+      "id": "week9-association-analysis-fp-growth-review",
+      "reason": "共同标签：Python、机器学习、周报"
     },
     {
-      "id": "week5-adaboost-learning-review",
+      "id": "week7-regression-tree-learning-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
+    {
+      "id": "week6-regression-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
     }
   ],
   "week7-regression-tree-learning-review": [
     {
+      "id": "python-decision-tree-beginner-guide",
+      "reason": "共同标签：Python、机器学习、决策树"
+    },
+    {
+      "id": "week9-association-analysis-fp-growth-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
+    {
       "id": "week8-kmeans-clustering-learning-review",
-      "reason": "共同标签：Python、机器学习、周报"
-    },
-    {
-      "id": "week6-regression-learning-review",
-      "reason": "共同标签：Python、机器学习、周报"
-    },
-    {
-      "id": "week5-adaboost-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
     }
   ],
   "week6-regression-learning-review": [
     {
+      "id": "week9-association-analysis-fp-growth-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
+    {
       "id": "week8-kmeans-clustering-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
     },
     {
       "id": "week7-regression-tree-learning-review",
-      "reason": "共同标签：Python、机器学习、周报"
-    },
-    {
-      "id": "week5-adaboost-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
     }
   ],
   "week5-adaboost-learning-review": [
     {
+      "id": "week9-association-analysis-fp-growth-review",
+      "reason": "共同标签：Python、机器学习、周报"
+    },
+    {
       "id": "week8-kmeans-clustering-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
     },
     {
       "id": "week7-regression-tree-learning-review",
-      "reason": "共同标签：Python、机器学习、周报"
-    },
-    {
-      "id": "week6-regression-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
     }
   ],
@@ -245,11 +259,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "week8-kmeans-clustering-learning-review",
+      "id": "week9-association-analysis-fp-growth-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week7-regression-tree-learning-review",
+      "id": "week8-kmeans-clustering-learning-review",
       "reason": "同属“学习札记”分类"
     }
   ],

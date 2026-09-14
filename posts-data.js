@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week9-association-analysis-fp-growth-review",
+      href: "posts/week9-association-analysis-fp-growth-review.html",
+      title: "第九周学习复盘：从购物篮中寻找关联规则",
+      date: "2026-09-14",
+      updated: "2026-09-14",
+      category: "学习札记",
+      excerpt: "复现Apriori和FP-growth，从支持度、置信度、频繁项集到FP树与条件模式基，理解关联分析的两条实现路线。",
+      tags: ["Python", "机器学习", "Apriori", "FP-growth", "关联分析", "频繁项集", "周报"],
+      words: 3500,
+      readTime: 11,
+    },
+    {
       id: "week8-kmeans-clustering-learning-review",
       href: "posts/week8-kmeans-clustering-learning-review.html",
       title: "第八周学习复盘：从一堆点到几个簇",

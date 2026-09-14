@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第九周学习复盘：从购物篮中寻找关联规则 | 风迁夏回</title>
+  <meta name="description" content="复现《机器学习实战》第11、12章，用Apriori和FP-growth寻找频繁项集，理解支持度、置信度、FP树和条件模式基。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week9-association-analysis-fp-growth-review.html">
+  <meta property="og:title" content="第九周学习复盘：从购物篮中寻找关联规则 | 风迁夏回">
+  <meta property="og:description" content="先用Apriori找常见组合，再用FP树压缩交易记录并挖掘频繁模式。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week9-association-analysis-fp-growth-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/apriori-week9-support.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260816-1">
+  <script src="../posts-data.js?v=20260914-1" defer></script>
+  <script src="../related-posts-data.js?v=20260914-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第九周学习复盘：从购物篮中寻找关联规则","description":"复现《机器学习实战》第11、12章，用Apriori和FP-growth寻找频繁项集。","image":"https://yezizhuang.top/assets/apriori-week9-support.png","url":"https://yezizhuang.top/posts/week9-association-analysis-fp-growth-review.html","datePublished":"2026-09-14","dateModified":"2026-09-14","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week9-association-analysis-fp-growth-review">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.09.14 · 学习札记 · 约 11 分钟</p>
+      <h1>第九周学习复盘：从购物篮中寻找关联规则</h1>
+      <p class="article-deck">这周继续学习无监督方法：不预测类别，而是从大量交易记录中找出经常一起出现的组合。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">本周复现了《机器学习实战》第11章Apriori关联分析和第12章FP-growth。两个算法都在寻找频繁项集，但路线不同：Apriori不断产生并检查候选组合，FP-growth先把数据压缩成一棵树，再从树中递归挖掘。</p>
+      <aside class="knn-note"><strong>实际运行结果：</strong>书中4条交易数据在最低支持度0.5时得到9个频繁项集，最低置信度0.7时得到3条关联规则；FP-growth书中示例在最低支持计数3时得到18个频繁项集。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇复盘主要记录</p>
+        <ul>
+          <li>支持度、置信度和频繁项集分别是什么</li>
+          <li>Apriori为什么能减少不必要的候选组合</li>
+          <li>FP树如何压缩重复的交易前缀</li>
+          <li>两种算法有什么联系和区别</li>
+        </ul>
+      </div>
+
+      <h2>一、关联分析在找什么</h2>
+      <p>超市里有很多购物篮记录。关联分析想回答的不是“这位顾客属于哪一类”，而是“哪些商品经常一起出现”。例如，若买面包的人经常也买牛奶，就可以形成一条规则：</p>
+      <p class="knn-formula">{面包} → {牛奶}</p>
+      <p>但“出现过”远远不够。组合必须出现得足够频繁，规则也必须足够可靠，这就需要支持度和置信度。</p>
+
+      <h2>二、支持度与置信度</h2>
+      <p><strong>支持度</strong>表示某个项集在全部交易中出现的比例：</p>
+      <p class="knn-formula">support(X) = 包含X的交易数 / 全部交易数</p>
+      <p><strong>置信度</strong>表示在已经出现X的交易中，同时出现Y的比例：</p>
+      <p class="knn-formula">confidence(X→Y) = support(X∪Y) / support(X)</p>
+      <p>生活化地说，支持度回答“这组搭配常不常见”，置信度回答“买了前面的东西后，后面的东西有多大概率也出现”。两者不是一回事。</p>
+
+      <h2>三、Apriori最重要的先验性质</h2>
+      <blockquote class="knn-principle">如果一个项集是频繁的，那么它的所有子集也一定频繁；反过来，只要某个子集不频繁，包含它的更大项集就不可能频繁。</blockquote>
+      <p>假设“面包和牛奶”都很少一起出现，那么“面包、牛奶和鸡蛋”只会更少，不必再扫描数据验证。Apriori就是利用这一点，按层次生成候选项集：</p>
+      <pre data-code-id="apriori-process"><code class="language-code">候选1项集 → 频繁1项集
+频繁1项集 → 候选2项集 → 频繁2项集
+频繁2项集 → 候选3项集 → 频繁3项集</code></pre>
+
+      <h2>四、书中数据的真实结果</h2>
+      <p>书中的交易记录为：</p>
+      <pre data-code-id="apriori-book-data"><code class="language-python">[[1, 3, 4],
+ [2, 3, 5],
+ [1, 2, 3, 5],
+ [2, 5]]</code></pre>
+      <p>设置最低支持度为0.5后，共留下9个频繁项集：4个频繁1项集、4个频繁2项集和1个频繁3项集。其中{2,5}支持度为0.75，{2,3,5}支持度为0.5。</p>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/apriori-week9-support.png" alt="书中Apriori示例的频繁项集支持度柱状图" width="1800" height="900">
+        <figcaption>图1：虚线是最低支持度0.5。不同颜色区分1项集、2项集和3项集。</figcaption>
+      </figure>
+
+      <h2>五、从频繁项集生成关联规则</h2>
+      <p>频繁项集只说明组合常见，还没有方向。对于{2,5}，可以尝试两条规则：{2}→{5}和{5}→{2}。本次最低置信度设置为0.7，得到3条规则：</p>
+      <pre data-code-id="apriori-rules-result"><code class="language-code">{1} → {3}，置信度 1.000
+{5} → {2}，置信度 1.000
+{2} → {5}，置信度 1.000</code></pre>
+      <p>置信度为1只表示这4条示例交易中没有反例。样本很少，所以不能把它直接解释成现实世界里100%成立。</p>
+
+      <h2>六、Apriori为什么可能很慢</h2>
+      <p>商品种类增加后，可能组合的数量增长得非常快。Apriori每生成一层候选项集，都要再次扫描数据统计支持度。先验性质已经过滤了很多组合，但数据量和项目数很大时，候选集仍可能很多。</p>
+      <aside class="knn-note knn-note-warning"><strong>关键限制：</strong>最低支持度设得越低，保留的项集通常越多，计算量也越大。阈值不是越低越好。</aside>
+
+      <h2>七、FP-growth怎样减少重复扫描</h2>
+      <p>FP-growth不再逐层产生大量候选项集，而是先统计频率、去掉不频繁项，再把每条交易按全局频率排序并插入FP树。不同交易相同的开头会共享树节点，因此可以压缩数据。</p>
+      <p>FP树节点保存：</p>
+      <ul>
+        <li>项目名称和计数；</li>
+        <li>父节点和子节点；</li>
+        <li>指向树中下一个同名节点的节点链接。</li>
+      </ul>
+      <p>头指针表则把相同项目的节点串起来，方便快速找到它在树中的所有位置。</p>
+
+      <h2>八、条件模式基和条件FP树</h2>
+      <p>挖掘某个项目时，要从它的每个节点向上回溯到根节点。得到的前缀路径及计数组成<strong>条件模式基</strong>。再用条件模式基创建一棵更小的<strong>条件FP树</strong>，递归寻找与该项目共同出现的频繁组合。</p>
+      <p>可以把它类比成：先锁定“买了牛奶”的购物篮，只保留牛奶之前的有效商品，再在这个缩小后的世界中继续寻找规律。</p>
+
+      <h2>九、两种算法怎样比较</h2>
+      <div class="knn-table-wrap" role="region" aria-label="Apriori与FP-growth比较" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>方面</th><th>Apriori</th><th>FP-growth</th></tr></thead>
+          <tbody>
+            <tr><td>共同目标</td><td>寻找频繁项集</td><td>寻找频繁项集</td></tr>
+            <tr><td>主要方法</td><td>逐层生成候选项集</td><td>构建FP树并递归挖掘</td></tr>
+            <tr><td>优点</td><td>过程直观，容易理解</td><td>避免产生大量候选集</td></tr>
+            <tr><td>难点</td><td>候选组合可能爆炸</td><td>树和递归过程较难理解</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>FP-growth不是用来直接生成关联规则的新指标，它首先更高效地寻找频繁项集。得到频繁项集后，仍可以按支持度和置信度生成规则。</p>
+
+      <h2>十、与书上源码不同的地方</h2>
+      <ul>
+        <li>Python 2的<code>print</code>改成当前Python可运行的写法。</li>
+        <li><code>map</code>显式转换为列表，适配Python 3迭代器行为。</li>
+        <li>字典遍历和排序改成Python 3支持的形式。</li>
+        <li>创建FP树初始字典时，相同交易使用累加计数，避免书中直接赋值造成重复记录被覆盖。</li>
+        <li>增加中文注释、独立案例入口和自动测试，算法主线及书中示例数据保持一致。</li>
+      </ul>
+
+      <h2>十一、目前还不熟的地方</h2>
+      <ol class="knn-mistakes">
+        <li><strong>候选集连接。</strong>低阶项集能跟下来，高阶项集的连接、去重和剪枝仍容易混乱。</li>
+        <li><strong>规则是否有价值。</strong>支持度和置信度达到阈值，不代表现实中一定有因果关系。</li>
+        <li><strong>条件FP树。</strong>能跟着代码运行，但节点链接、前缀路径和递归返回仍需要手画一遍。</li>
+      </ol>
+
+      <h2>十二、下周计划</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>配置PyTorch环境</strong><p>检查PyTorch版本、CPU和GPU状态。</p></div></li>
+        <li><span>02</span><div><strong>学习张量操作</strong><p>完成创建、变形、广播、索引和数据预处理。</p></div></li>
+        <li><span>03</span><div><strong>复习线性代数</strong><p>区分按元素乘法、点积和矩阵乘法。</p></div></li>
+        <li><span>04</span><div><strong>学习自动求导</strong><p>理解计算图、backward、梯度累积和detach。</p></div></li>
+      </ol>
+
+      <h2>十三、第九周最值得保留的认识</h2>
+      <p class="knn-summary-words"><span>频繁项集</span><span>支持度</span><span>置信度</span><span>先验性质</span><span>FP树</span></p>
+      <p>Apriori利用<strong>先验性质</strong>逐层筛选<strong>频繁项集</strong>，再用<strong>支持度</strong>判断组合是否常见、用<strong>置信度</strong>评价规则；FP-growth则使用<strong>FP树</strong>压缩重复路径，减少候选项集带来的开销。</p>
+      <p>这一周最重要的变化，是开始从“预测一个结果”转向“发现数据中共同出现的模式”。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week8-kmeans-clustering-learning-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：第八周K均值聚类复盘</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>
