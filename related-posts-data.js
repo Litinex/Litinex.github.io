@@ -1,6 +1,20 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "week10-pytorch-tensor-autograd-review": [
+    {
+      "id": "week9-association-analysis-fp-growth-review",
+      "reason": "共同标签：Python、周报"
+    },
+    {
+      "id": "week8-kmeans-clustering-learning-review",
+      "reason": "共同标签：Python、周报"
+    },
+    {
+      "id": "week7-regression-tree-learning-review",
+      "reason": "共同标签：Python、周报"
+    }
+  ],
   "week9-association-analysis-fp-growth-review": [
     {
       "id": "week8-kmeans-clustering-learning-review",
@@ -259,11 +273,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "week9-association-analysis-fp-growth-review",
+      "id": "week10-pytorch-tensor-autograd-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week8-kmeans-clustering-learning-review",
+      "id": "week9-association-analysis-fp-growth-review",
       "reason": "同属“学习札记”分类"
     }
   ],

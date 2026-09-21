@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第十周学习复盘：从张量到自动求导 | 风迁夏回</title>
+  <meta name="description" content="开始学习《动手学深度学习》，通过PyTorch张量、广播、数据预处理、线性代数、数值导数和自动求导打牢深度学习基础。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week10-pytorch-tensor-autograd-review.html">
+  <meta property="og:title" content="第十周学习复盘：从张量到自动求导 | 风迁夏回">
+  <meta property="og:description" content="第一次系统使用PyTorch：认识张量形状、广播和计算图，让程序自动算出梯度。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week10-pytorch-tensor-autograd-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/pytorch-week10-tangent.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260816-1">
+  <script src="../posts-data.js?v=20260921-1" defer></script>
+  <script src="../related-posts-data.js?v=20260921-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十周学习复盘：从张量到自动求导","description":"开始学习《动手学深度学习》，通过PyTorch张量、广播、数据预处理、线性代数、数值导数和自动求导打牢深度学习基础。","image":"https://yezizhuang.top/assets/pytorch-week10-tangent.png","url":"https://yezizhuang.top/posts/week10-pytorch-tensor-autograd-review.html","datePublished":"2026-09-21","dateModified":"2026-09-21","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week10-pytorch-tensor-autograd-review">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.09.21 · 学习札记 · 约 10 分钟</p>
+      <h1>第十周学习复盘：从张量到自动求导</h1>
+      <p class="article-deck">从传统机器学习切换到深度学习的第一周，先不急着搭神经网络，先把数据形状和梯度弄明白。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">本周开始学习《动手学深度学习》第2章预备知识，使用PyTorch 2.5.1完成张量操作、广播、数据预处理、基础线性代数、数值导数、自动求导和概率抽样。它们看起来零散，实际会贯穿后面的每一次模型训练。</p>
+      <aside class="knn-note"><strong>本周实际结果：</strong>5项自动测试全部通过；CSV输入转换为4×3张量；函数在x=1处的数值导数约为2.0003；自动求导得到梯度[0,4,8,12]；一万次公平骰子实验的频率接近1/6。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇复盘主要记录</p>
+        <ul>
+          <li>张量与shape为什么是PyTorch代码的基础</li>
+          <li>广播怎样让不同形状的张量参与运算</li>
+          <li>按元素乘法、点积和矩阵乘法的区别</li>
+          <li>backward、梯度累积和detach分别做什么</li>
+        </ul>
+      </div>
+
+      <h2>一、运行环境</h2>
+      <p>本周使用Python 3.12.3和PyTorch 2.5.1 CPU版。环境检查结果为：</p>
+      <pre data-code-id="pytorch-environment"><code class="language-code">PyTorch版本：2.5.1+cpu
+CUDA是否可用：False
+可用GPU数量：0
+本周使用设备：cpu</code></pre>
+      <p>第2章只有小规模张量计算，CPU足够。没有GPU不会妨碍理解广播、矩阵运算和自动求导，等到后面训练大型CNN时再评估速度。</p>
+
+      <h2>二、张量是什么</h2>
+      <p>可以先把张量理解成能放到CPU或GPU上计算的多维数字容器：一个数字是0维张量，一列数字是1维张量，表格是2维张量，很多张图片组成的批量通常是4维张量。</p>
+      <pre data-code-id="tensor-reshape"><code class="language-python">x = torch.arange(12)
+X = x.reshape(3, 4)
+
+print(X.shape)   # torch.Size([3, 4])
+print(X.numel()) # 12</code></pre>
+      <blockquote class="knn-principle">深度学习代码出错时，第一件事往往不是怀疑算法，而是检查每个张量的shape。</blockquote>
+
+      <h2>三、广播机制</h2>
+      <p>广播允许两个形状不同但兼容的张量参与运算。例如一个3×1张量和一个1×2张量相加：</p>
+      <pre data-code-id="tensor-broadcast"><code class="language-python">a = torch.arange(3).reshape(3, 1)
+b = torch.arange(2).reshape(1, 2)
+print(a + b)</code></pre>
+      <pre data-code-id="tensor-broadcast-result"><code class="language-code">tensor([[0, 1],
+        [1, 2],
+        [2, 3]])</code></pre>
+      <p>可以把它想成把一列数字横向复印、把一行数字纵向复印，再进行逐元素相加。真正判断时要从最后一个维度向前比较：两个维度相等，或者其中一个等于1，才可以广播。</p>
+
+      <h2>四、数据预处理</h2>
+      <p>书中的小型房价数据包含数值缺失值和类别缺失值。本次先用房间数平均值填充数值列，再对巷道类型做独热编码，最终得到：</p>
+      <pre data-code-id="preprocessing-result"><code class="language-code">tensor([[3., 1., 0.],
+        [2., 0., 1.],
+        [4., 0., 1.],
+        [3., 0., 1.]])
+
+输入形状：torch.Size([4, 3])</code></pre>
+      <p>这里的4表示4条样本，3表示处理后的3个输入特征。神经网络只能处理数值张量，因此文本类别必须先转换成数值表示。</p>
+
+      <h2>五、三种“乘法”不能混在一起</h2>
+      <div class="knn-table-wrap" role="region" aria-label="PyTorch乘法比较" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>写法</th><th>含义</th><th>主要要求</th></tr></thead>
+          <tbody>
+            <tr><td><code>A * B</code></td><td>对应位置逐元素相乘</td><td>形状相同或可以广播</td></tr>
+            <tr><td><code>torch.dot(x,y)</code></td><td>两个向量的点积</td><td>两个一维向量长度相同</td></tr>
+            <tr><td><code>A @ B</code></td><td>矩阵乘法</td><td>A的列数等于B的行数</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>本次2×3矩阵乘3×4矩阵，输出形状为2×4。矩阵乘法不要求两个矩阵形状相同，真正匹配的是中间两个维度。</p>
+
+      <h2>六、导数可以理解成局部斜率</h2>
+      <p>对函数f(x)=3x²-4x，理论导数是f'(x)=6x-4，所以x=1时斜率为2。用很小的h计算差分：</p>
+      <p class="knn-formula">(f(x+h)-f(x)) / h</p>
+      <p>当h=0.0001时，本次结果约为2.0003，与理论值2非常接近。</p>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/pytorch-week10-tangent.png" alt="二次函数及其在x等于1处的切线" width="1440" height="900">
+        <figcaption>图1：曲线是f(x)=3x²-4x，虚线是它在x=1处的切线，切线斜率为2。</figcaption>
+      </figure>
+
+      <h2>七、自动求导在做什么</h2>
+      <p>训练神经网络需要知道损失函数对每个参数的梯度。手工推导大型网络很麻烦，PyTorch会在前向计算时记录运算关系，形成计算图；调用<code>backward()</code>后，再按链式法则反向计算梯度。</p>
+      <pre data-code-id="autograd-basic"><code class="language-python">x = torch.arange(4.0, requires_grad=True)
+y = 2 * torch.dot(x, x)
+y.backward()
+print(x.grad)</code></pre>
+      <p>因为y=2xᵀx，所以理论梯度是4x。本次结果为：</p>
+      <pre data-code-id="autograd-result"><code class="language-code">tensor([0., 4., 8., 12.])</code></pre>
+      <p>自动求导结果与理论值一致。后面训练模型时，损失函数的<code>backward()</code>也是同一件事，只是计算图更复杂。</p>
+
+      <h2>八、为什么要清空梯度</h2>
+      <p>PyTorch默认把新梯度累加到已有梯度中。如果连续调用两次反向传播而不清零，第二次看到的不是单独的新梯度，而是两次结果之和。因此训练循环通常包含：</p>
+      <pre data-code-id="zero-grad"><code class="language-python">optimizer.zero_grad()
+loss.backward()
+optimizer.step()</code></pre>
+      <p>第一行清空上一批数据留下的梯度，第二行计算当前梯度，第三行根据梯度更新参数。</p>
+
+      <h2>九、detach是什么意思</h2>
+      <p><code>detach()</code>会得到一个共享数据但不继续记录当前计算关系的张量。若<code>u=(x*x).detach()</code>，之后计算<code>z=u*x</code>，反向传播时会把u当作常量，因此z对x的梯度等于u，而不会继续穿过u追溯到前面的<code>x*x</code>。</p>
+      <p>可以把计算图想成一张路线图，<code>detach()</code>相当于在某个位置告诉自动求导：“从这里往前不要再追了。”</p>
+
+      <h2>十、概率实验</h2>
+      <p>使用<code>torch.multinomial</code>模拟公平骰子。实验次数较少时频率波动很大；次数增加后，各点数频率逐渐接近理论概率0.167：</p>
+      <pre data-code-id="dice-result"><code class="language-code">10次：    [0.000, 0.000, 0.300, 0.400, 0.100, 0.200]
+1000次：  [0.168, 0.151, 0.182, 0.169, 0.160, 0.170]
+10000次： [0.170, 0.165, 0.168, 0.165, 0.168, 0.164]</code></pre>
+      <p>这不是说实验一定会刚好等于1/6，而是试验次数增加后，经验频率通常会向理论概率靠近。</p>
+
+      <h2>十一、与PDF代码不同的地方</h2>
+      <ul>
+        <li>PDF生成于2021年，本次使用PyTorch 2.5.1和Python 3.12运行。</li>
+        <li>新版Pandas只对数值列填平均值，再对类别列单独做独热编码，避免旧写法的类型错误。</li>
+        <li>数据和输出文件按当前代码文件定位，直接运行时不会依赖PyCharm工作目录。</li>
+        <li>Matplotlib作为可选依赖：没有安装时数值导数案例仍能运行，只跳过绘图。</li>
+        <li>本周基础案例不依赖<code>d2l</code>工具包，所有关键步骤直接展示。</li>
+      </ul>
+
+      <h2>十二、目前还不熟的地方</h2>
+      <ol class="knn-mistakes">
+        <li><strong>复杂广播。</strong>简单的行列广播能理解，维度更多时还需要从右向左逐个判断。</li>
+        <li><strong>矩阵形状。</strong>知道乘法规则，但看到多批次张量时还不能快速判断输出形状。</li>
+        <li><strong>计算图。</strong>能运行backward和detach，复杂分支中的梯度流向还需要继续画图。</li>
+      </ol>
+
+      <h2>十三、下周计划</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>线性回归原理</strong><p>理解模型、平方损失、小批量和梯度下降。</p></div></li>
+        <li><span>02</span><div><strong>从零实现</strong><p>手写数据迭代、模型、损失、SGD和训练循环。</p></div></li>
+        <li><span>03</span><div><strong>简洁实现</strong><p>使用nn.Linear、DataLoader和torch.optim复现同一任务。</p></div></li>
+        <li><span>04</span><div><strong>开始分类</strong><p>读取Fashion-MNIST，理解softmax、交叉熵和准确率。</p></div></li>
+      </ol>
+
+      <h2>十四、第十周最值得保留的认识</h2>
+      <p class="knn-summary-words"><span>张量</span><span>形状</span><span>广播</span><span>计算图</span><span>梯度</span></p>
+      <p>数据以<strong>张量</strong>进入模型，运算是否合法首先取决于<strong>形状</strong>；<strong>广播</strong>可以扩展兼容维度；前向运算形成<strong>计算图</strong>，反向传播沿图计算<strong>梯度</strong>。这五个词会贯穿后面的所有模型。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week9-association-analysis-fp-growth-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：第九周关联分析复盘</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

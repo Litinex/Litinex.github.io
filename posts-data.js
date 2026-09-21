@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week10-pytorch-tensor-autograd-review",
+      href: "posts/week10-pytorch-tensor-autograd-review.html",
+      title: "第十周学习复盘：从张量到自动求导",
+      date: "2026-09-21",
+      updated: "2026-09-21",
+      category: "学习札记",
+      excerpt: "开始学习《动手学深度学习》，通过PyTorch张量、广播、数据预处理、线性代数和自动求导打牢基础。",
+      tags: ["Python", "PyTorch", "深度学习", "张量", "自动求导", "梯度", "周报"],
+      words: 3300,
+      readTime: 10,
+    },
+    {
       id: "week9-association-analysis-fp-growth-review",
       href: "posts/week9-association-analysis-fp-growth-review.html",
       title: "第九周学习复盘：从购物篮中寻找关联规则",
