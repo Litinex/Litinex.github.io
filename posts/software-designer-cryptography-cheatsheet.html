@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>软件设计师加密算法考点速查：对称、非对称、散列与签名 | 风迁夏回</title>
+  <meta name="description" content="整理软件设计师常考的加密算法知识点：对称加密、非对称加密、散列函数、数字签名、数字证书、PKI、常见算法和易混淆考点。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/software-designer-cryptography-cheatsheet.html">
+  <meta property="og:title" content="软件设计师加密算法考点速查：对称、非对称、散列与签名 | 风迁夏回">
+  <meta property="og:description" content="用一张知识地图掌握软件设计师常考的密码学基础和算法辨析。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/software-designer-cryptography-cheatsheet.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260726-1">
+  <script src="../posts-data.js?v=20260922-2" defer></script>
+  <script src="../related-posts-data.js?v=20260922-2" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"软件设计师加密算法考点速查：对称、非对称、散列与签名","description":"整理软件设计师常考的加密算法知识点。","url":"https://yezizhuang.top/posts/software-designer-cryptography-cheatsheet.html","datePublished":"2026-09-22","dateModified":"2026-09-22","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page" data-post-id="software-designer-cryptography-cheatsheet">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.09.22 · 学习札记 · 约 15 分钟</p>
+      <h1>软件设计师加密算法考点速查：对称、非对称、散列与签名</h1>
+      <p class="article-deck">密码学题目别只背算法名字，先判断它在解决保密性、完整性、身份认证还是不可否认性。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">软件设计师中的加密算法题，表面上在考 DES、AES、RSA、SHA、数字签名和数字证书，实际上经常考的是“这个工具到底解决什么问题”。先把安全目标分清，再看密钥和算法，题目会容易很多。</p>
+      <aside class="knn-note"><strong>总开关：</strong>加密主要解决保密性；散列主要解决完整性；数字签名主要解决身份认证、完整性和不可否认性。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇考点速查主要记录</p>
+        <ul>
+          <li>保密性、完整性、身份认证、不可否认性分别是什么</li>
+          <li>对称加密和非对称加密的密钥、速度与应用场景</li>
+          <li>散列函数、数字签名、数字证书和PKI的关系</li>
+          <li>DES、3DES、AES、RSA、ECC、MD5、SHA的高频考法</li>
+        </ul>
+      </div>
+
+      <h2>一、先分清四个安全目标</h2>
+      <div class="knn-table-wrap" role="region" aria-label="信息安全目标" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>安全目标</th><th>大白话</th><th>常见技术</th><th>题目关键词</th></tr></thead>
+          <tbody>
+            <tr><td>保密性</td><td>不该看的人看不懂。</td><td>对称加密、非对称加密</td><td>防窃听、机密、密文、解密</td></tr>
+            <tr><td>完整性</td><td>内容没有被偷偷改过。</td><td>散列、MAC、数字签名</td><td>篡改检测、摘要、校验</td></tr>
+            <tr><td>身份认证</td><td>确认对方确实是他声称的那个人。</td><td>数字签名、数字证书、认证协议</td><td>验证身份、证书、可信第三方</td></tr>
+            <tr><td>不可否认性</td><td>做过的事情不能轻易赖掉。</td><td>数字签名、时间戳、审计</td><td>签名者不能否认、责任追踪</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>一个技术可以同时支持多个目标。例如数字签名既能让接收方验证身份，也能发现内容被修改，还能在一定条件下证明签名者不能否认自己的签名。</p>
+
+      <h2>二、对称加密：同一把钥匙进出</h2>
+      <p>对称加密使用同一个密钥进行加密和解密。发送方和接收方必须提前共享密钥，所以它的最大问题不是“算得慢”，而是“密钥怎么安全交给对方”。</p>
+      <pre data-code-id="symmetric-encryption-flow"><code class="language-code">明文 + 共享密钥 → 加密 → 密文
+密文 + 同一把共享密钥 → 解密 → 明文</code></pre>
+      <div class="knn-table-wrap" role="region" aria-label="对称加密算法" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>算法</th><th>考点</th><th>当前认识</th></tr></thead>
+          <tbody>
+            <tr><td>DES</td><td>分组密码，密钥长度较短。</td><td>安全性已经不足，历史上常考。</td></tr>
+            <tr><td>3DES</td><td>对DES重复执行多次。</td><td>比DES强，但速度慢，逐渐被淘汰。</td></tr>
+            <tr><td>AES</td><td>现代主流对称分组密码。</td><td>速度快、安全性高，应用广泛。</td></tr>
+            <tr><td>RC4</td><td>流密码。</td><td>历史上常见，现已不推荐用于新系统。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>优点：</strong>速度快，适合大量数据加密。<strong>缺点：</strong>密钥分发困难，参与者多时密钥管理复杂。</p>
+
+      <h2>三、非对称加密：公钥公开，私钥保密</h2>
+      <p>非对称加密使用一对密钥：公钥可以公开，私钥必须保密。公钥和私钥成对工作，但“用哪把钥匙加密”取决于你想解决什么问题。</p>
+      <div class="knn-table-wrap" role="region" aria-label="非对称加密用途" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>目的</th><th>发送方操作</th><th>接收方操作</th><th>解决的问题</th></tr></thead>
+          <tbody>
+            <tr><td>保密通信</td><td>用接收方公钥加密</td><td>用接收方私钥解密</td><td>只有接收方能看懂</td></tr>
+            <tr><td>数字签名</td><td>用发送方私钥签名</td><td>用发送方公钥验证</td><td>确认身份、发现篡改、支持不可否认</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="knn-formula">保密：公钥加密，私钥解密。签名：私钥签名，公钥验证。</p>
+      <p>非对称加密的优点是密钥分发更方便，缺点是计算速度通常比对称加密慢。因此实际系统常用“混合加密”：先用非对称算法安全交换会话密钥，再用对称算法加密大量业务数据。</p>
+
+      <h2>四、散列函数：把内容压成指纹</h2>
+      <p>散列函数把任意长度的输入映射成固定长度的摘要。摘要不是加密结果，通常不能靠“解密”还原原文。</p>
+      <pre data-code-id="hash-flow"><code class="language-code">文件内容 → SHA-256 → 摘要
+文件被修改 → SHA-256 → 不同摘要</code></pre>
+      <div class="knn-table-wrap" role="region" aria-label="散列算法" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>算法</th><th>考点</th><th>注意事项</th></tr></thead>
+          <tbody>
+            <tr><td>MD5</td><td>输出128位摘要。</td><td>已发现碰撞问题，不适合安全场景。</td></tr>
+            <tr><td>SHA-1</td><td>输出160位摘要。</td><td>安全性不足，不建议用于新系统。</td></tr>
+            <tr><td>SHA-256</td><td>SHA-2家族，输出256位摘要。</td><td>常见的现代安全散列算法。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <aside class="knn-note knn-note-warning"><strong>高频陷阱：</strong>散列不是加密，不依赖密钥，也不是为了保密；它主要用于完整性校验、口令存储辅助和数字签名中的摘要计算。</aside>
+
+      <h2>五、数字签名到底签了什么</h2>
+      <p>实际签名通常不会直接对整份大文件做昂贵的非对称运算，而是先对文件计算摘要，再对摘要进行签名。</p>
+      <ol class="knn-mistakes">
+        <li>发送方对消息计算摘要。</li>
+        <li>发送方用自己的私钥对摘要进行签名。</li>
+        <li>接收方用发送方公钥验证签名，并重新计算消息摘要。</li>
+        <li>两个摘要一致，说明来源可信且内容没有被修改。</li>
+      </ol>
+      <p>所以，数字签名不是为了让消息保密。任何拿到发送方公钥的人都可以验证签名，签名的核心是“证明是谁发的”和“内容有没有被改”。</p>
+
+      <h2>六、数字证书和PKI</h2>
+      <p>问题来了：接收方拿到的“发送方公钥”是真的吗？数字证书就是由可信认证机构把“身份”和“公钥”绑定在一起的凭证。</p>
+      <div class="knn-table-wrap" role="region" aria-label="数字证书和PKI" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>概念</th><th>大白话</th><th>考试关键词</th></tr></thead>
+          <tbody>
+            <tr><td>数字证书</td><td>证明某个身份对应某个公钥。</td><td>身份、公钥、CA签名、有效期</td></tr>
+            <tr><td>CA</td><td>大家信任的证书签发机构。</td><td>认证中心、签发、吊销、信任链</td></tr>
+            <tr><td>PKI</td><td>围绕证书和公钥建立的完整基础设施。</td><td>证书、CA、注册、吊销、验证</td></tr>
+            <tr><td>CRL/OCSP</td><td>检查证书是否已经失效或被吊销。</td><td>证书状态、吊销检查</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>七、常见算法一张表</h2>
+      <div class="knn-table-wrap" role="region" aria-label="常见加密算法对比" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>算法/技术</th><th>类别</th><th>主要用途</th><th>一句话记忆</th></tr></thead>
+          <tbody>
+            <tr><td>DES / 3DES / AES</td><td>对称加密</td><td>大量数据保密传输</td><td>AES是现代主流，DES已过时。</td></tr>
+            <tr><td>RSA</td><td>非对称加密</td><td>密钥交换、数字签名</td><td>公钥私钥，速度比对称算法慢。</td></tr>
+            <tr><td>ECC</td><td>非对称加密</td><td>密钥交换、签名</td><td>同等安全强度下密钥更短。</td></tr>
+            <tr><td>MD5 / SHA</td><td>散列函数</td><td>摘要、完整性、签名辅助</td><td>不是加密，不能靠摘要还原原文。</td></tr>
+            <tr><td>HMAC</td><td>带密钥散列</td><td>消息认证和完整性</td><td>散列 + 共享密钥，用于认证消息。</td></tr>
+            <tr><td>TLS</td><td>安全协议</td><td>安全通信、协商密钥、认证</td><td>不是单个加密算法，而是协议组合。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>八、软件设计师高频辨析</h2>
+      <div class="knn-table-wrap" role="region" aria-label="密码学易混淆考点" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>容易混淆</th><th>正确区分</th></tr></thead>
+          <tbody>
+            <tr><td>加密 vs 散列</td><td>加密强调保密，理论上可解密；散列强调摘要和完整性，通常不可逆。</td></tr>
+            <tr><td>私钥加密 vs 数字签名</td><td>题目里常用“私钥签名、公钥验证”描述签名；不要把签名简单理解成保密加密。</td></tr>
+            <tr><td>公钥加密 vs 私钥解密</td><td>用于保密通信，接收方私钥必须保密。</td></tr>
+            <tr><td>私钥签名 vs 公钥验证</td><td>用于身份认证、完整性和不可否认性，消息本身不因此保密。</td></tr>
+            <tr><td>对称 vs 非对称</td><td>对称快但密钥分发难；非对称慢但密钥分发方便。</td></tr>
+            <tr><td>数字证书 vs 数字签名</td><td>签名是动作，证书是把身份和公钥绑定起来的凭证。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>九、考场做题顺序</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>先问安全目标</strong><p>题目是在防窃听、查篡改、验身份，还是证明责任？</p></div></li>
+        <li><span>02</span><div><strong>再看密钥关系</strong><p>同一把密钥？对称。公钥/私钥成对？非对称或签名。</p></div></li>
+        <li><span>03</span><div><strong>再看输出形式</strong><p>固定长度摘要且不可逆？散列。可恢复明文？加密。</p></div></li>
+        <li><span>04</span><div><strong>最后看协议角色</strong><p>出现CA、证书、吊销、信任链，通常是在考PKI。</p></div></li>
+      </ol>
+      <blockquote class="knn-principle">对称加密保密，非对称加密解决密钥和身份，散列验证完整性，数字签名证明来源和责任，数字证书绑定身份与公钥。</blockquote>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="software-design-patterns-cheatsheet.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：软件设计师23种设计模式速查</span></a>
+      <a class="article-pagination-link article-pagination-link-next" href="week10-pytorch-tensor-autograd-review.html"><span class="article-pagination-link-text">下一篇：第十周PyTorch基础复盘</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></a>
+    </nav>
+  </main>
+</body>
+</html>

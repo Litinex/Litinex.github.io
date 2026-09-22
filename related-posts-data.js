@@ -1,7 +1,11 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
-  "software-design-patterns-cheatsheet": [
+  "software-designer-cryptography-cheatsheet": [
+    {
+      "id": "software-design-patterns-cheatsheet",
+      "reason": "共同标签：软件设计师、软考"
+    },
     {
       "id": "week10-pytorch-tensor-autograd-review",
       "reason": "同属“学习札记”分类"
@@ -9,9 +13,19 @@
     {
       "id": "week9-association-analysis-fp-growth-review",
       "reason": "同属“学习札记”分类"
+    }
+  ],
+  "software-design-patterns-cheatsheet": [
+    {
+      "id": "software-designer-cryptography-cheatsheet",
+      "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "week8-kmeans-clustering-learning-review",
+      "id": "week10-pytorch-tensor-autograd-review",
+      "reason": "同属“学习札记”分类"
+    },
+    {
+      "id": "week9-association-analysis-fp-growth-review",
       "reason": "同属“学习札记”分类"
     }
   ],
@@ -287,11 +301,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "software-design-patterns-cheatsheet",
+      "id": "software-designer-cryptography-cheatsheet",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week10-pytorch-tensor-autograd-review",
+      "id": "software-design-patterns-cheatsheet",
       "reason": "同属“学习札记”分类"
     }
   ],

@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "software-designer-cryptography-cheatsheet",
+      href: "posts/software-designer-cryptography-cheatsheet.html",
+      title: "软件设计师加密算法考点速查：对称、非对称、散列与签名",
+      date: "2026-09-22",
+      updated: "2026-09-22",
+      category: "学习札记",
+      excerpt: "整理软件设计师常考的加密算法知识点：对称加密、非对称加密、散列函数、数字签名、数字证书、PKI和高频辨析。",
+      tags: ["软件设计师", "密码学", "加密算法", "软考", "RSA", "AES", "数字签名"],
+      words: 5200,
+      readTime: 15,
+    },
+    {
       id: "software-design-patterns-cheatsheet",
       href: "posts/software-design-patterns-cheatsheet.html",
       title: "软件设计师设计模式速查：23种模式一张地图",
