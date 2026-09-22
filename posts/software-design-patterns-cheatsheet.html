@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>软件设计师设计模式速查：23种模式一张地图 | 风迁夏回</title>
+  <meta name="description" content="用大白话整理软件设计师常考的23种经典设计模式，覆盖创建型、结构型、行为型，以及适配器、工厂、观察者、策略等高频辨析。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/software-design-patterns-cheatsheet.html">
+  <meta property="og:title" content="软件设计师设计模式速查：23种模式一张地图 | 风迁夏回">
+  <meta property="og:description" content="创建型、结构型、行为型设计模式的考试向总结，用关键词快速判断题目考的是哪一种模式。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/software-design-patterns-cheatsheet.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260726-1">
+  <script src="../posts-data.js?v=20260922-1" defer></script>
+  <script src="../related-posts-data.js?v=20260922-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"软件设计师设计模式速查：23种模式一张地图","description":"用大白话整理软件设计师常考的23种经典设计模式。","url":"https://yezizhuang.top/posts/software-design-patterns-cheatsheet.html","datePublished":"2026-09-22","dateModified":"2026-09-22","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page" data-post-id="software-design-patterns-cheatsheet">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.09.22 · 学习札记 · 约 12 分钟</p>
+      <h1>软件设计师设计模式速查：23种模式一张地图</h1>
+      <p class="article-deck">设计模式不是背代码，而是识别“变化点”：对象怎么创建、怎么组合、怎么协作。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">准备软件设计师时，设计模式最容易卡在“名字都听过，但题目一换说法就认不出来”。这篇笔记不从复杂 UML 讲起，而是先把 23 种经典模式放回三个问题里：对象怎么创建、对象怎么组合、对象怎么协作。</p>
+      <aside class="knn-note"><strong>先记住一句话：</strong>创建型看“怎么造”，结构型看“怎么拼”，行为型看“怎么协作”。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇速查主要记录</p>
+        <ul>
+          <li>23种模式的三大分类和一句话理解</li>
+          <li>工厂、单例、生成器、适配器等高频模式</li>
+          <li>考试中最容易混淆的模式对比</li>
+          <li>如何从题干关键词和UML角色快速判断</li>
+        </ul>
+      </div>
+
+      <h2>一、先按三类建立地图</h2>
+      <div class="knn-table-wrap" role="region" aria-label="设计模式三大分类" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>分类</th><th>它在解决什么问题</th><th>包含的模式</th></tr></thead>
+          <tbody>
+            <tr><td>创建型</td><td>对象怎么创建、什么时候创建</td><td>工厂方法、抽象工厂、单例、生成器、原型</td></tr>
+            <tr><td>结构型</td><td>类和对象怎么组合成更大的结构</td><td>适配器、桥接、组合、装饰器、外观、享元、代理</td></tr>
+            <tr><td>行为型</td><td>对象之间怎么分工、通信和协作</td><td>责任链、命令、解释器、迭代器、中介者、备忘录、观察者、状态、策略、模板方法、访问者</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>二、创建型：对象怎么创建</h2>
+      <div class="knn-table-wrap" role="region" aria-label="创建型设计模式" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>模式</th><th>大白话</th><th>考试关键词</th><th>最该记住的点</th></tr></thead>
+          <tbody>
+            <tr><td>工厂方法</td><td>子类决定创建哪一种产品。</td><td>抽象工厂、具体工厂、延迟实例化</td><td>一个具体工厂通常对应一种具体产品。</td></tr>
+            <tr><td>抽象工厂</td><td>一个工厂生产一整套配套产品。</td><td>产品族、相关对象、风格一致</td><td>新增产品族容易，新增产品种类困难。</td></tr>
+            <tr><td>单例</td><td>一个类全局只允许有一个实例。</td><td>私有构造、静态实例、getInstance</td><td>适合配置、日志、缓存、连接池；要注意线程安全。</td></tr>
+            <tr><td>生成器</td><td>复杂对象分步骤组装，最后 build。</td><td>Builder、Director、逐步构建</td><td>解决构造方法参数太多、可选项太多的问题。</td></tr>
+            <tr><td>原型</td><td>复制已有对象，避免重新走复杂创建流程。</td><td>clone、浅拷贝、深拷贝</td><td>重点看引用属性是否也被复制。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <blockquote class="knn-principle">工厂方法造一个，抽象工厂造一族；单例只一个，生成器分步造；原型靠复制。</blockquote>
+
+      <h2>三、结构型：对象怎么组合</h2>
+      <div class="knn-table-wrap" role="region" aria-label="结构型设计模式" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>模式</th><th>大白话</th><th>典型场景</th></tr></thead>
+          <tbody>
+            <tr><td>适配器</td><td>两个接口对不上，套一个转换器。</td><td>旧系统兼容新接口、第三方库适配。</td></tr>
+            <tr><td>桥接</td><td>把抽象和实现拆开，让两个维度独立变化。</td><td>图形×颜色、消息类型×发送渠道。</td></tr>
+            <tr><td>组合</td><td>单个对象和一组对象，用同一种方式处理。</td><td>文件/文件夹、菜单/子菜单、组织树。</td></tr>
+            <tr><td>装饰器</td><td>不改原类，给对象一层层增加功能。</td><td>输入流包装、咖啡加配料、日志增强。</td></tr>
+            <tr><td>外观</td><td>复杂子系统对外只提供一个简单入口。</td><td>电脑启动、订单系统统一入口。</td></tr>
+            <tr><td>享元</td><td>相同对象不要创建很多份，大家共享。</td><td>大量树木、字符、图标、对象缓存。</td></tr>
+            <tr><td>代理</td><td>真实对象前面加一层，控制访问。</td><td>权限代理、远程代理、虚拟代理、缓存代理。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <aside class="knn-note knn-note-warning"><strong>适配器、装饰器、代理不要混：</strong>适配器负责转换接口；装饰器负责动态增强功能；代理负责控制访问。</aside>
+
+      <h2>四、行为型：对象怎么协作</h2>
+      <div class="knn-table-wrap" role="region" aria-label="行为型设计模式" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>模式</th><th>大白话</th><th>典型关键词</th></tr></thead>
+          <tbody>
+            <tr><td>责任链</td><td>请求沿处理者链逐个传，直到有人处理。</td><td>请假审批、异常处理、过滤器链。</td></tr>
+            <tr><td>命令</td><td>把“做某件事”封装成一个对象。</td><td>调用者、命令、接收者、撤销重做。</td></tr>
+            <tr><td>解释器</td><td>给表达式或小语言定义规则并解释执行。</td><td>文法、表达式、解析。</td></tr>
+            <tr><td>迭代器</td><td>不暴露集合内部结构，统一遍历元素。</td><td>集合、遍历、hasNext、next。</td></tr>
+            <tr><td>中介者</td><td>对象之间不直接互聊，统一通过中介协调。</td><td>中央协调、聊天室、降低耦合。</td></tr>
+            <tr><td>备忘录</td><td>保存一份快照，以后可以恢复。</td><td>撤销、存档、回滚。</td></tr>
+            <tr><td>观察者</td><td>一个对象变化，自动通知所有关注者。</td><td>一对多、发布订阅、事件监听。</td></tr>
+            <tr><td>状态</td><td>对象处于不同状态时，表现出不同的行为。</td><td>状态切换、订单、连接、游戏角色。</td></tr>
+            <tr><td>策略</td><td>一组算法可以互换，运行时选择一种。</td><td>算法替换、支付方式、排序方式。</td></tr>
+            <tr><td>模板方法</td><td>父类固定大流程，子类实现小步骤。</td><td>算法骨架、固定流程、钩子。</td></tr>
+            <tr><td>访问者</td><td>对象结构不变，新增操作单独实现。</td><td>双重分派、操作分离、结构稳定。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>五、最容易混淆的几组模式</h2>
+      <div class="knn-table-wrap" role="region" aria-label="设计模式易混淆对比" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>对比</th><th>一句话区分</th><th>做题时问自己</th></tr></thead>
+          <tbody>
+            <tr><td>适配器 vs 装饰器</td><td>适配器改接口，装饰器加功能。</td><td>原对象功能不变但接口不兼容？适配器。想动态叠加能力？装饰器。</td></tr>
+            <tr><td>装饰器 vs 代理</td><td>装饰器增强功能，代理控制访问。</td><td>重点是增加行为？装饰器。重点是权限、远程、延迟、缓存？代理。</td></tr>
+            <tr><td>工厂方法 vs 抽象工厂</td><td>工厂方法造一个，抽象工厂造一族。</td><td>一个产品的多个实现？工厂方法。多个配套产品？抽象工厂。</td></tr>
+            <tr><td>策略 vs 状态</td><td>策略由客户端选，状态由对象当前状态决定。</td><td>主动选择算法？策略。状态变化导致行为变化？状态。</td></tr>
+            <tr><td>观察者 vs 中介者</td><td>观察者是一对多通知，中介者负责多对象协调。</td><td>主题通知订阅者？观察者。对象交互复杂？中介者。</td></tr>
+            <tr><td>模板方法 vs 策略</td><td>模板方法靠继承固定流程，策略靠组合替换算法。</td><td>流程骨架固定、子类补步骤？模板方法。多套算法可替换？策略。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>六、从UML图快速识别</h2>
+      <ul>
+        <li><strong>私有构造方法 + 静态实例 + getInstance：</strong>单例。</li>
+        <li><strong>抽象工厂 + 多个具体工厂，每个工厂创建一种产品：</strong>工厂方法。</li>
+        <li><strong>一个工厂接口包含多个 createXXX 方法，各工厂生产一套产品：</strong>抽象工厂。</li>
+        <li><strong>Builder + Director + Product + 多个构建步骤：</strong>生成器。</li>
+        <li><strong>目标接口 + 适配器 + 被适配者：</strong>适配器。</li>
+        <li><strong>Component 与 Composite 形成递归树形结构：</strong>组合。</li>
+        <li><strong>Subject 持有多个 Observer 并负责通知：</strong>观察者。</li>
+        <li><strong>Context 持有 Strategy，算法可以替换：</strong>策略。</li>
+      </ul>
+
+      <h2>七、最后的做题顺序</h2>
+      <ol class="knn-mistakes">
+        <li><strong>先看分类：</strong>题目描述的是创建、组合，还是协作？</li>
+        <li><strong>再找变化点：</strong>变化的是接口、功能、访问方式、算法、状态，还是流程？</li>
+        <li><strong>再看角色：</strong>有没有工厂、产品族、观察者、策略、接收者、代理等关键词？</li>
+        <li><strong>最后排除：</strong>确认它不是在解决另一个相似问题。</li>
+      </ol>
+      <blockquote class="knn-principle">创建型看“怎么造”，结构型看“怎么拼”，行为型看“怎么协作”。这句话是设计模式选择题的总开关。</blockquote>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week10-pytorch-tensor-autograd-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：第十周PyTorch基础复盘</span></a>
+      <a class="article-pagination-link article-pagination-link-next" href="week9-association-analysis-fp-growth-review.html"><span class="article-pagination-link-text">下一篇：第九周关联分析复盘</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></a>
+    </nav>
+  </main>
+</body>
+</html>

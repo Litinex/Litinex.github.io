@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "software-design-patterns-cheatsheet",
+      href: "posts/software-design-patterns-cheatsheet.html",
+      title: "软件设计师设计模式速查：23种模式一张地图",
+      date: "2026-09-22",
+      updated: "2026-09-22",
+      category: "学习札记",
+      excerpt: "用大白话整理软件设计师常考的23种经典设计模式，覆盖创建型、结构型、行为型，以及适配器、工厂、观察者、策略等高频辨析。",
+      tags: ["软件设计师", "设计模式", "软考", "工厂模式", "适配器模式", "观察者模式"],
+      words: 4200,
+      readTime: 12,
+    },
+    {
       id: "week10-pytorch-tensor-autograd-review",
       href: "posts/week10-pytorch-tensor-autograd-review.html",
       title: "第十周学习复盘：从张量到自动求导",

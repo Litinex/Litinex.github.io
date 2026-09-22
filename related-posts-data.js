@@ -1,6 +1,20 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "software-design-patterns-cheatsheet": [
+    {
+      "id": "week10-pytorch-tensor-autograd-review",
+      "reason": "同属“学习札记”分类"
+    },
+    {
+      "id": "week9-association-analysis-fp-growth-review",
+      "reason": "同属“学习札记”分类"
+    },
+    {
+      "id": "week8-kmeans-clustering-learning-review",
+      "reason": "同属“学习札记”分类"
+    }
+  ],
   "week10-pytorch-tensor-autograd-review": [
     {
       "id": "week9-association-analysis-fp-growth-review",
@@ -273,11 +287,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "week10-pytorch-tensor-autograd-review",
+      "id": "software-design-patterns-cheatsheet",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week9-association-analysis-fp-growth-review",
+      "id": "week10-pytorch-tensor-autograd-review",
       "reason": "同属“学习札记”分类"
     }
   ],
