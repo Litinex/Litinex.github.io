@@ -1,6 +1,20 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "pytorch-tensor-numpy-conversion": [
+    {
+      "id": "week10-pytorch-tensor-autograd-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week11-linear-softmax-regression-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week9-association-analysis-fp-growth-review",
+      "reason": "共同标签：Python"
+    }
+  ],
   "week11-linear-softmax-regression-review": [
     {
       "id": "week10-pytorch-tensor-autograd-review",
@@ -11,8 +25,8 @@
       "reason": "共同标签：Python、线性回归、周报"
     },
     {
-      "id": "week9-association-analysis-fp-growth-review",
-      "reason": "共同标签：Python、周报"
+      "id": "pytorch-tensor-numpy-conversion",
+      "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
   "software-designer-cryptography-cheatsheet": [
@@ -21,11 +35,11 @@
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "pytorch-tensor-numpy-conversion",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week10-pytorch-tensor-autograd-review",
+      "id": "week11-linear-softmax-regression-review",
       "reason": "同属“学习札记”分类"
     }
   ],
@@ -35,25 +49,25 @@
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "pytorch-tensor-numpy-conversion",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week10-pytorch-tensor-autograd-review",
+      "id": "week11-linear-softmax-regression-review",
       "reason": "同属“学习札记”分类"
     }
   ],
   "week10-pytorch-tensor-autograd-review": [
+    {
+      "id": "pytorch-tensor-numpy-conversion",
+      "reason": "共同标签：Python、PyTorch、张量"
+    },
     {
       "id": "week11-linear-softmax-regression-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
       "id": "week9-association-analysis-fp-growth-review",
-      "reason": "共同标签：Python、周报"
-    },
-    {
-      "id": "week8-kmeans-clustering-learning-review",
       "reason": "共同标签：Python、周报"
     }
   ],
@@ -315,11 +329,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "pytorch-tensor-numpy-conversion",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "software-designer-cryptography-cheatsheet",
+      "id": "week11-linear-softmax-regression-review",
       "reason": "同属“学习札记”分类"
     }
   ],

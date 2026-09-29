@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>PyTorch张量与NumPy互转：内存共享、复制与item() | 风迁夏回</title>
+  <meta name="description" content="通过可运行示例掌握PyTorch张量与NumPy数组的相互转换，理解numpy、from_numpy和torch.tensor的内存共享差异，并用item提取标量。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/pytorch-tensor-numpy-conversion.html">
+  <meta property="og:title" content="PyTorch张量与NumPy互转：内存共享、复制与item() | 风迁夏回">
+  <meta property="og:description" content="用三个小实验看懂Tensor与ndarray互转、共享内存与独立复制，以及标量张量的item用法。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/pytorch-tensor-numpy-conversion.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260816-1">
+  <script src="../posts-data.js?v=20260929-1" defer></script>
+  <script src="../related-posts-data.js?v=20260929-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"PyTorch张量与NumPy互转：内存共享、复制与item()","description":"通过可运行示例掌握PyTorch张量与NumPy数组的相互转换，理解numpy、from_numpy和torch.tensor的内存共享差异，并用item提取标量。","url":"https://yezizhuang.top/posts/pytorch-tensor-numpy-conversion.html","datePublished":"2026-09-29","dateModified":"2026-09-29","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="pytorch-tensor-numpy-conversion">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.09.29 · 学习札记 · 约 7 分钟</p>
+      <h1>PyTorch张量与NumPy互转：内存共享、复制与item()</h1>
+      <p class="article-deck">三个小实验，弄清Tensor与ndarray怎样互转、修改一方为什么可能影响另一方，以及怎样取出标量值。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">PyTorch负责张量计算，NumPy擅长通用数值处理和数据交换。在数据预处理、绘图和调试时，我们经常要在<code>Tensor</code>与<code>ndarray</code>之间切换。转换方法并不难，真正需要注意的是：转换后是否仍共享同一块内存。</p>
+
+      <div class="knn-at-a-glance" aria-label="本文要点">
+        <p class="knn-eyebrow">先记住这三个常用写法</p>
+        <ul>
+          <li>张量转NumPy：<code>tensor.detach().cpu().numpy()</code></li>
+          <li>NumPy转独立张量：<code>torch.tensor(array)</code></li>
+          <li>从单元素张量取值：<code>tensor.item()</code></li>
+        </ul>
+      </div>
+
+      <h2>一、转换方法总览</h2>
+      <div class="knn-table-wrap" role="region" aria-label="张量与NumPy转换方法对比" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>场景</th><th>写法</th><th>内存关系</th></tr></thead>
+          <tbody>
+            <tr><td>Tensor → NumPy</td><td><code>tensor.numpy()</code></td><td>通常共享CPU内存</td></tr>
+            <tr><td>Tensor → NumPy</td><td><code>tensor.detach().cpu().numpy().copy()</code></td><td>独立复制</td></tr>
+            <tr><td>NumPy → Tensor</td><td><code>torch.from_numpy(array)</code></td><td>通常共享CPU内存</td></tr>
+            <tr><td>NumPy → Tensor</td><td><code>torch.tensor(array)</code></td><td>独立复制</td></tr>
+            <tr><td>单元素Tensor → Python值</td><td><code>tensor.item()</code></td><td>返回Python标量</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <aside class="knn-note"><strong>术语提醒：</strong>这里用“共享内存”和“独立复制”比“浅拷贝”和“深拷贝”更准确。前者关注底层数据存储是否相同，后者通常用来描述嵌套对象的复制层级。</aside>
+
+      <h2>二、Tensor转换为NumPy数组</h2>
+      <p>对于位于CPU上、且不需要梯度的张量，可以直接调用<code>numpy()</code>。得到的数组通常与原张量共享底层内存，因此修改数组也会改变张量。</p>
+      <pre data-code-id="tensor-to-numpy-shared"><code class="language-python">import torch
+
+tensor = torch.tensor([1, 2, 3, 4, 5])
+array = tensor.numpy()
+
+array[0] = 100
+print(array)   # [100   2   3   4   5]
+print(tensor)  # tensor([100,   2,   3,   4,   5])</code></pre>
+      <p>如果希望两者互不影响，就在转换后调用<code>copy()</code>，创建拥有独立数据的NumPy数组：</p>
+      <pre data-code-id="tensor-to-numpy-copy"><code class="language-python">tensor = torch.tensor([1, 2, 3, 4, 5])
+array = tensor.detach().cpu().numpy().copy()
+
+array[0] = 100
+print(array)   # [100   2   3   4   5]
+print(tensor)  # tensor([1, 2, 3, 4, 5])</code></pre>
+      <p><code>detach()</code>把张量从当前自动求导计算图中分离，<code>cpu()</code>确保数据位于CPU，<code>numpy()</code>完成类型转换，最后的<code>copy()</code>才真正切断内存共享。对于普通CPU张量，前两个步骤可能没有实际变化，但这条写法能覆盖训练代码中更常见的情况。</p>
+
+      <h2>三、NumPy数组转换为Tensor</h2>
+      <p><code>torch.from_numpy()</code>通常不会复制数据，而是让张量与NumPy数组共享内存。修改张量后，原数组也会变化。</p>
+      <pre data-code-id="numpy-to-tensor-shared"><code class="language-python">import numpy as np
+import torch
+
+array = np.array([11, 22, 33])
+tensor = torch.from_numpy(array)
+
+tensor[0] = 100
+print(tensor)  # tensor([100,  22,  33])
+print(array)   # [100  22  33]</code></pre>
+      <p>如果需要一份独立数据，使用<code>torch.tensor()</code>更直接：</p>
+      <pre data-code-id="numpy-to-tensor-copy"><code class="language-python">array = np.array([11, 22, 33])
+tensor = torch.tensor(array)
+
+tensor[0] = 100
+print(tensor)  # tensor([100,  22,  33])
+print(array)   # [11 22 33]</code></pre>
+      <p><code>torch.tensor()</code>还可以在创建时指定数据类型，例如<code>torch.tensor(array, dtype=torch.float32)</code>。这比先创建张量再调用旧式的<code>type()</code>更清晰。</p>
+
+      <h2>四、用item()提取Python标量</h2>
+      <p>零维张量经常出现在损失值、准确率或单个预测结果中。调用<code>item()</code>可以取出普通Python数字：</p>
+      <pre data-code-id="scalar-tensor-item"><code class="language-python">tensor = torch.tensor(100)
+value = tensor.item()
+
+print(tensor, type(tensor))  # tensor(100) &lt;class 'torch.Tensor'&gt;
+print(value, type(value))    # 100 &lt;class 'int'&gt;</code></pre>
+      <p><code>item()</code>要求张量只能包含一个元素。多元素张量调用它会报错；这类张量应先索引到单个元素，或根据用途转换成列表、NumPy数组。</p>
+
+      <h2>五、完整可运行示例</h2>
+      <pre data-code-id="tensor-numpy-complete-example"><code class="language-python">import numpy as np
+import torch
+
+
+def tensor_to_numpy():
+    tensor = torch.tensor([1, 2, 3, 4, 5])
+    array = tensor.detach().cpu().numpy().copy()
+
+    array[0] = 100
+    print(f"array: {array}, type: {type(array)}")
+    print(f"tensor: {tensor}, type: {type(tensor)}")
+
+
+def numpy_to_tensor():
+    array = np.array([11, 22, 33])
+    tensor = torch.tensor(array)
+
+    tensor[0] = 100
+    print(f"tensor: {tensor}, type: {type(tensor)}")
+    print(f"array: {array}, type: {type(array)}")
+
+
+def extract_scalar():
+    tensor = torch.tensor(100)
+    value = tensor.item()
+
+    print(f"tensor: {tensor}, type: {type(tensor)}")
+    print(f"value: {value}, type: {type(value)}")
+
+
+if __name__ == "__main__":
+    tensor_to_numpy()
+    numpy_to_tensor()
+    extract_scalar()</code></pre>
+
+      <h2>六、怎么选择</h2>
+      <ul>
+        <li><strong>只读交换数据：</strong>可以使用<code>numpy()</code>或<code>from_numpy()</code>，省去复制开销。</li>
+        <li><strong>后续会修改数据：</strong>优先使用<code>copy()</code>或<code>torch.tensor()</code>，避免一处修改意外影响另一处。</li>
+        <li><strong>训练中的张量要转NumPy：</strong>使用<code>tensor.detach().cpu().numpy()</code>。</li>
+        <li><strong>只需要一个数：</strong>确认张量只有一个元素，再调用<code>item()</code>。</li>
+      </ul>
+      <blockquote class="knn-principle">转换之前先问自己一个问题：我希望转换后的对象与原对象共享数据，还是各自独立？</blockquote>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week11-linear-softmax-regression-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：第十一周线性模型复盘</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

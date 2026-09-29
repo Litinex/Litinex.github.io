@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "pytorch-tensor-numpy-conversion",
+      href: "posts/pytorch-tensor-numpy-conversion.html",
+      title: "PyTorch张量与NumPy互转：内存共享、复制与item()",
+      date: "2026-09-29",
+      updated: "2026-09-29",
+      category: "学习札记",
+      excerpt: "用三个可运行实验掌握Tensor与ndarray互转，理解共享内存、独立复制，以及从单元素张量提取Python标量。",
+      tags: ["Python", "PyTorch", "NumPy", "张量", "数据转换", "深度学习"],
+      words: 2200,
+      readTime: 7,
+    },
+    {
       id: "week11-linear-softmax-regression-review",
       href: "posts/week11-linear-softmax-regression-review.html",
       title: "第十一周学习复盘：从线性回归到softmax分类",
