@@ -1,17 +1,31 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "week11-linear-softmax-regression-review": [
+    {
+      "id": "week10-pytorch-tensor-autograd-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week6-regression-learning-review",
+      "reason": "共同标签：Python、线性回归、周报"
+    },
+    {
+      "id": "week9-association-analysis-fp-growth-review",
+      "reason": "共同标签：Python、周报"
+    }
+  ],
   "software-designer-cryptography-cheatsheet": [
     {
       "id": "software-design-patterns-cheatsheet",
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "week10-pytorch-tensor-autograd-review",
+      "id": "week11-linear-softmax-regression-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week9-association-analysis-fp-growth-review",
+      "id": "week10-pytorch-tensor-autograd-review",
       "reason": "同属“学习札记”分类"
     }
   ],
@@ -21,25 +35,25 @@
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "week10-pytorch-tensor-autograd-review",
+      "id": "week11-linear-softmax-regression-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week9-association-analysis-fp-growth-review",
+      "id": "week10-pytorch-tensor-autograd-review",
       "reason": "同属“学习札记”分类"
     }
   ],
   "week10-pytorch-tensor-autograd-review": [
+    {
+      "id": "week11-linear-softmax-regression-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
     {
       "id": "week9-association-analysis-fp-growth-review",
       "reason": "共同标签：Python、周报"
     },
     {
       "id": "week8-kmeans-clustering-learning-review",
-      "reason": "共同标签：Python、周报"
-    },
-    {
-      "id": "week7-regression-tree-learning-review",
       "reason": "共同标签：Python、周报"
     }
   ],
@@ -87,15 +101,15 @@
   ],
   "week6-regression-learning-review": [
     {
+      "id": "week11-linear-softmax-regression-review",
+      "reason": "共同标签：Python、线性回归、周报"
+    },
+    {
       "id": "week9-association-analysis-fp-growth-review",
       "reason": "共同标签：Python、机器学习、周报"
     },
     {
       "id": "week8-kmeans-clustering-learning-review",
-      "reason": "共同标签：Python、机器学习、周报"
-    },
-    {
-      "id": "week7-regression-tree-learning-review",
       "reason": "共同标签：Python、机器学习、周报"
     }
   ],
@@ -301,11 +315,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "software-designer-cryptography-cheatsheet",
+      "id": "week11-linear-softmax-regression-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "software-design-patterns-cheatsheet",
+      "id": "software-designer-cryptography-cheatsheet",
       "reason": "同属“学习札记”分类"
     }
   ],

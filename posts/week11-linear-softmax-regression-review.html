@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第十一周学习复盘：从线性回归到softmax分类 | 风迁夏回</title>
+  <meta name="description" content="复现《动手学深度学习》第3章：从零实现线性回归与softmax回归，并使用PyTorch在Fashion-MNIST上完成多分类训练。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week11-linear-softmax-regression-review.html">
+  <meta property="og:title" content="第十一周学习复盘：从线性回归到softmax分类 | 风迁夏回">
+  <meta property="og:description" content="把模型、损失、反向传播和参数更新串成一次完整训练，再从预测数值走向预测类别。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week11-linear-softmax-regression-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/pytorch-week11-softmax-curves.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260816-1">
+  <script src="../posts-data.js?v=20260929-1" defer></script>
+  <script src="../related-posts-data.js?v=20260929-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十一周学习复盘：从线性回归到softmax分类","description":"复现《动手学深度学习》第3章：从零实现线性回归与softmax回归，并使用PyTorch在Fashion-MNIST上完成多分类训练。","image":"https://yezizhuang.top/assets/pytorch-week11-softmax-curves.png","url":"https://yezizhuang.top/posts/week11-linear-softmax-regression-review.html","datePublished":"2026-09-29","dateModified":"2026-09-29","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week11-linear-softmax-regression-review">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.09.29 · 学习札记 · 约 12 分钟</p>
+      <h1>第十一周学习复盘：从线性回归到softmax分类</h1>
+      <p class="article-deck">这一周真正把“数据进入模型以后发生了什么”跑了一遍：预测、算损失、反向传播，再更新参数。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">本周学习《动手学深度学习》第3章线性神经网络。我先从零实现线性回归，再用PyTorch高级API写一遍；随后读取Fashion-MNIST，分别完成softmax回归的从零实现和简洁实现。相比只会调用模型，这次重点是理解训练循环里每一步的作用。</p>
+      <aside class="knn-note"><strong>本周实际结果：</strong>RTX 4060已能参与训练；5项基础测试通过；线性回归恢复出w≈[2.000,-3.400]、b≈4.199；两种softmax实现训练10轮后，测试准确率分别约为83.4%和82.9%。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇复盘主要记录</p>
+        <ul>
+          <li>线性回归中的模型、平方损失和SGD分别做什么</li>
+          <li>从零实现与PyTorch简洁实现的对应关系</li>
+          <li>softmax怎样把十个分数变成类别概率</li>
+          <li>Fashion-MNIST训练结果和仍未解决的问题</li>
+        </ul>
+      </div>
+
+      <h2>一、这一章的两类问题</h2>
+      <p>线性回归回答“有多少”，例如根据面积和房龄估计房价；softmax回归回答“是哪一类”，例如判断一张服装图片是T恤、裤子还是鞋。两者输出不同，但训练主线几乎一样：</p>
+      <blockquote class="knn-principle">读取一小批数据 → 模型给出预测 → 损失衡量差距 → 反向传播计算梯度 → 优化器更新参数。</blockquote>
+
+      <h2>二、先造一份知道答案的数据</h2>
+      <p>书中先用真实参数w=[2,-3.4]、b=4.2生成1000条人工数据，并加入少量随机噪声。这样训练结束后，可以直接检查模型有没有把原参数找回来。</p>
+      <pre data-code-id="week11-synthetic-data"><code class="language-python">true_w = torch.tensor([2.0, -3.4])
+true_b = 4.2
+features = torch.normal(0, 1, (1000, 2))
+labels = features @ true_w + true_b
+labels += torch.normal(0, 0.01, labels.shape)
+labels = labels.reshape((-1, 1))</code></pre>
+      <p>可以把两个特征想成房屋面积和房龄，权重表示这两个因素各自会怎样影响价格，偏置则是模型的基础起点。</p>
+
+      <h2>三、为什么要小批量读取</h2>
+      <p>训练时不把60000张图片一次塞给模型，也不必每看一张就更新一次。小批量是在计算效率和更新频率之间取一个折中。生活中有点像批作业：一次拿一小摞，批完就根据这一摞发现的问题调整判断，再继续下一摞。</p>
+      <pre data-code-id="week11-mini-batch"><code class="language-python">for start in range(0, len(features), batch_size):
+    batch_indices = torch.tensor(indices[start:start + batch_size])
+    yield features[batch_indices], labels[batch_indices]</code></pre>
+
+      <h2>四、线性回归从零实现</h2>
+      <p>从零版只使用张量与自动求导。模型负责计算Xw+b，平方损失负责衡量预测与真实值的距离，SGD沿着梯度反方向把参数挪动一小步。</p>
+      <pre data-code-id="week11-linear-scratch"><code class="language-python">for X, y in data_iter(batch_size, features, labels):
+    loss = squared_loss(linreg(X, w, b), y)
+    loss.sum().backward()
+    sgd([w, b], learning_rate, batch_size)</code></pre>
+      <p>3轮以后，平均损失降到约0.00005，学到的参数为：</p>
+      <pre data-code-id="week11-linear-result"><code class="language-code">真实权重： [ 2.0000, -3.4000]
+学到权重： [ 1.9997, -3.3995]
+真实偏置： 4.2
+学到偏置： 4.1995</code></pre>
+      <p>参数没有一模一样，是因为数据里故意加入了噪声。不过误差已经很小，说明训练循环确实在工作。</p>
+
+      <h2>五、简洁实现并没有换掉原理</h2>
+      <div class="knn-table-wrap" role="region" aria-label="两种线性回归实现对应关系" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>从零实现</th><th>PyTorch简洁实现</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td><code>data_iter</code></td><td><code>DataLoader</code></td><td>按小批量读取数据</td></tr>
+            <tr><td><code>X @ w + b</code></td><td><code>nn.Linear</code></td><td>建立线性模型</td></tr>
+            <tr><td><code>squared_loss</code></td><td><code>nn.MSELoss</code></td><td>计算预测误差</td></tr>
+            <tr><td><code>sgd</code></td><td><code>torch.optim.SGD</code></td><td>根据梯度更新参数</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>高级API减少了重复代码，但“预测、损失、反向传播、更新”四个步骤没有改变。从零实现的价值，就是知道这些封装里面大致在做什么。</p>
+
+      <h2>六、Fashion-MNIST是什么</h2>
+      <p>Fashion-MNIST包含60000张训练图片和10000张测试图片，共10种服装类别。每张图片是28×28的灰度图，所以一批256张图片的形状为：</p>
+      <pre data-code-id="week11-fashion-shape"><code class="language-code">torch.Size([256, 1, 28, 28])
+
+256：一批图片数量
+1：灰度通道数
+28、28：图片高度和宽度</code></pre>
+      <p>softmax线性模型会先把每张图片展平成784个像素，再输出10个类别分数。</p>
+
+      <h2>七、softmax到底做了什么</h2>
+      <p>线性层输出的10个数字可能为负，也不保证总和为1，不能直接当概率。softmax先取指数让结果都为正，再除以同一行的总和：</p>
+      <p class="knn-formula">softmax(X) = exp(X) / sum(exp(X))</p>
+      <p>可以把它理解成把10个候选类别的“原始支持分”换算成总和为1的支持率。概率最大的类别就是最终预测。</p>
+
+      <h2>八、交叉熵为什么关注正确类别</h2>
+      <p>如果真实标签是“短靴”，交叉熵主要检查模型给“短靴”的概率。正确类别概率越接近1，损失越小；如果模型很自信地给错，损失会明显增大。</p>
+      <pre data-code-id="week11-cross-entropy"><code class="language-python">def cross_entropy(probabilities, labels):
+    true_probabilities = probabilities[range(len(probabilities)), labels]
+    return -torch.log(true_probabilities)</code></pre>
+
+      <h2>九、两种softmax实现的真实结果</h2>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/pytorch-week11-softmax-curves.png" alt="softmax回归从零实现和PyTorch简洁实现的损失与测试准确率曲线" width="1980" height="810">
+        <figcaption>图1：两种实现的损失下降趋势基本一致，测试准确率最终都在83%左右。</figcaption>
+      </figure>
+      <div class="knn-table-wrap" role="region" aria-label="softmax训练结果" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>实现</th><th>第10轮损失</th><th>训练准确率</th><th>测试准确率</th></tr></thead>
+          <tbody>
+            <tr><td>从零实现</td><td>0.4474</td><td>84.7%</td><td>83.4%</td></tr>
+            <tr><td>PyTorch简洁实现</td><td>0.4472</td><td>84.8%</td><td>82.9%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>两次训练的初始参数和数据打乱顺序不完全相同，因此准确率不会逐位一致。它们的损失与准确率走势接近，说明从零版的主要计算逻辑是正确的。</p>
+
+      <h2>十、与PDF代码不同的地方</h2>
+      <ul>
+        <li>PDF为2021年的版本，本次使用Python 3.9.25、PyTorch 2.8.0和CUDA 12.6。</li>
+        <li>书中很多公共功能来自<code>d2l</code>包，本次把核心函数直接写出来，便于逐行理解。</li>
+        <li>Windows独立脚本把DataLoader的<code>num_workers</code>设为0，避免多进程重复启动主文件。</li>
+        <li>模型和数据会自动移动到CUDA；没有GPU时仍可回退到CPU。</li>
+        <li>新版<code>CrossEntropyLoss</code>直接接收原始分数，内部完成数值稳定的log-softmax。</li>
+        <li>PyTorch 2.8把带梯度张量转成Python数字前先<code>detach()</code>，避免运行警告。</li>
+      </ul>
+
+      <h2>十一、目前还不熟的地方</h2>
+      <ol class="knn-mistakes">
+        <li><strong>数值稳定性。</strong>从零版直接计算指数，输入过大时可能上溢，书中也提醒这只是教学实现。</li>
+        <li><strong>交叉熵推导。</strong>会写代码，也知道正确类别概率越低损失越大，但从最大似然到交叉熵的公式还需要再推一遍。</li>
+        <li><strong>错误分析。</strong>目前只看整体准确率，还没有用混淆矩阵检查衬衫、T恤和套衫等相似类别。</li>
+      </ol>
+
+      <h2>十二、下周计划</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>多层感知机</strong><p>理解隐藏层、ReLU和非线性表达能力。</p></div></li>
+        <li><span>02</span><div><strong>两种实现</strong><p>分别完成多层感知机的从零实现和PyTorch简洁实现。</p></div></li>
+        <li><span>03</span><div><strong>模型选择</strong><p>学习训练误差、泛化误差、过拟合与欠拟合。</p></div></li>
+        <li><span>04</span><div><strong>正则化</strong><p>开始权重衰减和dropout实验。</p></div></li>
+      </ol>
+
+      <h2>十三、本周最值得保留的认识</h2>
+      <p class="knn-summary-words"><span>模型</span><span>损失</span><span>梯度</span><span>更新</span><span>评估</span></p>
+      <p>模型先给出预测，损失把“错多少”变成一个数字，反向传播计算每个参数应该往哪里改，优化器完成更新，最后用测试集评估效果。线性回归、softmax回归乃至后面更深的网络，都会反复使用这条主线。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week10-pytorch-tensor-autograd-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：第十周PyTorch基础复盘</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

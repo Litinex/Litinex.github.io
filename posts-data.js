@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week11-linear-softmax-regression-review",
+      href: "posts/week11-linear-softmax-regression-review.html",
+      title: "第十一周学习复盘：从线性回归到softmax分类",
+      date: "2026-09-29",
+      updated: "2026-09-29",
+      category: "学习札记",
+      excerpt: "复现《动手学深度学习》第3章，从零实现线性回归与softmax回归，并在Fashion-MNIST上完成多分类训练。",
+      tags: ["Python", "PyTorch", "深度学习", "线性回归", "softmax", "Fashion-MNIST", "周报"],
+      words: 4100,
+      readTime: 12,
+    },
+    {
       id: "software-designer-cryptography-cheatsheet",
       href: "posts/software-designer-cryptography-cheatsheet.html",
       title: "软件设计师加密算法考点速查：对称、非对称、散列与签名",
