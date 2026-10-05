@@ -1,21 +1,39 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "week12-mlp-regularization-review": [
+    {
+      "id": "week11-linear-softmax-regression-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week10-pytorch-tensor-autograd-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "pytorch-tensor-numpy-conversion",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    }
+  ],
   "pytorch-tensor-numpy-conversion": [
     {
       "id": "week10-pytorch-tensor-autograd-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "week12-mlp-regularization-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week9-association-analysis-fp-growth-review",
-      "reason": "共同标签：Python"
+      "id": "week11-linear-softmax-regression-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
   "week11-linear-softmax-regression-review": [
+    {
+      "id": "week12-mlp-regularization-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
     {
       "id": "week10-pytorch-tensor-autograd-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
@@ -23,10 +41,6 @@
     {
       "id": "week6-regression-learning-review",
       "reason": "共同标签：Python、线性回归、周报"
-    },
-    {
-      "id": "pytorch-tensor-numpy-conversion",
-      "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
   "software-designer-cryptography-cheatsheet": [
@@ -35,11 +49,11 @@
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "pytorch-tensor-numpy-conversion",
+      "id": "week12-mlp-regularization-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "pytorch-tensor-numpy-conversion",
       "reason": "同属“学习札记”分类"
     }
   ],
@@ -49,11 +63,11 @@
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "pytorch-tensor-numpy-conversion",
+      "id": "week12-mlp-regularization-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "pytorch-tensor-numpy-conversion",
       "reason": "同属“学习札记”分类"
     }
   ],
@@ -63,12 +77,12 @@
       "reason": "共同标签：Python、PyTorch、张量"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "week12-mlp-regularization-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week9-association-analysis-fp-growth-review",
-      "reason": "共同标签：Python、周报"
+      "id": "week11-linear-softmax-regression-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
   "week9-association-analysis-fp-growth-review": [
@@ -329,11 +343,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "pytorch-tensor-numpy-conversion",
+      "id": "week12-mlp-regularization-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "pytorch-tensor-numpy-conversion",
       "reason": "同属“学习札记”分类"
     }
   ],

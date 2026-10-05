@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第十二周学习复盘：隐藏层、过拟合与正则化 | 风迁夏回</title>
+  <meta name="description" content="学习《动手学深度学习》第4章4.1至4.6，复现多层感知机、欠拟合与过拟合、权重衰减和Dropout。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week12-mlp-regularization-review.html">
+  <meta property="og:title" content="第十二周学习复盘：隐藏层、过拟合与正则化 | 风迁夏回">
+  <meta property="og:description" content="从线性模型走向带ReLU的多层感知机，再用权重衰减和Dropout控制过拟合。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week12-mlp-regularization-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/pytorch-week12-accuracy.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20260816-1">
+  <script src="../posts-data.js?v=20261005-1" defer></script>
+  <script src="../related-posts-data.js?v=20261005-1" defer></script>
+  <script src="../taxonomy.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../learning-progress.js?v=20260714-1" defer></script>
+  <script src="../article-recommendations.js?v=20260714-1" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20260620-2" defer></script>
+  <script src="../music-player.js?v=20260624-2" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十二周学习复盘：隐藏层、过拟合与正则化","description":"学习《动手学深度学习》第4章4.1至4.6，复现多层感知机、欠拟合与过拟合、权重衰减和Dropout。","image":"https://yezizhuang.top/assets/pytorch-week12-accuracy.png","url":"https://yezizhuang.top/posts/week12-mlp-regularization-review.html","datePublished":"2026-10-05","dateModified":"2026-10-05","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week12-mlp-regularization-review">
+  <main class="article-shell">
+    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-header">
+      <p class="meta">2026.10.05 · 学习札记 · 约 13 分钟</p>
+      <h1>第十二周学习复盘：隐藏层、过拟合与正则化</h1>
+      <p class="article-deck">模型变复杂以后，问题不只是“能不能把训练集学会”，还要问“换一批数据能不能继续做对”。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">本周学习《动手学深度学习》第4章4.1至4.6。内容从多层感知机和激活函数开始，接着用多项式实验观察欠拟合与过拟合，最后复现权重衰减和Dropout。代码仍然分成独立案例，并在RTX 4060上完成四组Fashion-MNIST训练。</p>
+      <aside class="knn-note"><strong>本周实际结果：</strong>6项自动测试通过；4阶多项式测试损失约0.0112；权重衰减把测试损失从约185降到30；普通MLP两种实现本轮测试准确率约85.0%和83.4%，Dropout两种实现约86.4%和86.3%。</aside>
+
+      <div class="knn-at-a-glance" aria-label="本文内容">
+        <p class="knn-eyebrow">这篇复盘主要记录</p>
+        <ul>
+          <li>为什么只堆叠线性层仍然只是线性模型</li>
+          <li>ReLU怎样给网络加入非线性表达能力</li>
+          <li>欠拟合、过拟合与模型容量之间的关系</li>
+          <li>权重衰减和Dropout如何限制模型过度记忆训练集</li>
+        </ul>
+      </div>
+
+      <h2>一、为什么要增加隐藏层</h2>
+      <p>上周的softmax回归把784个像素直接映射到10个类别。它只能学习一层线性关系，而图片中一个像素是否重要，往往取决于周围像素。多层感知机先让隐藏层学习一组中间表示，再由输出层完成分类。</p>
+      <p class="knn-formula">H = ReLU(XW₁ + b₁)，O = HW₂ + b₂</p>
+      <p>可以把隐藏层理解为一组“中间判断”：它不直接宣布图片属于哪一类，而是先学习轮廓、亮暗组合等更适合分类的表示。</p>
+
+      <h2>二、只堆线性层为什么没有用</h2>
+      <p>如果隐藏层后面没有激活函数，两层线性变换可以合并为一层：</p>
+      <pre data-code-id="week12-linear-collapse"><code class="language-code">H = XW1 + b1
+O = HW2 + b2
+  = X(W1W2) + (b1W2 + b2)</code></pre>
+      <p>无论堆多少层，最后仍然是一条线性公式。ReLU等非线性激活函数让这种合并不再成立，网络才有能力表示弯曲、分段和更复杂的关系。</p>
+
+      <h2>三、三种激活函数</h2>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/pytorch-week12-activations.png" alt="ReLU、Sigmoid、Tanh及其导数曲线" width="1598" height="1579">
+        <figcaption>图1：三种常见激活函数及其导数。输入远离0时，sigmoid和tanh的导数逐渐接近0。</figcaption>
+      </figure>
+      <div class="knn-table-wrap" role="region" aria-label="激活函数比较" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>激活函数</th><th>输出范围</th><th>直观理解</th></tr></thead>
+          <tbody>
+            <tr><td>ReLU</td><td>[0,+∞)</td><td>负数归零，正数原样通过</td></tr>
+            <tr><td>sigmoid</td><td>(0,1)</td><td>把任意数字压缩成类似概率的值</td></tr>
+            <tr><td>tanh</td><td>(-1,1)</td><td>以0为中心压缩输入</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>本章MLP采用ReLU。它计算简单，正区间梯度为1，比隐藏层中的sigmoid更不容易让梯度快速变小。</p>
+
+      <h2>四、MLP从零实现</h2>
+      <p>Fashion-MNIST图片展平后有784个输入。书中使用256个隐藏单元和10个输出类别：</p>
+      <pre data-code-id="week12-mlp-scratch"><code class="language-python">def forward(images):
+    X = images.reshape((-1, 784))
+    hidden = relu(X @ W1 + b1)
+    return hidden @ W2 + b2</code></pre>
+      <p>从零版要手动保存W1、b1、W2、b2；简洁版则用<code>Flatten</code>、<code>Linear</code>和<code>ReLU</code>组合。两种写法不同，但前向计算结构一致。</p>
+
+      <h2>五、四组Fashion-MNIST训练</h2>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/pytorch-week12-accuracy.png" alt="普通MLP与Dropout MLP四种实现的测试准确率曲线" width="1601" height="913">
+        <figcaption>图2：四组模型的测试准确率随训练轮数总体提高，但单轮结果存在明显波动。</figcaption>
+      </figure>
+      <div class="knn-table-wrap" role="region" aria-label="第十二周模型训练结果" tabindex="0">
+        <table class="knn-table">
+          <thead><tr><th>模型</th><th>第10轮训练准确率</th><th>第10轮测试准确率</th></tr></thead>
+          <tbody>
+            <tr><td>MLP从零版</td><td>86.4%</td><td>85.0%</td></tr>
+            <tr><td>MLP简洁版</td><td>86.5%</td><td>83.4%</td></tr>
+            <tr><td>Dropout从零版</td><td>87.4%</td><td>86.4%</td></tr>
+            <tr><td>Dropout简洁版</td><td>87.3%</td><td>86.3%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>不能根据这一次实验就断言“从零版一定比简洁版好”或“Dropout一定提升准确率”。随机初始化、样本顺序和训练轮数都会让测试准确率波动。更可靠的比较需要多次重复、控制变量，并观察整段曲线。</p>
+
+      <h2>六、欠拟合和过拟合</h2>
+      <p><strong>欠拟合</strong>是模型连训练数据的规律都没有学好；<strong>过拟合</strong>是训练数据学得很好，但把噪声和偶然细节也记住了，换到测试数据表现下降。</p>
+      <figure class="knn-figure knn-figure-wide">
+        <img src="../assets/pytorch-week12-polynomial-fit.png" alt="1阶、4阶和20阶多项式模型的训练与测试损失曲线" width="2222" height="616">
+        <figcaption>图3：1阶模型容量不足；4阶模型接近真实生成公式；20阶模型的训练损失低于测试损失，泛化差距更明显。</figcaption>
+      </figure>
+      <pre data-code-id="week12-polynomial-results"><code class="language-code">1阶：训练损失=25.3620，测试损失=15.8694
+4阶：训练损失=0.0081，测试损失=0.0112
+20阶：训练损失=0.0326，测试损失=0.0625</code></pre>
+      <p>这里20阶模型的训练损失没有低于4阶，是因为有限轮数内高阶参数更难优化；但它的训练与测试差距更大，已经能看到高容量模型更容易出现泛化问题。过拟合程度还会受到数据量、噪声和训练时间影响。</p>
+
+      <h2>七、权重衰减</h2>
+      <p>权重衰减在原损失后加入权重大小的惩罚项。模型若想使用非常大的权重去贴合少量训练样本，就要付出额外代价：</p>
+      <p class="knn-formula">总损失 = 原损失 + λ × ||w||² / 2</p>
+      <pre data-code-id="week12-weight-decay-results"><code class="language-code">lambda=0：测试损失=185.0453，权重范数=13.3392
+lambda=3：测试损失=30.4501，权重范数=5.4014</code></pre>
+      <p>这个小样本高维实验里，加入权重衰减后权重整体变小，测试损失明显下降。λ越大并不一定越好，过强的惩罚也可能让模型学不动。</p>
+
+      <h2>八、Dropout</h2>
+      <p>Dropout训练时随机把一部分隐藏单元设为0，并放大留下的值以保持期望不变。可以类比小组练习时随机让一部分同学暂时不回答，迫使其他成员也学会解决问题，避免整个小组只依赖固定几个人。</p>
+      <pre data-code-id="week12-dropout"><code class="language-python">mask = (torch.rand(X.shape, device=X.device) > probability).float()
+return mask * X / (1.0 - probability)</code></pre>
+      <p>关键点是：Dropout只在训练阶段开启。测试时调用<code>model.eval()</code>，使用完整网络预测，不能继续随机丢弃隐藏单元。</p>
+
+      <h2>九、与PDF代码不同的地方</h2>
+      <ul>
+        <li>PDF为2021年版本，本次使用Python 3.9.25、PyTorch 2.8.0和CUDA 12.6。</li>
+        <li>不依赖<code>d2l</code>工具包，训练、评估、Dropout和L2惩罚函数直接写在本周代码中。</li>
+        <li>Windows独立脚本使用<code>num_workers=0</code>，避免DataLoader子进程重复执行主文件。</li>
+        <li>书中函数式网络改成继承<code>nn.Module</code>，只是为了统一调用<code>train()</code>、<code>eval()</code>和CUDA迁移；前向公式保持一致。</li>
+        <li>所有Fashion-MNIST模型自动使用CUDA，没有可用GPU时仍会回退到CPU。</li>
+        <li>Matplotlib图标题使用英文，避免本机默认字体缺少中文字形。</li>
+      </ul>
+
+      <h2>十、目前还不熟的地方</h2>
+      <ol class="knn-mistakes">
+        <li><strong>超参数选择。</strong>隐藏单元数、学习率、权重衰减系数和Dropout概率目前主要沿用书中设置。</li>
+        <li><strong>泛化判断。</strong>知道不能只看训练损失，但还需要练习使用验证集和重复实验选择模型。</li>
+        <li><strong>高阶模型优化。</strong>20阶模型的表现同时受模型容量和优化过程影响，不能把一次结果简单等同于所有过拟合现象。</li>
+      </ol>
+
+      <h2>十一、下周计划</h2>
+      <ol class="knn-checklist">
+        <li><span>01</span><div><strong>计算图</strong><p>继续4.7，整理正向传播、反向传播和计算图。</p></div></li>
+        <li><span>02</span><div><strong>数值稳定性</strong><p>学习梯度消失、梯度爆炸和参数初始化。</p></div></li>
+        <li><span>03</span><div><strong>分布偏移</strong><p>区分协变量偏移、标签偏移和概念偏移。</p></div></li>
+        <li><span>04</span><div><strong>案例准备</strong><p>开始整理房价预测需要的数据处理流程。</p></div></li>
+      </ol>
+
+      <h2>十二、本周最值得保留的认识</h2>
+      <p class="knn-summary-words"><span>隐藏层</span><span>非线性</span><span>容量</span><span>泛化</span><span>正则化</span></p>
+      <p><strong>隐藏层</strong>配合激活函数带来<strong>非线性</strong>表达能力；模型<strong>容量</strong>增加后更容易学会训练数据，也更需要关注测试数据上的<strong>泛化</strong>；权重衰减和Dropout等<strong>正则化</strong>方法用于限制模型过度记忆。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="pytorch-tensor-numpy-conversion.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：张量与NumPy互转</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

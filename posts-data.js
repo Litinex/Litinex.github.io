@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week12-mlp-regularization-review",
+      href: "posts/week12-mlp-regularization-review.html",
+      title: "第十二周学习复盘：隐藏层、过拟合与正则化",
+      date: "2026-10-05",
+      updated: "2026-10-05",
+      category: "学习札记",
+      excerpt: "学习《动手学深度学习》第4章4.1至4.6，复现多层感知机、欠拟合与过拟合、权重衰减和Dropout。",
+      tags: ["Python", "PyTorch", "深度学习", "多层感知机", "过拟合", "权重衰减", "Dropout", "周报"],
+      words: 4700,
+      readTime: 13,
+    },
+    {
       id: "pytorch-tensor-numpy-conversion",
       href: "posts/pytorch-tensor-numpy-conversion.html",
       title: "PyTorch张量与NumPy互转：内存共享、复制与item()",
