@@ -52,6 +52,10 @@
   const posts = Array.isArray(window.__BLOG_POSTS__)
     ? window.__BLOG_POSTS__.filter((post) => safeText(post?.href) && safeText(post?.title))
     : [];
+  const postCount = document.querySelector("[data-home-post-count]");
+  if (postCount) {
+    postCount.textContent = String(posts.length);
+  }
 
   if (posts.length === 0) {
     return;
