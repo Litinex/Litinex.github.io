@@ -1,162 +1,6 @@
 (() => {
-  const playlist = [
-    {
-      neteaseSongId: "1357960253",
-      title: "藍二乗",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/AVhYLte6khAcd3wOO65avw==/109951170245162530.jpg",
-    },
-    {
-      neteaseSongId: "487527984",
-      title: "雲と幽霊",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/rD6Ul3DVakQkD8_VeL-aRw==/19162288649094546.jpg",
-    },
-    {
-      neteaseSongId: "487527983",
-      title: "靴の花火",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/rD6Ul3DVakQkD8_VeL-aRw==/19162288649094546.jpg",
-    },
-    {
-      neteaseSongId: "2734279861",
-      title: "修羅",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/R85bgBy55sUQnWq8NDlgaQ==/109951171812887175.jpg",
-    },
-    {
-      neteaseSongId: "487527980",
-      title: "言って。",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/rD6Ul3DVakQkD8_VeL-aRw==/19162288649094546.jpg",
-    },
-    {
-      neteaseSongId: "1357953768",
-      title: "だから僕は音楽を辞めた",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/AVhYLte6khAcd3wOO65avw==/109951170245162530.jpg",
-    },
-    {
-      neteaseSongId: "2036445126",
-      title: "都落ち",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/aC8zzUP4nr1sGx5qfr5cVw==/109951168523411427.jpg",
-    },
-    {
-      neteaseSongId: "1357628744",
-      title: "パレード",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/AVhYLte6khAcd3wOO65avw==/109951170245162530.jpg",
-    },
-    {
-      neteaseSongId: "1870469768",
-      title: "老人と海",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/5aHcGADR5i6biE5TSqf_aQ==/109951166295171725.jpg",
-    },
-    {
-      neteaseSongId: "1466519473",
-      title: "花人局",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/033ZocR9XnX1MdcXCWW_iQ==/109951165180340452.jpg",
-    },
-    {
-      neteaseSongId: "1485319473",
-      title: "風を食む",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/Jh-7TNNm9BhJZejuRx6_EQ==/109951165373693055.jpg",
-    },
-    {
-      neteaseSongId: "1810759765",
-      title: "春泥棒",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/kBtj7HlFDuokeO4iyHTXaA==/109951165616927101.jpg",
-    },
-    {
-      neteaseSongId: "1850977722",
-      title: "又三郎",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/b2M2BZbgwsk1n_UUAxxfSg==/109951166074391935.jpg",
-    },
-    {
-      neteaseSongId: "1457709580",
-      title: "思想犯",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/OWvCQnwUzt-LOcWSCYqW9Q==/109951165084906395.jpg",
-    },
-    {
-      neteaseSongId: "557579321",
-      title: "ただ君に晴れ",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/FHi1cWVObsNewrw-Jf2w3g==/109951163289889776.jpg",
-    },
-    {
-      neteaseSongId: "1428153831",
-      title: "夜行",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/rX3QUba-6_CacELe4bqL2g==/109951164767615222.jpg",
-    },
-    {
-      neteaseSongId: "1442466883",
-      title: "花に亡霊",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/_Os98d4NSKf-vLo_93QoEg==/109951164927614269.jpg",
-    },
-    {
-      neteaseSongId: "1815109509",
-      title: "嘘月",
-      artist: "ヨルシカ",
-      cover: "https://p1.music.126.net/Ok0xk_CpJW21lAUG9UiMww==/109951165666599650.jpg",
-    },
-    {
-      neteaseSongId: "2093433056",
-      title: "Ethereal",
-      artist: "txmy",
-      cover: "https://p2.music.126.net/HDlXcbUwFf9YXObc8aZ2aQ==/109951170245612849.jpg",
-    },
-    {
-      neteaseSongId: "28481734",
-      title: "a memories for us feat.\"Day's\"",
-      artist: "MANYO / 三輪学",
-      cover: "https://p2.music.126.net/GuHMyPqydehCKSPSnjddwQ==/109951171282694931.jpg",
-    },
-    {
-      neteaseSongId: "2106662944",
-      title: "Seraphic",
-      artist: "txmy",
-      cover: "https://p2.music.126.net/waQXFPUyyA8LB8B3_388vA==/109951171329995384.jpg",
-    },
-    {
-      neteaseSongId: "2049977284",
-      title: "A New Era",
-      artist: "John Lunn / The Chamber Orchestra Of London",
-      cover: "https://p2.music.126.net/dw4qiE2NMr3UabCaTIJ5og==/109951168634292660.jpg",
-    },
-    {
-      neteaseSongId: "1856336348",
-      title: "8.8",
-      artist: "あたらよ",
-      cover: "https://p1.music.126.net/33QleQ2pw4RTFTbHD2-z3w==/109951166120531270.jpg",
-    },
-    {
-      neteaseSongId: "2112531307",
-      title: "「僕は...」",
-      artist: "あたらよ",
-      cover: "https://p1.music.126.net/41BC-DD4kBShAYLNvcVzOg==/109951169217397474.jpg",
-    },
-    {
-      neteaseSongId: "1973608593",
-      title: "また夏を追う",
-      artist: "あたらよ",
-      cover: "https://p1.music.126.net/qMj8LmjgfBHlFxOHvTIyUw==/109951167795762268.jpg",
-    },
-    {
-      neteaseSongId: "1867150097",
-      title: "夏霞",
-      artist: "あたらよ",
-      cover: "https://p1.music.126.net/zi2Fm_ckfMEpkM37rZ5UEg==/109951166253940594.jpg",
-    },
-  ];
+  const playlistData = window.BLOG_MUSIC_PLAYLIST || {};
+  const playlist = playlistData.tracks || [];
 
   const settings = {
     startIndex: 0,
@@ -237,7 +81,7 @@
       </div>
     </section>
     <section class="music-playlist-panel" id="music-playlist" aria-label="播放列表" hidden>
-      <div class="music-playlist-head"><span>播放列表</span><strong class="music-playlist-count"></strong></div>
+      <div class="music-playlist-head"><a class="music-playlist-source" href="https://music.163.com/playlist?id=2427750321" target="_blank" rel="noopener noreferrer">网易云歌单</a><strong class="music-playlist-count"></strong></div>
       <ol class="music-playlist"></ol>
     </section>
   `;
@@ -268,6 +112,7 @@
   const playlistPanel = root.querySelector(".music-playlist-panel");
   const playlistEl = root.querySelector(".music-playlist");
   const playlistCountEl = root.querySelector(".music-playlist-count");
+  const playlistSourceEl = root.querySelector(".music-playlist-source");
 
   if (
     !collapsedButton ||
@@ -288,7 +133,8 @@
     !collapseToggle ||
     !playlistPanel ||
     !playlistEl ||
-    !playlistCountEl
+    !playlistCountEl ||
+    !playlistSourceEl
   ) {
     root.remove();
     return;
@@ -324,11 +170,50 @@
     collapsedButton.setAttribute("aria-label", `展开音乐播放器：${title} - ${artist}`);
   }
 
+  const disclosureAnimations = new WeakMap();
+
+  function setDisclosureVisible(element, visible) {
+    const previous = disclosureAnimations.get(element);
+    if (!previous && element.hidden === !visible) return;
+
+    const canAnimate = typeof element.animate === "function"
+      && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const closedFrame = { opacity: 0, transform: "translateY(8px) scale(0.96)" };
+    const openFrame = { opacity: 1, transform: "translateY(0) scale(1)" };
+    const style = canAnimate && !element.hidden ? getComputedStyle(element) : null;
+    const start = style ? { opacity: style.opacity, transform: style.transform } : closedFrame;
+    previous?.cancel();
+    disclosureAnimations.delete(element);
+    element.inert = !visible;
+    element.setAttribute("aria-hidden", String(!visible));
+
+    if (!canAnimate) {
+      element.hidden = !visible;
+      return;
+    }
+
+    element.hidden = false;
+    const animation = element.animate([start, visible ? openFrame : closedFrame], {
+      duration: visible ? 260 : 180,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "both",
+    });
+    disclosureAnimations.set(element, animation);
+    animation.finished.then(() => {
+      if (disclosureAnimations.get(element) !== animation) return;
+      element.hidden = !visible;
+      disclosureAnimations.delete(element);
+      animation.cancel();
+    }, () => {
+      // A newer interaction owns the state after cancelling this transition.
+    });
+  }
+
   function setCollapsed(shouldCollapse) {
     isCollapsed = Boolean(shouldCollapse);
     root.classList.toggle("is-collapsed", isCollapsed);
-    playerEl.hidden = isCollapsed;
-    collapsedButton.hidden = !isCollapsed;
+    setDisclosureVisible(playerEl, !isCollapsed);
+    setDisclosureVisible(collapsedButton, isCollapsed);
     collapsedButton.setAttribute("aria-expanded", String(!isCollapsed));
 
     if (isCollapsed) {
@@ -341,7 +226,7 @@
     root.classList.toggle("is-playlist-open", isPlaylistOpen);
     listToggle.setAttribute("aria-expanded", String(isPlaylistOpen));
     listToggle.setAttribute("aria-label", isPlaylistOpen ? "收起播放列表" : "展开播放列表");
-    playlistPanel.hidden = !isPlaylistOpen;
+    setDisclosureVisible(playlistPanel, isPlaylistOpen);
   }
 
   function formatTime(seconds) {
@@ -505,11 +390,13 @@
   function renderPlaylist() {
     const fragment = document.createDocumentFragment();
     playlistCountEl.textContent = `${tracks.length} 首`;
+    playlistSourceEl.textContent = safeText(playlistData.name) || "网易云歌单";
+    playlistSourceEl.href = playlistData.source || "https://music.163.com/";
 
     tracks.forEach((track, index) => {
       const item = document.createElement("li");
       const button = document.createElement("button");
-      const cover = document.createElement("span");
+      const cover = document.createElement("img");
       const text = document.createElement("span");
       const title = document.createElement("span");
       const artist = document.createElement("span");
@@ -520,9 +407,14 @@
       button.setAttribute("aria-current", index === currentIndex ? "true" : "false");
 
       cover.className = "music-track-cover";
+      cover.alt = "";
+      cover.width = 32;
+      cover.height = 32;
+      cover.loading = "lazy";
+      cover.decoding = "async";
       const coverUrl = safeText(track.cover);
       if (coverUrl) {
-        cover.style.setProperty("--music-cover", `url("${coverUrl}")`);
+        cover.src = `${coverUrl}?param=64y64`;
       }
 
       text.className = "music-track-text";

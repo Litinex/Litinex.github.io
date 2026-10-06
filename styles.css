@@ -2554,11 +2554,14 @@ html[data-theme="dark"] .article-body .code-editor code {
   width: min(300px, calc(100vw - 32px));
   max-height: calc(100dvh - 36px);
   gap: 8px;
+  min-height: 48px;
+  pointer-events: none;
   color: var(--ink-strong);
 }
 
-.music-dock.is-collapsed {
-  width: 48px;
+.music-dock > * {
+  pointer-events: auto;
+  transform-origin: right bottom;
 }
 .music-dock [hidden] {
   display: none !important;
@@ -2577,7 +2580,10 @@ html[data-theme="dark"] .article-body .code-editor code {
 }
 
 .music-collapsed-button {
-  position: relative;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
   display: grid;
   width: 48px;
   height: 48px;
@@ -2832,7 +2838,21 @@ html[data-theme="dark"] .article-body .code-editor code {
   color: var(--muted);
   font-size: 11px;
 }
+.music-playlist-source {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.music-playlist-source:hover {
+  color: var(--primary);
+}
+
 .music-playlist-head strong {
+  flex-shrink: 0;
+  margin-left: 8px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
@@ -2867,6 +2887,7 @@ html[data-theme="dark"] .article-body .code-editor code {
   color: var(--primary);
 }
 .music-track-cover {
+  object-fit: cover;
   width: 32px;
   height: 32px;
   border-radius: 3px;
@@ -2892,7 +2913,7 @@ html[data-theme="dark"] .article-body .code-editor code {
 
 /* Short windows scroll the expanded controls and playlist as one surface. */
 @media (max-height: 600px) {
-  .music-dock:not(.is-collapsed) {
+  .music-dock {
     flex-direction: column;
     overflow-y: auto;
     overscroll-behavior: contain;

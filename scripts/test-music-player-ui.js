@@ -71,7 +71,8 @@ async function checkPlayer(page, origin, width) {
   const listToggle = page.locator(".music-list-toggle");
   await listToggle.click();
   const tracks = page.locator(".music-track");
-  assert.equal(await tracks.count(), 26);
+  assert.equal(await tracks.count(), 362);
+  assert.equal(await page.locator(".music-playlist-source").getAttribute("href"), "https://music.163.com/playlist?id=2427750321");
   const lastTrack = tracks.last();
   const lastTitle = await lastTrack.locator(".music-track-title").innerText();
   await lastTrack.click();
@@ -98,7 +99,7 @@ async function checkPlayer(page, origin, width) {
   // Stop the media fixture from generating play events to exercise consecutive failures.
   await page.evaluate(() => {
     testAudio.play = () => Promise.resolve();
-    for (let index = 0; index < 26; index++) testAudio.dispatchEvent(new Event("error"));
+    for (let index = 0; index < document.querySelectorAll(".music-track").length; index++) testAudio.dispatchEvent(new Event("error"));
   });
   assert.match(await page.locator(".music-status").innerText(), /已停止/);
 }
@@ -122,6 +123,60 @@ async function checkShortViewport(page, origin) {
   }
 }
 
+async function checkDisclosureMotion(page, origin) {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto(`${origin}/posts/week12-mlp-regularization-review.html`, { waitUntil: "domcontentloaded" });
+  const transitions = [
+    { trigger: ".music-collapsed-button", surface: ".music-player", visible: true },
+    { trigger: ".music-list-toggle", surface: ".music-playlist-panel", visible: true },
+    { trigger: ".music-list-toggle", surface: ".music-playlist-panel", visible: false },
+    { trigger: ".music-collapse-toggle", surface: ".music-player", visible: false },
+  ];
+  for (const transition of transitions) {
+    const frames = await page.evaluate(({ trigger, surface }) => {
+      document.querySelector(trigger).click();
+      const animations = document.querySelector(surface).getAnimations();
+      animations.forEach((animation) => animation.pause());
+      return animations.map((animation) => ({
+        duration: animation.effect.getTiming().duration,
+        opacity: animation.effect.getKeyframes().map((frame) => frame.opacity),
+      }));
+    }, transition);
+    assert.ok(frames.some((motion) => motion.duration >= 120 && motion.duration <= 400
+      && new Set(motion.opacity).size > 1), `${transition.surface}: opening and closing should visibly ease between states`);
+    const intermediate = await page.evaluate((surface) => {
+      const element = document.querySelector(surface);
+      element.getAnimations().forEach((animation) => { animation.currentTime = animation.effect.getTiming().duration / 2; });
+      const style = getComputedStyle(element);
+      const bounds = element.getBoundingClientRect();
+      return { hidden: element.hidden, display: style.display, visibility: style.visibility,
+        opacity: Number(style.opacity), width: bounds.width, height: bounds.height };
+    }, transition.surface);
+    assert.equal(intermediate.hidden, false, "Surface stays rendered throughout the transition");
+    assert.notEqual(intermediate.display, "none");
+    assert.notEqual(intermediate.visibility, "hidden");
+    assert.ok(intermediate.width > 0 && intermediate.height > 0);
+    assert.ok(intermediate.opacity > 0.01 && intermediate.opacity < 0.99, "Transition has a visible intermediate opacity");
+    await page.evaluate(() => document.querySelector(".music-dock").getAnimations({ subtree: true }).forEach((animation) => animation.finish()));
+    await page.waitForFunction(({ surface, visible }) => document.querySelector(surface).hidden === !visible, transition);
+  }
+  // Interrupt transitions through the same controls, without waiting for animations to finish.
+  await page.evaluate(() => {
+    document.querySelector(".music-collapsed-button").click();
+    document.querySelector(".music-collapse-toggle").click();
+    document.querySelector(".music-collapsed-button").click();
+    const toggle = document.querySelector(".music-list-toggle");
+    toggle.click(); toggle.click(); toggle.click();
+  });
+  await page.waitForFunction(() => document.querySelector(".music-dock").getAnimations({ subtree: true }).length === 0);
+  assert.ok(await page.locator(".music-player").isVisible(), "Latest open action survives interrupted closing");
+  assert.ok(await page.locator(".music-playlist-panel").isVisible(), "Rapid toggles settle on the latest playlist state");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => document.querySelector(".music-player").hidden);
+  assert.ok(await page.locator(".music-collapsed-button").evaluate((el) => el === document.activeElement));
+}
+
 async function run() {
   const server = createStaticServer();
   await listen(server, 0);
@@ -133,11 +188,14 @@ async function run() {
     await context.route("**/*", (route) => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
     await context.addInitScript(installAudioFixture);
     const page = await context.newPage();
-    if (process.argv.includes("--short")) {
+    if (process.argv.includes("--motion")) {
+      await checkDisclosureMotion(page, origin);
+    } else if (process.argv.includes("--short")) {
       await checkShortViewport(page, origin);
     } else {
       for (const width of [320, 375, 1440]) await checkPlayer(page, origin, width);
       await checkShortViewport(page, origin);
+      await checkDisclosureMotion(page, origin);
     }
     console.log("PASS: responsive player, media states, seeking, playlist, outside/Escape dismissal and focus");
   } finally {

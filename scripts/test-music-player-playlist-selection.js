@@ -357,7 +357,7 @@ function createMusicPlayerDomFromTemplate(html) {
   const panel = element("div", "music-playlist-panel");
   const count = element("strong", "music-playlist-count");
   const playlist = element("ol", "music-playlist");
-  panel.append(count, playlist);
+  panel.append(element("a", "music-playlist-source"), count, playlist);
 
   return [collapsedButton, player, panel];
 }
@@ -368,6 +368,7 @@ function loadMusicPlayer() {
   const document = new FakeDocument();
   const sandbox = {
     Audio: FakeAudio,
+    window: {},
     document,
     encodeURIComponent,
     Number,
@@ -375,6 +376,8 @@ function loadMusicPlayer() {
     String,
   };
 
+  const playlistCode = fs.readFileSync(path.resolve(__dirname, "..", "music-playlist.js"), "utf8");
+  vm.runInNewContext(playlistCode, sandbox, { filename: "music-playlist.js" });
   vm.runInNewContext(code, sandbox, { filename: "music-player.js" });
   assert.equal(FakeAudio.instances.length, 1, "Music player should create one Audio instance.");
   return { audio: FakeAudio.instances[0], document };
