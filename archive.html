@@ -20,15 +20,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261006-2">
+  <link rel="stylesheet" href="styles.css?v=20261006-3">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260620-2" defer></script>
   <script src="music-player.js?v=20260624-2" defer></script>
   <script src="posts-data.js?v=20260929-1" defer></script>
-  <script src="archive-search.js?v=20260617-1" defer></script>
+  <script src="archive-search.js?v=20261006-3" defer></script>
   <script src="taxonomy.js?v=20260528-1" defer></script>
   <script src="views.js?v=20260427-1" defer></script>
-  <script src="theme-toggle.js?v=20260610-1" defer></script>
+  <script src="theme-toggle.js?v=20261006-3" defer></script>
   <script src="page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {
@@ -67,8 +67,9 @@
 
     <section class="site-banner compact-banner" aria-label="归档页横幅">
       <picture class="site-banner-media" aria-hidden="true">
-        <img src="assets/hero-sky-1920.jpg" alt="" decoding="async">
-      </picture>
+          <source type="image/webp" srcset="assets/hero-sky-1280-640.webp 640w, assets/hero-sky-1280.webp 1280w, assets/hero-sky-1920.webp 1920w, assets/hero-sky-2560.webp 2560w" sizes="100vw">
+          <img src="assets/hero-sky-1920.jpg" alt="" decoding="async" width="1920" height="1440" srcset="assets/hero-sky-1280.jpg 1280w, assets/hero-sky-1920.jpg 1920w, assets/hero-sky-2560.jpg 2560w" sizes="100vw" fetchpriority="high">
+        </picture>
       <div class="site-banner-content">
         <p class="eyebrow">Archive</p>
         <h1>归档</h1>
@@ -96,13 +97,18 @@
               >
               <button class="archive-search-clear" type="button" data-archive-search-clear aria-label="清空搜索" hidden>×</button>
             </div>
-            <p class="archive-search-count" data-archive-search-count></p>
+            <p class="archive-search-hint">按 <kbd>/</kbd> 搜索，按 <kbd>Esc</kbd> 清空关键词</p>
+            <p class="archive-search-count" data-archive-search-count role="status" aria-live="polite" aria-atomic="true"></p>
           </section>
         </aside>
 
         <section class="archive-content content-column" aria-label="历史文章">
+          <div class="archive-category-filters" data-archive-categories role="group" aria-label="按分类筛选"></div>
           <ul class="archive-list post-card-list" data-archive-list data-archive-page-size="8"></ul>
-          <p class="archive-empty fuwari-card" data-archive-empty hidden>没有找到匹配的文章。</p>
+          <div class="archive-empty fuwari-card" data-archive-empty hidden>
+            <p>没有找到匹配的文章，试试其他关键词或分类。</p>
+            <button class="button button-secondary" type="button" data-archive-reset>清除全部筛选</button>
+          </div>
           <nav class="archive-pagination" aria-label="文章列表分页" data-archive-pagination hidden>
             <div class="archive-pagination-bar">
               <button class="archive-pagination-control" type="button" data-archive-pagination-prev aria-label="上一页" disabled>

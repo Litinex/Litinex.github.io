@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260811-1" defer></script>
   <script src="../related-posts-data.js?v=20260811-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"从打分到概率：零基础学会 Logistic 回归与 Sigmoid 分类","description":"结合《机器学习实战》第五章源码，图解 Sigmoid、线性打分、决策边界、对数似然和梯度更新，并用 NumPy 从零实现 Logistic 回归，完成二维分类与病马生存预测。","image":"https://yezizhuang.top/assets/logistic-sigmoid-curve.svg","url":"https://yezizhuang.top/posts/python-logistic-regression-sigmoid-classification.html","datePublished":"2026-08-11","dateModified":"2026-08-11","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="python-logistic-regression-sigmoid-classification">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.08.11 · Python 入门 · 约 26 分钟</p>
       <h1>从打分到概率：零基础学会 Logistic 回归与 Sigmoid 分类</h1>
@@ -77,7 +89,7 @@
         <li>把结果解释为类别 1 的估计概率，再用阈值完成分类。</li>
       </ol>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/logistic-classification-boundary.svg" alt="Logistic 回归将输入特征加权求和，经过 Sigmoid 得到概率，再以0.5为阈值分类；二维空间中形成直线决策边界" width="1200" height="700">
+        <img src="../assets/logistic-classification-boundary.svg" alt="Logistic 回归将输入特征加权求和，经过 Sigmoid 得到概率，再以0.5为阈值分类；二维空间中形成直线决策边界" width="1200" height="700" loading="lazy" decoding="async">
         <figcaption>图 1：模型输出的是概率；默认以 0.5 为界时，边界恰好位于线性分数 z = 0 的地方。</figcaption>
       </figure>
 
@@ -104,7 +116,7 @@
         <li><code>z</code> 越小，输出越接近 <code>0</code>。</li>
       </ul>
       <figure class="knn-figure">
-        <img src="../assets/logistic-sigmoid-curve.svg" alt="Sigmoid S形曲线，将任意实数映射到0和1之间，0对应0.5" width="1200" height="680" loading="lazy">
+        <img src="../assets/logistic-sigmoid-curve.svg" alt="Sigmoid S形曲线，将任意实数映射到0和1之间，0对应0.5" width="1200" height="680" loading="lazy" decoding="async">
         <figcaption>图 2：Sigmoid 是一条平滑的 S 形曲线。它不会真正等于 0 或 1，但在两端会无限接近。</figcaption>
       </figure>
 

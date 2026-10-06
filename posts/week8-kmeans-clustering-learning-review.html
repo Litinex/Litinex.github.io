@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260907-1" defer></script>
   <script src="../related-posts-data.js?v=20260907-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"第八周学习复盘：从一堆点到几个簇","description":"第八周机器学习实战总结：复现标准K均值、二分K均值、球面距离和地图地点聚类，用真实结果理解质心、簇与SSE。","image":"https://yezizhuang.top/assets/kmeans-week8-comparison.png","url":"https://yezizhuang.top/posts/week8-kmeans-clustering-learning-review.html","datePublished":"2026-09-07","dateModified":"2026-09-07","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="week8-kmeans-clustering-learning-review">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.09.07 · 学习札记 · 约 10 分钟</p>
       <h1>第八周学习复盘：从一堆点到几个簇</h1>
@@ -95,7 +107,10 @@
 [ 2.626530,  3.108680]
 [-2.461543,  2.787376]</code></pre>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/kmeans-week8-comparison.png" alt="标准K均值与二分K均值的聚类结果比较" width="1600" height="640">
+        <picture>
+          <source type="image/webp" srcset="../assets/kmeans-week8-comparison-800.webp 800w, ../assets/kmeans-week8-comparison.webp 1904w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/kmeans-week8-comparison.png" alt="标准K均值与二分K均值的聚类结果比较" width="1904" height="781" loading="lazy" decoding="async">
+        </picture>
         <figcaption>图 1：左侧为标准 K 均值的 4 簇结果，右侧为二分 K 均值的 3 簇结果。叉号表示质心。</figcaption>
       </figure>
 

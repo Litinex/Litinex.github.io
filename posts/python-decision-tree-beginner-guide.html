@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260726-1" defer></script>
   <script src="../related-posts-data.js?v=20260726-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"像玩猜谜一样做预测：零基础彻底学会决策树","description":"面向零基础读者的决策树图文教程：从生活中的连续提问讲起，手算基尼不纯度与最佳切分，从零实现分类树，再用 scikit-learn 完成训练、剪枝、可视化和评估。","image":"https://yezizhuang.top/assets/decision-tree-loan.svg","url":"https://yezizhuang.top/posts/python-decision-tree-beginner-guide.html","datePublished":"2026-07-26","dateModified":"2026-07-26","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="python-decision-tree-beginner-guide">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.07.26 · Python 入门 · 约 24 分钟</p>
       <h1>像玩猜谜一样做预测：零基础彻底学会决策树</h1>
@@ -63,7 +75,7 @@
       <h2>一、决策树到底是什么</h2>
       <p><strong>决策树（Decision Tree）</strong>是一种监督学习算法。训练数据不只有特征，还带着正确答案，也就是标签。算法观察许多已知案例，自动学会“先问什么、后问什么”，最后用这套规则判断新数据。</p>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/decision-tree-loan.svg" alt="贷款审批决策树：先判断是否有稳定收入，再根据负债率或信用记录判断批准或拒绝" width="1200" height="720">
+        <img src="../assets/decision-tree-loan.svg" alt="贷款审批决策树：先判断是否有稳定收入，再根据负债率或信用记录判断批准或拒绝" width="1200" height="720" loading="lazy" decoding="async">
         <figcaption>图 1：新申请人从顶部出发，每回答一个问题就沿一条分支向下，走到叶节点时得到预测结果。</figcaption>
       </figure>
       <p>一棵树有四种重要部件：</p>
@@ -80,7 +92,7 @@
       <blockquote class="knn-principle">每次都选择一个切分，让分开后的各组尽可能“纯”。</blockquote>
       <p>“纯”是指一组中的样本尽量属于同一类别。10 个样本全是“批准”非常纯；5 个批准、5 个拒绝则非常混乱。好的问题能让混在一起的数据分到更清楚的两边。</p>
       <figure class="knn-figure">
-        <img src="../assets/decision-tree-split.svg" alt="比较两个候选问题：按年龄切分后类别仍混杂，按收入切分后类别几乎完全分开" width="1200" height="650" loading="lazy">
+        <img src="../assets/decision-tree-split.svg" alt="比较两个候选问题：按年龄切分后类别仍混杂，按收入切分后类别几乎完全分开" width="1200" height="650" loading="lazy" decoding="async">
         <figcaption>图 2：算法会尝试很多“特征 + 阈值”组合，并选择让子节点最纯的那一个。</figcaption>
       </figure>
 

@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260929-1" defer></script>
   <script src="../related-posts-data.js?v=20260929-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十一周学习复盘：从线性回归到softmax分类","description":"复现《动手学深度学习》第3章：从零实现线性回归与softmax回归，并使用PyTorch在Fashion-MNIST上完成多分类训练。","image":"https://yezizhuang.top/assets/pytorch-week11-softmax-curves.png","url":"https://yezizhuang.top/posts/week11-linear-softmax-regression-review.html","datePublished":"2026-09-29","dateModified":"2026-09-29","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="week11-linear-softmax-regression-review">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.09.29 · 学习札记 · 约 12 分钟</p>
       <h1>第十一周学习复盘：从线性回归到softmax分类</h1>
@@ -130,7 +142,10 @@ labels = labels.reshape((-1, 1))</code></pre>
 
       <h2>九、两种softmax实现的真实结果</h2>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/pytorch-week11-softmax-curves.png" alt="softmax回归从零实现和PyTorch简洁实现的损失与测试准确率曲线" width="1980" height="810">
+        <picture>
+          <source type="image/webp" srcset="../assets/pytorch-week11-softmax-curves-800.webp 800w, ../assets/pytorch-week11-softmax-curves.webp 1961w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/pytorch-week11-softmax-curves.png" alt="softmax回归从零实现和PyTorch简洁实现的损失与测试准确率曲线" width="1961" height="800" loading="lazy" decoding="async">
+        </picture>
         <figcaption>图1：两种实现的损失下降趋势基本一致，测试准确率最终都在83%左右。</figcaption>
       </figure>
       <div class="knn-table-wrap" role="region" aria-label="softmax训练结果" tabindex="0">

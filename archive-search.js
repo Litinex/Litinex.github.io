@@ -8,6 +8,8 @@
   const paginationPrev = document.querySelector("[data-archive-pagination-prev]");
   const paginationNext = document.querySelector("[data-archive-pagination-next]");
   const paginationPages = document.querySelector("[data-archive-pagination-pages]");
+  const categoryFilters = document.querySelector("[data-archive-categories]");
+  const resetButton = document.querySelector("[data-archive-reset]");
 
   if (!searchInput || !listElement) {
     return;
@@ -112,6 +114,7 @@
       const seriesName = safeText(post?.series?.name);
 
       item.dataset.postHref = href;
+      item.dataset.category = categoryText;
       item.dataset.searchText = [
         titleText,
         normalizeDate(post.date),
@@ -185,6 +188,61 @@
   let currentPage = 1;
   let currentTokens = [];
   let currentQuery = "";
+  let currentCategory = "";
+  const categories = [...new Set(items.map((item) => safeText(item.dataset.category)).filter(Boolean))];
+  const highlightFields = items.flatMap((item) => Array.from(
+    item.querySelectorAll(".post-card-title, .post-card-excerpt, .post-meta-item > span:last-child, .post-tags .tag-chip"),
+    (element) => ({ element, text: element.textContent })
+  ));
+
+  // Construct text nodes instead of HTML so arbitrary search input stays literal.
+  function highlightMatches() {
+    const tokens = [...new Set(currentTokens)].sort((a, b) => b.length - a.length);
+    highlightFields.forEach(({ element, text }) => {
+      const fragment = document.createDocumentFragment();
+      const lowerText = text.toLowerCase();
+      let cursor = 0;
+      while (cursor < text.length) {
+        let matchIndex = -1;
+        let matchToken = "";
+        tokens.forEach((token) => {
+          const index = lowerText.indexOf(token, cursor);
+          if (index !== -1 && (matchIndex === -1 || index < matchIndex)) {
+            matchIndex = index;
+            matchToken = token;
+          }
+        });
+        if (matchIndex === -1) {
+          fragment.append(document.createTextNode(text.slice(cursor)));
+          break;
+        }
+        fragment.append(document.createTextNode(text.slice(cursor, matchIndex)));
+        const mark = document.createElement("mark");
+        mark.className = "search-match";
+        mark.textContent = text.slice(matchIndex, matchIndex + matchToken.length);
+        fragment.append(mark);
+        cursor = matchIndex + matchToken.length;
+      }
+      element.replaceChildren(fragment);
+    });
+  }
+
+  function renderCategoryFilters() {
+    if (!categoryFilters) return;
+    ["", ...categories].forEach((category) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tag-chip tag-chip-button";
+      button.dataset.category = category;
+      button.textContent = category || "全部";
+      button.setAttribute("aria-pressed", String(category === currentCategory));
+      button.addEventListener("click", () => {
+        currentCategory = category;
+        applyFilter(searchInput.value, { resetPage: true });
+      });
+      categoryFilters.appendChild(button);
+    });
+  }
 
   function normalizeQuery(value) {
     return safeText(value);
@@ -202,6 +260,11 @@
         url.searchParams.set("q", normalized);
       } else {
         url.searchParams.delete("q");
+      }
+      if (currentCategory) {
+        url.searchParams.set("category", currentCategory);
+      } else {
+        url.searchParams.delete("category");
       }
 
       const normalizedPage = Number.isFinite(page) ? Math.max(1, Math.trunc(page)) : 1;
@@ -355,7 +418,8 @@
     }
 
     if (countElement) {
-      let text = currentTokens.length === 0 ? `共 ${total} 篇文章` : `找到 ${matchedCount} / ${total} 篇文章`;
+      const filters = [currentCategory, currentQuery ? `搜索“${currentQuery}”` : ""].filter(Boolean);
+      let text = filters.length ? `${filters.join("，")}：找到 ${matchedCount} 篇文章` : `共 ${total} 篇文章`;
       if (totalPages > 1) {
         text = `${text} · 第 ${currentPage} / ${totalPages} 页`;
       }
@@ -365,6 +429,10 @@
     if (clearButton) {
       clearButton.hidden = currentTokens.length === 0;
     }
+
+    categoryFilters?.querySelectorAll("button[data-category]").forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.category === currentCategory));
+    });
 
     if (options.updateUrl) {
       setUrlState(currentQuery, currentPage);
@@ -384,7 +452,8 @@
 
     items.forEach((item, index) => {
       const text = itemTexts[index] || "";
-      const matched = tokens.length === 0 || tokens.every((token) => text.includes(token));
+      const matchesCategory = !currentCategory || item.dataset.category === currentCategory;
+      const matched = matchesCategory && tokens.every((token) => text.includes(token));
       matchedFlags[index] = matched;
       if (matched) {
         matchedCount += 1;
@@ -395,6 +464,7 @@
       currentPage = 1;
     }
 
+    highlightMatches();
     renderState({ updateUrl: true });
   }
 
@@ -420,6 +490,21 @@
 
   searchInput.addEventListener("input", () => {
     applyFilter(searchInput.value, { resetPage: true });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const target = event.target;
+    if (event.key !== "/" || event.ctrlKey || event.metaKey || event.altKey || event.isComposing) return;
+    if (target instanceof Element && (target.closest("input, textarea, select") || target.isContentEditable)) return;
+    event.preventDefault();
+    searchInput.focus();
+  });
+
+  resetButton?.addEventListener("click", () => {
+    currentCategory = "";
+    searchInput.value = "";
+    applyFilter("", { resetPage: true });
+    setFocus(searchInput);
   });
 
   searchInput.addEventListener("keydown", (event) => {
@@ -476,6 +561,8 @@
 
   try {
     const params = new URLSearchParams(window.location.search);
+    const initialCategory = safeText(params.get("category"));
+    if (categories.includes(initialCategory)) currentCategory = initialCategory;
     const initialPage = Number.parseInt(params.get("p") || "", 10);
     if (Number.isFinite(initialPage) && initialPage > 1) {
       currentPage = initialPage;
@@ -494,5 +581,6 @@
     // Ignore parsing failures.
   }
 
+  renderCategoryFilters();
   applyFilter(searchInput.value);
 })();

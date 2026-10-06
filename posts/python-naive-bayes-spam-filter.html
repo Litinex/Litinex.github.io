@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260727-1" defer></script>
   <script src="../related-posts-data.js?v=20260727-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"让单词自己投票：零基础学会朴素贝叶斯与垃圾邮件过滤","description":"结合《机器学习实战》第四章源码，从词表、词集和词袋讲到贝叶斯公式、拉普拉斯平滑与对数概率，最后用50封真实邮件完成朴素贝叶斯垃圾邮件过滤。","image":"https://yezizhuang.top/assets/naive-bayes-spam-pipeline.svg","url":"https://yezizhuang.top/posts/python-naive-bayes-spam-filter.html","datePublished":"2026-07-27","dateModified":"2026-07-27","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="python-naive-bayes-spam-filter">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.07.27 · Python 入门 · 约 25 分钟</p>
       <h1>让单词自己投票：零基础学会朴素贝叶斯与垃圾邮件过滤</h1>
@@ -70,7 +82,7 @@
       </ul>
       <p>机器不能直接理解一段英文，所以完整流程要经过五步：</p>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/naive-bayes-spam-pipeline.svg" alt="朴素贝叶斯邮件分类流程：原始邮件经过分词、词袋向量化、两类概率得分计算，最终输出垃圾或正常" width="1200" height="650">
+        <img src="../assets/naive-bayes-spam-pipeline.svg" alt="朴素贝叶斯邮件分类流程：原始邮件经过分词、词袋向量化、两类概率得分计算，最终输出垃圾或正常" width="1200" height="650" loading="lazy" decoding="async">
         <figcaption>图 1：训练阶段学出每个词在两类中的概率；预测阶段把新邮件转换成同样的向量，再比较两类总得分。</figcaption>
       </figure>
       <ol>
@@ -104,7 +116,7 @@
       <p class="knn-formula">P(免费, 购买 | 垃圾) ≈ P(免费 | 垃圾) × P(购买 | 垃圾)</p>
       <p>现实里单词显然不是完全独立的，“机器”和“学习”经常一起出现。这个假设看起来很“天真”，所以叫<strong>朴素</strong>。但它把几乎算不动的问题变得简单，而且在文本分类、小数据和高维稀疏特征中常常表现很好。</p>
       <figure class="knn-figure">
-        <img src="../assets/naive-bayes-word-evidence.svg" alt="单词像证据一样改变垃圾邮件和正常邮件的相对得分" width="1200" height="650" loading="lazy">
+        <img src="../assets/naive-bayes-word-evidence.svg" alt="单词像证据一样改变垃圾邮件和正常邮件的相对得分" width="1200" height="650" loading="lazy" decoding="async">
         <figcaption>图 2：先验概率决定起点；每个词根据训练中学到的条件概率，为垃圾或正常一侧增加证据。</figcaption>
       </figure>
 

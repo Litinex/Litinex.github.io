@@ -20,12 +20,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261006-2">
+  <link rel="stylesheet" href="styles.css?v=20261006-3">
   <script src="code-blocks.js?v=20260428-3" defer></script>
   <script src="ambient-background.js?v=20260620-2" defer></script>
   <script src="music-player.js?v=20260624-2" defer></script>
   <script src="views.js?v=20260427-1" defer></script>
-  <script src="theme-toggle.js?v=20260610-1" defer></script>
+  <script src="theme-toggle.js?v=20261006-3" defer></script>
   <script src="page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {
@@ -59,8 +59,9 @@
 
     <section class="site-banner compact-banner" aria-label="关于页横幅">
       <picture class="site-banner-media" aria-hidden="true">
-        <img src="assets/hero-sky-1920.jpg" alt="" decoding="async">
-      </picture>
+          <source type="image/webp" srcset="assets/hero-sky-1280-640.webp 640w, assets/hero-sky-1280.webp 1280w, assets/hero-sky-1920.webp 1920w, assets/hero-sky-2560.webp 2560w" sizes="100vw">
+          <img src="assets/hero-sky-1920.jpg" alt="" decoding="async" width="1920" height="1440" srcset="assets/hero-sky-1280.jpg 1280w, assets/hero-sky-1920.jpg 1920w, assets/hero-sky-2560.jpg 2560w" sizes="100vw" fetchpriority="high">
+        </picture>
       <div class="site-banner-content">
         <p class="eyebrow">About</p>
         <h1>把学习过程写成可以被未来继续使用的材料。</h1>
@@ -72,7 +73,10 @@
       <div class="fuwari-grid">
         <aside class="profile-sidebar" aria-label="作者信息">
           <section class="profile-card fuwari-card">
-            <img class="profile-avatar" src="assets/avatar.jpg?v=20260620-1" alt="风迁夏回头像" width="104" height="104">
+            <picture>
+          <source type="image/webp" srcset="assets/avatar.webp 512w" sizes="104px">
+          <img class="profile-avatar" src="assets/avatar.jpg?v=20260620-1" alt="风迁夏回头像" width="104" height="104" decoding="async">
+        </picture>
             <h2>风迁夏回</h2>
             <p>长期记录，慢慢修正。</p>
           </section>

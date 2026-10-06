@@ -283,6 +283,7 @@
 
     const targets = collectTocTargets(articleBody);
     if (targets.length === 0) return;
+    shell.classList.add("has-article-toc");
 
     const usedIds = new Set();
     const entries = targets.map((target, index) => {
@@ -295,19 +296,27 @@
     toc.className = "article-toc";
     toc.setAttribute("aria-label", "文章目录");
 
-    const heading = document.createElement("div");
+    const disclosure = document.createElement("details");
+    disclosure.className = "article-toc-disclosure";
+    const desktopLayout = window.matchMedia("(min-width: 1200px)");
+    disclosure.open = desktopLayout.matches;
+    desktopLayout.addEventListener("change", (event) => {
+      disclosure.open = event.matches;
+    });
+
+    const heading = document.createElement("summary");
     heading.className = "article-toc-heading";
 
     const kicker = document.createElement("p");
     kicker.className = "section-kicker";
     kicker.textContent = "Contents";
 
-    const title = document.createElement("h2");
+    const title = document.createElement("span");
     title.className = "article-toc-title";
-    title.textContent = "目录";
+    title.textContent = "本文目录";
 
     heading.append(kicker, title);
-    toc.appendChild(heading);
+    disclosure.appendChild(heading);
 
     const list = document.createElement("ol");
     list.className = "article-toc-list";
@@ -325,8 +334,22 @@
       list.appendChild(item);
     });
 
-    toc.appendChild(list);
+    disclosure.appendChild(list);
+    toc.appendChild(disclosure);
+    list.addEventListener("click", (event) => {
+      const link = event.target.closest("[data-toc-target]");
+      if (link && !desktopLayout.matches) {
+        disclosure.open = false;
+        // Closing the list removes the focused link from keyboard navigation.
+        heading.focus({ preventScroll: true });
+      }
+    });
     header.insertAdjacentElement("afterend", toc);
+
+    const readingLayout = document.createElement("div");
+    readingLayout.className = "article-reading-layout";
+    toc.replaceWith(readingLayout);
+    readingLayout.append(toc, articleBody);
 
     const links = Array.from(toc.querySelectorAll("[data-toc-target]"));
     let ticking = false;

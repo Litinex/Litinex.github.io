@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260831-1" defer></script>
   <script src="../related-posts-data.js?v=20260831-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"第七周学习复盘：让决策树也能预测连续数值","description":"第七周机器学习实战总结：复现回归树、预剪枝、后剪枝、模型树和预测函数，并比较三种回归方法的实际结果。","image":"https://yezizhuang.top/assets/regression-tree-week7-curves.png","url":"https://yezizhuang.top/posts/week7-regression-tree-learning-review.html","datePublished":"2026-08-31","dateModified":"2026-08-31","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="week7-regression-tree-learning-review">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.08.31 · 学习札记 · 约 13 分钟</p>
       <h1>第七周学习复盘：让决策树也能预测连续数值</h1>
@@ -87,7 +99,10 @@ def regErr(dataSet):
       <h2>三、为什么回归树的曲线是阶梯</h2>
       <p>普通回归树的每个叶节点只返回一个常数。同一区域内，无论输入发生多小的变化，预测值都保持不变；跨过某个切分阈值时，预测值才突然跳到另一个叶节点的常数。</p>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/regression-tree-week7-curves.png" alt="回归树的阶梯拟合曲线与模型树的分段线性拟合曲线" width="2160" height="864">
+        <picture>
+          <source type="image/webp" srcset="../assets/regression-tree-week7-curves-800.webp 800w, ../assets/regression-tree-week7-curves.webp 2160w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/regression-tree-week7-curves.png" alt="回归树的阶梯拟合曲线与模型树的分段线性拟合曲线" width="2160" height="864" loading="lazy" decoding="async">
+        </picture>
         <figcaption>图 1：左边的回归树在每个区域输出常数，所以呈阶梯状；右边的模型树在叶节点内继续使用线性模型。</figcaption>
       </figure>
       <p>阶梯状不是绘图错误，而是回归树叶节点定义决定的。树越复杂，台阶越多，也越可能追随训练数据中的噪声。</p>

@@ -276,7 +276,8 @@ async function run() {
       viewport: { width: 900, height: 220 },
       deviceScaleFactor: 3,
     });
-    await page.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: "networkidle" });
+    await page.route("**/*", (route) => new URL(route.request().url()).origin === `http://127.0.0.1:${port}` ? route.continue() : route.abort());
+    await page.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: "domcontentloaded" });
     await page.addStyleTag({
       content: ".theme-toggle, .theme-toggle * { transition: none !important; }",
     });

@@ -48,7 +48,7 @@
   applyTheme(initialTheme);
 
   const mount = () => {
-    const target = document.querySelector(".header-actions, .article-toolbar");
+    const target = document.querySelector(".header-actions") || document.querySelector(".article-toolbar");
     if (!target || target.querySelector("[data-theme-toggle]")) return;
 
     const button = document.createElement("button");

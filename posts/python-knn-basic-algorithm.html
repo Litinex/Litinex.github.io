@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260723-1" defer></script>
   <script src="../related-posts-data.js?v=20260723-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {
@@ -58,9 +58,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="python-knn-basic-algorithm">
   <main class="article-shell">
-    <div class="article-toolbar">
-      <a class="article-back" href="../index.html">返回首页</a>
-    </div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.07.23 · Python 入门 · 约 18 分钟</p>
       <h1>让邻居替你做决定：零基础学会 K 近邻算法（KNN）</h1>
@@ -96,7 +106,7 @@
       <p>当一条没有标签的新数据出现时，KNN 只做三件事：计算它到所有旧数据的距离，找出最近的 K 个邻居，让这些邻居投票。</p>
 
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/knn-neighbor-vote.svg" alt="KNN 邻居投票示意图：待预测的新样本周围最近的五个邻居中，蓝色有三个，红色有两个，所以预测为蓝色类别" width="1200" height="720">
+        <img src="../assets/knn-neighbor-vote.svg" alt="KNN 邻居投票示意图：待预测的新样本周围最近的五个邻居中，蓝色有三个，红色有两个，所以预测为蓝色类别" width="1200" height="720" loading="lazy" decoding="async">
         <figcaption>图 1：当 K = 5 时，虚线圈内有 3 个蓝色圆点和 2 个红色三角形，新样本因此被预测为蓝色类别。</figcaption>
       </figure>
 
@@ -234,7 +244,7 @@ print(f"预测结果：{result} 类")</code></pre>
       <p>K 没有一个适合所有数据集的固定答案。它决定算法听多少人的意见，也决定模型是更敏感还是更平滑。</p>
 
       <figure class="knn-figure">
-        <img src="../assets/knn-k-choice.svg" alt="不同 K 值的效果对比：K 等于 1 时容易受噪声影响，K 等于 5 时边界较平衡，K 等于 15 时可能忽略局部规律" width="1200" height="620" loading="lazy">
+        <img src="../assets/knn-k-choice.svg" alt="不同 K 值的效果对比：K 等于 1 时容易受噪声影响，K 等于 5 时边界较平衡，K 等于 15 时可能忽略局部规律" width="1200" height="620" loading="lazy" decoding="async">
         <figcaption>图 2：K 太小容易被单个异常点带偏；K 太大又可能把真正的局部差异抹平。</figcaption>
       </figure>
 

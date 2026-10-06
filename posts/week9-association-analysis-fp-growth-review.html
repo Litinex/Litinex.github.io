@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260914-1" defer></script>
   <script src="../related-posts-data.js?v=20260914-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"第九周学习复盘：从购物篮中寻找关联规则","description":"复现《机器学习实战》第11、12章，用Apriori和FP-growth寻找频繁项集。","image":"https://yezizhuang.top/assets/apriori-week9-support.png","url":"https://yezizhuang.top/posts/week9-association-analysis-fp-growth-review.html","datePublished":"2026-09-14","dateModified":"2026-09-14","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="week9-association-analysis-fp-growth-review">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.09.14 · 学习札记 · 约 11 分钟</p>
       <h1>第九周学习复盘：从购物篮中寻找关联规则</h1>
@@ -88,7 +100,10 @@
  [2, 5]]</code></pre>
       <p>设置最低支持度为0.5后，共留下9个频繁项集：4个频繁1项集、4个频繁2项集和1个频繁3项集。其中{2,5}支持度为0.75，{2,3,5}支持度为0.5。</p>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/apriori-week9-support.png" alt="书中Apriori示例的频繁项集支持度柱状图" width="1800" height="900">
+        <picture>
+          <source type="image/webp" srcset="../assets/apriori-week9-support-800.webp 800w, ../assets/apriori-week9-support.webp 1800w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/apriori-week9-support.png" alt="书中Apriori示例的频繁项集支持度柱状图" width="1800" height="900" loading="lazy" decoding="async">
+        </picture>
         <figcaption>图1：虚线是最低支持度0.5。不同颜色区分1项集、2项集和3项集。</figcaption>
       </figure>
 

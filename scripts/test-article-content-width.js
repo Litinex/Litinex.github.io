@@ -40,7 +40,7 @@ const { chromium } = requireWorkspaceDependency("playwright");
 async function measureArticleBody(page, origin, fixture, viewport) {
   const { pathname, requiredModuleSelectors } = fixture;
   await page.setViewportSize(viewport);
-  await page.goto(`${origin}${pathname}`, { waitUntil: "networkidle" });
+  await page.goto(`${origin}${pathname}`, { waitUntil: "domcontentloaded" });
   await page.waitForSelector(".article-body");
   try {
     await page.waitForSelector(".resume-reading-card", { timeout: 5000 });
@@ -60,7 +60,8 @@ async function measureArticleBody(page, origin, fixture, viewport) {
       articleLeft: articleRect.left,
       articleRight: articleRect.right,
       articleWidth: articleRect.width,
-      alignedModules: moduleSelectors.flatMap((selector) => {
+      // The desktop TOC now occupies its own sidebar; content modules still align.
+      alignedModules: moduleSelectors.filter((selector) => selector !== ".article-toc").flatMap((selector) => {
         return Array.from(document.querySelectorAll(selector), (module) => {
           const moduleRect = module.getBoundingClientRect();
           return {
@@ -136,7 +137,8 @@ async function run() {
     if (executablePath) launchOptions.executablePath = executablePath;
 
     browser = await chromium.launch(launchOptions);
-    const page = await browser.newPage({ viewport: desktopViewports[0] });
+    const page = await browser.newPage({ viewport: desktopViewports[0], reducedMotion: "reduce" });
+    await page.route("**/*", (route) => new URL(route.request().url()).origin === `http://127.0.0.1:${port}` ? route.continue() : route.abort());
     await page.addInitScript(() => {
       window.localStorage.setItem(
         "fuwari.learning.v1",

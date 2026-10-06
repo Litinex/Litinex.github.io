@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20260816-1" defer></script>
   <script src="../related-posts-data.js?v=20260816-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"第五周学习复盘：从一棵会犯错的树桩，到一群会纠错的分类器","description":"第五周机器学习实战总结：从单层决策树、样本权重和 alpha 加权投票出发，复现 AdaBoost 三轮训练、病马生存预测和 ROC-AUC 计算，并记录尚待解决的问题。","image":"https://yezizhuang.top/assets/adaboost-week5-flow.svg","url":"https://yezizhuang.top/posts/week5-adaboost-learning-review.html","datePublished":"2026-08-16","dateModified":"2026-08-16","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="week5-adaboost-learning-review">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.08.16 · 学习札记 · 约 22 分钟</p>
       <h1>第五周学习复盘：从一棵会犯错的树桩，到一群会纠错的分类器</h1>
@@ -72,7 +84,7 @@
         <li>最终让所有弱分类器按可靠程度加权投票。</li>
       </ol>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/adaboost-week5-flow.svg" alt="AdaBoost 三轮训练流程：第一轮样本同权，之后提高错分样本权重，最终三棵树桩按 alpha 加权投票" width="1200" height="720">
+        <img src="../assets/adaboost-week5-flow.svg" alt="AdaBoost 三轮训练流程：第一轮样本同权，之后提高错分样本权重，最终三棵树桩按 alpha 加权投票" width="1200" height="720" loading="lazy" decoding="async">
         <figcaption>图 1：AdaBoost 的关键不是“堆很多模型”，而是后一轮会根据前一轮的错误改变学习重点。</figcaption>
       </figure>
       <blockquote class="knn-principle">一个弱分类器负责解决一部分问题；被它忽略的难题，会被下一位分类器放大并重新学习。</blockquote>
@@ -240,7 +252,10 @@ test_predictions = classify(test_data, classifiers)</code></pre>
         <li>走完全部样本后到达 <code>(0,0)</code>。</li>
       </ul>
       <figure class="knn-figure">
-        <img src="../assets/adaboost-horse-roc.png" alt="AdaBoost 病马训练结果 ROC 曲线，蓝色曲线明显高于随机猜测对角线，AUC 为0.858668" width="1024" height="832" loading="lazy">
+        <picture>
+          <source type="image/webp" srcset="../assets/adaboost-horse-roc-800.webp 800w, ../assets/adaboost-horse-roc.webp 1024w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/adaboost-horse-roc.png" alt="AdaBoost 病马训练结果 ROC 曲线，蓝色曲线明显高于随机猜测对角线，AUC 为0.858668" width="1024" height="832" loading="lazy" decoding="async">
+        </picture>
         <figcaption>图 2：本次 ROC 使用的是 299 条训练数据的组合预测强度；蓝线越靠近左上角，排序区分能力越强。</figcaption>
       </figure>
 

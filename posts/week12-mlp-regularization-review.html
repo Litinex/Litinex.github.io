@@ -21,18 +21,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-2">
+  <link rel="stylesheet" href="../styles.css?v=20261006-3">
   <script src="../posts-data.js?v=20261005-1" defer></script>
   <script src="../related-posts-data.js?v=20261005-1" defer></script>
   <script src="../taxonomy.js?v=20260528-1" defer></script>
-  <script src="../article-reader.js?v=20260528-1" defer></script>
+  <script src="../article-reader.js?v=20261006-3" defer></script>
   <script src="../learning-progress.js?v=20260714-1" defer></script>
   <script src="../article-recommendations.js?v=20260714-1" defer></script>
   <script src="../code-blocks.js?v=20260428-3" defer></script>
   <script src="../ambient-background.js?v=20260620-2" defer></script>
   <script src="../music-player.js?v=20260624-2" defer></script>
   <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20260610-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
   <script src="../page-transitions.js?v=20260610-1" defer></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十二周学习复盘：隐藏层、过拟合与正则化","description":"学习《动手学深度学习》第4章4.1至4.6，复现多层感知机、欠拟合与过拟合、权重衰减和Dropout。","image":"https://yezizhuang.top/assets/pytorch-week12-accuracy.png","url":"https://yezizhuang.top/posts/week12-mlp-regularization-review.html","datePublished":"2026-10-05","dateModified":"2026-10-05","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
@@ -40,7 +40,19 @@
 </head>
 <body class="article-page knn-article-page" data-post-id="week12-mlp-regularization-review">
   <main class="article-shell">
-    <div class="article-toolbar"><a class="article-back" href="../index.html">返回首页</a></div>
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
     <header class="article-header">
       <p class="meta">2026.10.05 · 学习札记 · 约 13 分钟</p>
       <h1>第十二周学习复盘：隐藏层、过拟合与正则化</h1>
@@ -75,7 +87,10 @@ O = HW2 + b2
 
       <h2>三、三种激活函数</h2>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/pytorch-week12-activations.png" alt="ReLU、Sigmoid、Tanh及其导数曲线" width="1598" height="1579">
+        <picture>
+          <source type="image/webp" srcset="../assets/pytorch-week12-activations-800.webp 800w, ../assets/pytorch-week12-activations.webp 1598w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/pytorch-week12-activations.png" alt="ReLU、Sigmoid、Tanh及其导数曲线" width="1598" height="1579" loading="lazy" decoding="async">
+        </picture>
         <figcaption>图1：三种常见激活函数及其导数。输入远离0时，sigmoid和tanh的导数逐渐接近0。</figcaption>
       </figure>
       <div class="knn-table-wrap" role="region" aria-label="激活函数比较" tabindex="0">
@@ -100,7 +115,10 @@ O = HW2 + b2
 
       <h2>五、四组Fashion-MNIST训练</h2>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/pytorch-week12-accuracy.png" alt="普通MLP与Dropout MLP四种实现的测试准确率曲线" width="1601" height="913">
+        <picture>
+          <source type="image/webp" srcset="../assets/pytorch-week12-accuracy-800.webp 800w, ../assets/pytorch-week12-accuracy.webp 1601w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/pytorch-week12-accuracy.png" alt="普通MLP与Dropout MLP四种实现的测试准确率曲线" width="1601" height="913" loading="lazy" decoding="async">
+        </picture>
         <figcaption>图2：四组模型的测试准确率随训练轮数总体提高，但单轮结果存在明显波动。</figcaption>
       </figure>
       <div class="knn-table-wrap" role="region" aria-label="第十二周模型训练结果" tabindex="0">
@@ -119,7 +137,10 @@ O = HW2 + b2
       <h2>六、欠拟合和过拟合</h2>
       <p><strong>欠拟合</strong>是模型连训练数据的规律都没有学好；<strong>过拟合</strong>是训练数据学得很好，但把噪声和偶然细节也记住了，换到测试数据表现下降。</p>
       <figure class="knn-figure knn-figure-wide">
-        <img src="../assets/pytorch-week12-polynomial-fit.png" alt="1阶、4阶和20阶多项式模型的训练与测试损失曲线" width="2222" height="616">
+        <picture>
+          <source type="image/webp" srcset="../assets/pytorch-week12-polynomial-fit-800.webp 800w, ../assets/pytorch-week12-polynomial-fit.webp 2222w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/pytorch-week12-polynomial-fit.png" alt="1阶、4阶和20阶多项式模型的训练与测试损失曲线" width="2222" height="616" loading="lazy" decoding="async">
+        </picture>
         <figcaption>图3：1阶模型容量不足；4阶模型接近真实生成公式；20阶模型的训练损失低于测试损失，泛化差距更明显。</figcaption>
       </figure>
       <pre data-code-id="week12-polynomial-results"><code class="language-code">1阶：训练损失=25.3620，测试损失=15.8694
