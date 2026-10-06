@@ -4715,3 +4715,152 @@ html[data-theme="dark"] .article-body {
     width: auto;
   }
 }
+
+/* Editorial reading pass: keep archive browsing and long-form reading on the same visual system. */
+.article-shell {
+  width: min(1120px, calc(100% - 32px));
+}
+
+.article-toolbar {
+  max-width: 1120px;
+  margin-inline: auto;
+  box-shadow: none;
+}
+
+.article-header {
+  max-width: 860px;
+  margin-bottom: 30px;
+}
+
+.article-header h1 {
+  color: var(--ink-strong);
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  letter-spacing: -0.02em;
+  line-height: 1.16;
+}
+
+.article-deck {
+  max-width: 720px;
+  color: var(--muted-strong);
+  font-size: 1.08rem;
+  line-height: 1.85;
+}
+
+.article-toc {
+  max-width: 860px;
+  margin: 26px auto 32px;
+  border: 0;
+  border-left: 3px solid var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: color-mix(in srgb, var(--card-bg-solid) 72%, transparent);
+  box-shadow: none;
+}
+
+.article-toc-title {
+  font-family: var(--font-serif);
+  font-size: 1.28rem;
+}
+
+.article-body {
+  width: min(920px, 100%);
+  padding: clamp(28px, 5vw, 58px) clamp(22px, 6vw, 68px);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+
+.article-body p,
+.article-body li {
+  max-width: 72ch;
+}
+
+.article-body h2,
+.article-section-heading {
+  padding-left: 16px;
+  border-left: 3px solid var(--primary);
+}
+
+.article-body .knn-figure-wide,
+.article-body .knn-table-wrap,
+.article-body pre,
+.article-body .code-editor,
+.article-body .knn-formula,
+.article-body .knn-at-a-glance,
+.article-body .knn-comparison,
+.article-body .knn-pros-cons,
+.article-body .knn-checklist,
+.article-body .knn-summary-words {
+  max-width: none;
+}
+
+.article-pagination {
+  max-width: 920px;
+}
+
+.archive-content {
+  gap: 20px;
+}
+
+.archive-list {
+  gap: 12px;
+}
+
+.archive-list .post-card {
+  border-left: 3px solid color-mix(in srgb, var(--primary) 58%, var(--line));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--card-bg-solid) 82%, transparent);
+}
+
+.archive-list .post-card-inner {
+  padding: 24px 24px 24px 28px;
+}
+
+.archive-list .post-card-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 2.3vw, 1.7rem);
+  letter-spacing: -0.01em;
+}
+
+.archive-pagination-control,
+.archive-page-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (max-width: 720px) {
+  .article-shell {
+    width: min(100% - 20px, 920px);
+    padding-top: 14px;
+  }
+
+  .article-toolbar {
+    min-height: 56px;
+    margin-bottom: 28px;
+  }
+
+  .article-header h1 {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+
+  .article-deck {
+    font-size: 1rem;
+  }
+
+  .article-toc {
+    margin-top: 20px;
+    padding: 16px;
+  }
+
+  .article-body {
+    padding: 28px 20px;
+  }
+
+  .article-body h2,
+  .article-section-heading {
+    padding-left: 12px;
+  }
+
+  .archive-list .post-card-inner {
+    padding: 22px 18px 22px 24px;
+  }
+}
