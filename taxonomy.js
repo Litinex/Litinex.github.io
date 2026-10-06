@@ -113,7 +113,6 @@
     if (!currentPost) return;
 
     const header = document.querySelector(".article-header");
-    const metaLine = header?.querySelector(".meta");
     if (!header) return;
 
     const tags = postTags(currentPost);
@@ -170,11 +169,7 @@
       taxonomy.appendChild(tagsRow);
     }
 
-    if (metaLine && typeof metaLine.insertAdjacentElement === "function") {
-      metaLine.insertAdjacentElement("afterend", taxonomy);
-    } else {
-      header.appendChild(taxonomy);
-    }
+    header.appendChild(taxonomy);
 
     if (series) {
       renderSeriesCard({ currentPost, series });
