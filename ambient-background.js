@@ -754,6 +754,8 @@
   }
 
   function init() {
+    // Article reading uses a static backdrop without pointer trails or animation work.
+    if (document.body.classList.contains("article-page")) return;
     ensureBackdrop();
     applyPosition();
     syncMotionPreference();

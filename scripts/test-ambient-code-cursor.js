@@ -42,13 +42,15 @@ async function launchBrowser() {
 }
 
 async function newDesktopPage(browser, options = {}) {
-  return browser.newPage({
+  const page = await browser.newPage({
     viewport: desktopViewport,
     deviceScaleFactor: 2,
     hasTouch: false,
     isMobile: false,
     ...options,
   });
+  await page.route("**/*", (route) => new URL(route.request().url()).origin === `http://127.0.0.1:${port}` ? route.continue() : route.abort());
+  return page;
 }
 
 async function withDesktopPage(browser, action, options = {}) {
@@ -421,21 +423,17 @@ async function assertHomePageUsesReferenceGlyphs(page) {
   );
 }
 
-async function assertArticlePageUsesReferenceGlyphs(page) {
-  await openPageAndShowReferenceMarks(
-    page,
-    "posts/python-list-basic-usage.html",
-    "Article page cursor animation",
-    ".article-back",
-    "Article back link"
-  );
-}
-
-async function assertArticleBodyMasksAmbientMarks(page) {
+async function assertArticlePageHasQuietBackdrop(page) {
   await page.goto(`http://127.0.0.1:${port}/posts/python-list-basic-usage.html`, {
-    waitUntil: "networkidle",
+    waitUntil: "domcontentloaded",
   });
-  await assertModuleHidesAmbientMarksWithoutVisualChange(page, ".article-body", "Article body");
+  await followPointerPath(page, standardPointerPath);
+  if (await page.locator("[data-ambient-backdrop], .ambient-code-line").count()) {
+    throw new Error("Article reading should not create ambient layers or pointer glyphs.");
+  }
+  const homeLink = page.getByRole("navigation", { name: "主导航", exact: true }).getByRole("link", { name: "主页", exact: true });
+  await homeLink.click();
+  await page.waitForURL(`http://127.0.0.1:${port}/index.html`);
 }
 
 async function assertScrolledArchiveKeepsAnimating(page) {
@@ -525,8 +523,7 @@ async function run() {
   try {
     browser = await launchBrowser();
     await withDesktopPage(browser, assertHomePageUsesReferenceGlyphs);
-    await withDesktopPage(browser, assertArticlePageUsesReferenceGlyphs);
-    await withDesktopPage(browser, assertArticleBodyMasksAmbientMarks);
+    await withDesktopPage(browser, assertArticlePageHasQuietBackdrop);
     await withDesktopPage(browser, assertScrolledArchiveKeepsAnimating);
     await withDesktopPage(browser, assertArchiveCardsMaskAmbientMarks);
     await assertReducedMotionDoesNotSpawnCode(browser);
