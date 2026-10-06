@@ -19,13 +19,10 @@
 
   const heading = document.createElement("div");
   heading.className = "article-recommendations-heading";
-  const kicker = document.createElement("p");
-  kicker.className = "section-kicker";
-  kicker.textContent = "Continue Exploring";
   const title = document.createElement("h2");
   title.id = "related-reading-title";
   title.textContent = "继续阅读";
-  heading.append(kicker, title);
+  heading.appendChild(title);
 
   const list = document.createElement("div");
   list.className = "article-recommendation-list";

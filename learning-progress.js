@@ -125,12 +125,9 @@
     const header = document.createElement("div");
     header.className = "article-learning-heading";
     const copy = document.createElement("div");
-    const kicker = document.createElement("p");
-    kicker.className = "section-kicker";
-    kicker.textContent = items.length > 0 ? "Learning Progress" : "Reading Progress";
     const title = document.createElement("h2");
     title.textContent = items.length > 0 ? safeText(post.series.name) : "阅读记录";
-    copy.append(kicker, title);
+    copy.appendChild(title);
 
     const toggle = document.createElement("button");
     toggle.type = "button";
@@ -163,7 +160,7 @@
       const note = document.createElement("p");
       note.className = "article-learning-note";
       note.textContent = "完成状态仅保存在当前浏览器。";
-      card.appendChild(note);
+      copy.appendChild(note);
     }
 
     pagination.insertAdjacentElement("beforebegin", card);

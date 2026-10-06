@@ -89,23 +89,23 @@
         disabled.className = `${className} is-disabled`;
         disabled.setAttribute("aria-disabled", "true");
         text.textContent = isPrevious ? "已经是最早一篇" : "已经是最新一篇";
-        disabled.append(arrow, text);
-        if (!isPrevious) {
-          disabled.append(text, arrow);
-        }
+        disabled.appendChild(text);
         return disabled;
       }
 
       const link = document.createElement("a");
       link.className = className;
       link.href = postLinkFromHere(post);
-      text.textContent = `${isPrevious ? "上一篇" : "下一篇"}：${safeText(post.title)}`;
-
+      const label = document.createElement("span");
+      label.className = "article-pagination-label";
+      const directionText = document.createTextNode(isPrevious ? "上一篇" : "下一篇");
       if (isPrevious) {
-        link.append(arrow, text);
+        label.append(arrow, directionText);
       } else {
-        link.append(text, arrow);
+        label.append(directionText, arrow);
       }
+      text.textContent = safeText(post.title);
+      link.append(label, text);
 
       return link;
     }

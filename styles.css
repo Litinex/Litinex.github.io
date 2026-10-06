@@ -372,6 +372,9 @@ html[data-theme="dark"] .knn-summary-words span {
 .article-recommendations {
   width: min(var(--content-width), 100%);
   margin: 24px auto;
+}
+
+.resume-reading-card {
   border: 1px solid var(--line);
   border-radius: 22px;
   background: color-mix(in srgb, var(--surface) 92%, transparent);
@@ -417,7 +420,31 @@ html[data-theme="dark"] .knn-summary-words span {
 
 .article-learning-card,
 .article-recommendations {
-  padding: 24px;
+  padding: 24px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  box-shadow: none;
+}
+
+.article-learning-card {
+  margin-block: 0 36px;
+}
+
+.article-learning-heading h2 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.article-learning-note {
+  margin: 5px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.article-recommendations-heading h2 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
 }
 
 .article-learning-heading,
@@ -436,18 +463,17 @@ html[data-theme="dark"] .knn-summary-words span {
 }
 
 .learning-complete-button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 9px 15px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 6px;
   color: var(--ink);
-  background: var(--surface-strong);
+  background: transparent;
   cursor: pointer;
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+  transition: border-color 160ms ease, background 160ms ease;
 }
 
 .learning-complete-button:hover {
-  transform: translateY(-1px);
   border-color: var(--gold);
 }
 
@@ -503,49 +529,59 @@ html[data-theme="dark"] .knn-summary-words span {
 
 .article-recommendation-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 18px;
+  grid-template-columns: 1fr;
+  margin-top: 20px;
 }
 
 .article-recommendation-card {
   display: grid;
-  align-content: start;
-  gap: 9px;
-  min-height: 170px;
-  padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-template-areas: "meta excerpt" "title excerpt";
+  align-items: start;
+  gap: 8px 36px;
+  padding: 24px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
   color: var(--ink);
-  background: var(--surface-strong);
+  background: transparent;
   text-decoration: none;
-  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.article-recommendation-card:hover {
-  transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--gold) 62%, var(--line));
-  box-shadow: var(--shadow-soft);
+.article-recommendation-card > strong {
+  grid-area: title;
+  font-size: 1.06rem;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.article-recommendation-card:hover > strong {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.article-recommendation-card:focus-visible,
+.learning-complete-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 5px;
 }
 
 .article-recommendation-meta {
-  color: var(--gold);
+  grid-area: meta;
+  color: var(--muted);
   font-size: 0.78rem;
   line-height: 1.5;
 }
 
 .article-recommendation-excerpt {
-  display: -webkit-box;
-  overflow: hidden;
+  grid-area: excerpt;
+  align-self: center;
   font-size: 0.9rem;
-  line-height: 1.65;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  line-height: 1.8;
 }
 
 @media (max-width: 760px) {
   .resume-reading-card,
-  .article-learning-heading,
   .continue-learning-heading {
     align-items: flex-start;
     flex-direction: column;
@@ -561,7 +597,19 @@ html[data-theme="dark"] .knn-summary-words span {
   }
 
   .article-recommendation-card {
-    min-height: 0;
+    grid-template-columns: 1fr;
+    grid-template-areas: "meta" "title" "excerpt";
+    gap: 8px;
+    padding-block: 22px;
+  }
+
+  .article-learning-heading {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .learning-complete-button {
+    flex-shrink: 0;
   }
 }
 
@@ -4953,6 +5001,74 @@ html[data-theme="dark"] .article-body {
 
 .article-pagination {
   max-width: 920px;
+  gap: 32px;
+  margin-top: 0;
+  padding-bottom: 32px;
+}
+
+.article-page .article-pagination .article-pagination-link {
+  align-content: start;
+  gap: 10px;
+  padding: 12px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.article-pagination-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.article-pagination-link-next .article-pagination-label {
+  justify-content: flex-end;
+}
+
+.article-pagination .article-pagination-link-text {
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.article-pagination-link:hover .article-pagination-link-text {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.article-pagination-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 5px;
+}
+
+.article-pagination .is-disabled {
+  opacity: 1;
+}
+
+.article-pagination .is-disabled .article-pagination-link-text {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+@media (max-width: 760px) {
+  .article-pagination {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .article-pagination-link-next {
+    text-align: left;
+  }
+
+  .article-pagination-link-next .article-pagination-label {
+    justify-content: flex-start;
+  }
 }
 
 .archive-content {
