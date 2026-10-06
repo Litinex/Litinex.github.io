@@ -198,65 +198,48 @@
   const root = document.createElement("div");
   root.className = "music-dock is-collapsed";
   root.innerHTML = `
-    <button class="music-collapsed-button" type="button" aria-label="展开音乐播放器" aria-expanded="false">
-      <span class="music-collapsed-cover" aria-hidden="true">
-        <span class="music-collapsed-disc-rotor">
-          <span class="music-collapsed-disc-groove"></span>
-          <span class="music-collapsed-disc-art"></span>
-          <span class="music-collapsed-disc-hole"></span>
-        </span>
-      </span>
-      <span class="music-collapsed-equalizer" aria-hidden="true">
-        <span></span>
-        <span></span>
-        <span></span>
-      </span>
+    <button class="music-collapsed-button" type="button" aria-label="展开音乐播放器" aria-expanded="false" aria-controls="music-player">
+      <span class="music-collapsed-disc-art" aria-hidden="true"></span>
+      <span class="music-playing-dot" aria-hidden="true"></span>
     </button>
-    <section class="music-player" aria-label="音乐播放器">
-      <button class="music-cover-button" type="button" aria-label="播放音乐" aria-pressed="false">
-        <span class="music-cover-shell" aria-hidden="true">
-          <span class="music-disc-rotor">
-            <span class="music-disc-groove"></span>
-            <span class="music-disc-art"></span>
-            <span class="music-disc-hole"></span>
-          </span>
-        </span>
-      </button>
-      <div class="music-main">
+    <section class="music-player" id="music-player" aria-label="音乐播放器" hidden>
+      <div class="music-player-heading">
+        <span>随身听</span>
+        <button class="music-icon-button music-collapse-toggle" type="button" aria-label="折叠播放器"><span aria-hidden="true">×</span></button>
+      </div>
+      <div class="music-now-playing">
+        <button class="music-cover-button" type="button" aria-label="播放音乐" aria-pressed="false">
+          <span class="music-disc-art" aria-hidden="true"></span>
+        </button>
         <div class="music-meta">
           <div class="music-title"></div>
           <div class="music-artist"></div>
         </div>
-        <div class="music-progress" aria-hidden="true">
-          <span class="music-progress-bar"></span>
-        </div>
-        <div class="music-status" aria-live="polite"></div>
+      </div>
+      <div class="music-timeline">
+        <input class="music-progress-bar" type="range" min="0" max="100" step="0.1" value="0" aria-label="播放进度" disabled>
+        <div class="music-times"><span class="music-elapsed">0:00</span><span class="music-duration">--:--</span></div>
       </div>
       <div class="music-controls" role="group" aria-label="播放控制">
         <button class="music-icon-button music-prev" type="button" aria-label="上一首">
-          <span aria-hidden="true">‹</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14M19 5 9 12l10 7Z"/></svg>
         </button>
-        <button class="music-icon-button music-play" type="button" aria-label="播放音乐" aria-pressed="false">
-          <span class="music-play-symbol" aria-hidden="true"></span>
-        </button>
+        <button class="music-icon-button music-play" type="button" aria-label="播放音乐" aria-pressed="false"><span class="music-play-symbol" aria-hidden="true"></span></button>
         <button class="music-icon-button music-next" type="button" aria-label="下一首">
-          <span aria-hidden="true">›</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 5v14M5 5l10 7-10 7Z"/></svg>
         </button>
-        <button class="music-icon-button music-list-toggle" type="button" aria-label="展开播放列表" aria-expanded="false">
-          <span aria-hidden="true">≡</span>
-        </button>
-        <button class="music-icon-button music-collapse-toggle" type="button" aria-label="折叠播放器">
-          <span aria-hidden="true">×</span>
+      </div>
+      <div class="music-player-footer">
+        <div class="music-status" role="status" aria-live="polite"></div>
+        <button class="music-icon-button music-list-toggle" type="button" aria-label="展开播放列表" aria-expanded="false" aria-controls="music-playlist">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>歌单</span>
         </button>
       </div>
     </section>
-    <div class="music-playlist-panel" aria-label="播放列表" hidden>
-      <div class="music-playlist-head">
-        <span>Playlist</span>
-        <strong class="music-playlist-count"></strong>
-      </div>
+    <section class="music-playlist-panel" id="music-playlist" aria-label="播放列表" hidden>
+      <div class="music-playlist-head"><span>播放列表</span><strong class="music-playlist-count"></strong></div>
       <ol class="music-playlist"></ol>
-    </div>
+    </section>
   `;
 
   const mountPoint = document.documentElement;
@@ -276,6 +259,8 @@
   const artistEl = root.querySelector(".music-artist");
   const statusEl = root.querySelector(".music-status");
   const progressBar = root.querySelector(".music-progress-bar");
+  const elapsedEl = root.querySelector(".music-elapsed");
+  const durationEl = root.querySelector(".music-duration");
   const prevButton = root.querySelector(".music-prev");
   const nextButton = root.querySelector(".music-next");
   const listToggle = root.querySelector(".music-list-toggle");
@@ -295,6 +280,8 @@
     !artistEl ||
     !statusEl ||
     !progressBar ||
+    !elapsedEl ||
+    !durationEl ||
     !prevButton ||
     !nextButton ||
     !listToggle ||
@@ -340,7 +327,8 @@
   function setCollapsed(shouldCollapse) {
     isCollapsed = Boolean(shouldCollapse);
     root.classList.toggle("is-collapsed", isCollapsed);
-    playerEl.setAttribute("aria-hidden", String(isCollapsed));
+    playerEl.hidden = isCollapsed;
+    collapsedButton.hidden = !isCollapsed;
     collapsedButton.setAttribute("aria-expanded", String(!isCollapsed));
 
     if (isCollapsed) {
@@ -356,11 +344,21 @@
     playlistPanel.hidden = !isPlaylistOpen;
   }
 
+  function formatTime(seconds) {
+    const total = Math.max(0, Math.floor(seconds));
+    return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
+  }
+
   function updateProgress() {
     const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
     const currentTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
     const percent = duration > 0 ? Math.min(Math.max((currentTime / duration) * 100, 0), 100) : 0;
     progressBar.style.setProperty("--music-progress", `${percent}%`);
+    progressBar.value = String(percent);
+    progressBar.disabled = duration <= 0;
+    elapsedEl.textContent = formatTime(currentTime);
+    durationEl.textContent = duration > 0 ? formatTime(duration) : "--:--";
+    progressBar.setAttribute("aria-valuetext", `${formatTime(currentTime)} / ${durationEl.textContent}`);
   }
 
   function updatePlaylistActive() {
@@ -394,6 +392,8 @@
     const cover = safeText(track?.cover);
 
     titleEl.textContent = title;
+    titleEl.title = title;
+    artistEl.title = artist;
     artistEl.textContent = artist;
 
     if (cover) {
@@ -435,7 +435,7 @@
         .play()
         .then(() => {})
         .catch(() => {
-          setStatus("浏览器阻止了自动播放，请点击唱片开始播放");
+          setStatus("浏览器阻止了自动播放，请点击播放按钮");
         });
     }
   }
@@ -573,21 +573,27 @@
   });
 
   document.addEventListener("click", (event) => {
-    if (!isPlaylistOpen) {
-      return;
-    }
-
-    if (playlistPanel.contains(event.target) || listToggle.contains(event.target)) {
-      return;
-    }
-
-    setPlaylistOpen(false);
+    if (isCollapsed || root.contains(event.target)) return;
+    const shouldRestoreFocus = root.contains(document.activeElement);
+    setCollapsed(true);
+    if (shouldRestoreFocus) collapsedButton.focus({ preventScroll: true });
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && isPlaylistOpen) {
+    if (event.key !== "Escape" || isCollapsed) return;
+    if (isPlaylistOpen) {
       setPlaylistOpen(false);
+      listToggle.focus({ preventScroll: true });
+    } else {
+      setCollapsed(true);
+      collapsedButton.focus({ preventScroll: true });
     }
+  });
+
+  progressBar.addEventListener("input", () => {
+    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+    audio.currentTime = audio.duration * Number(progressBar.value) / 100;
+    updateProgress();
   });
 
   collapseToggle.addEventListener("click", (event) => {
@@ -622,8 +628,11 @@
     consecutiveFailures = 0;
     setPressed(true);
     updateMetadata(currentTrack());
-    setStatus("正在播放");
+    setStatus("正在加载…");
   });
+
+  audio.addEventListener("playing", () => setStatus("正在播放"));
+  audio.addEventListener("waiting", () => setStatus("正在缓冲…"));
 
   audio.addEventListener("pause", () => {
     setPressed(false);
@@ -653,7 +662,7 @@
 
     audio.currentTime = 0;
     audio.play().catch(() => {
-      setStatus("播放结束，点击唱片重新播放");
+      setStatus("播放结束，点击播放按钮重新播放");
     });
   });
 

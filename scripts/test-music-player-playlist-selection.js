@@ -343,7 +343,7 @@ function createMusicPlayerDomFromTemplate(html) {
   const artist = element("div", "music-artist");
   const status = element("div", "music-status");
   const progress = element("span", "music-progress-bar");
-  main.append(title, artist, progress, status);
+  main.append(title, artist, progress, status, element("span", "music-elapsed"), element("span", "music-duration"));
 
   const controls = element("div", "music-controls");
   const prev = element("button", "music-icon-button music-prev");
@@ -498,7 +498,8 @@ assertTrackSelection(document, audio, {
 const outsideClickPlayer = loadMusicPlayer();
 openExpandedPlaylist(outsideClickPlayer.document);
 outsideClickPlayer.document.body.click();
-assertPlaylistClosed(outsideClickPlayer.document, "Clicking outside the open playlist");
+assert.equal(playlistDisclosureState(outsideClickPlayer.document).isCollapsed, true, "Clicking outside closes the whole player");
+assert.equal(playlistDisclosureState(outsideClickPlayer.document).panelHidden, true, "Outside click also closes the playlist");
 
 const insideClickPlayer = loadMusicPlayer();
 openExpandedPlaylist(insideClickPlayer.document);
