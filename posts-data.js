@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "software-development-models-beginner-guide",
+      href: "posts/software-development-models-beginner-guide.html",
+      title: "软件开发模型入门：瀑布、迭代、螺旋和敏捷到底怎么选",
+      date: "2026-10-10",
+      updated: "2026-10-10",
+      category: "学习札记",
+      excerpt: "用奶茶店小程序的例子讲清瀑布、演化、增量、螺旋、快速原型、V模型、喷泉和基于构件的开发，并纠正常见混淆。",
+      tags: ["软件设计师", "软件工程", "开发模型", "瀑布模型", "敏捷开发", "软考"],
+      words: 3764,
+      readTime: 18,
+    },
+    {
       id: "week12-mlp-regularization-review",
       href: "posts/week12-mlp-regularization-review.html",
       title: "第十二周学习复盘：隐藏层、过拟合与正则化",

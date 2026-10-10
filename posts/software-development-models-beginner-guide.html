@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>软件开发模型入门：瀑布、迭代、螺旋和敏捷到底怎么选 | 风迁夏回</title>
+  <meta name="description" content="用小白能听懂的例子解释图片中的软件开发模型：瀑布、演化、增量、螺旋、快速原型、V模型、喷泉和基于构件的开发，并纠正常见混淆。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/software-development-models-beginner-guide.html">
+  <meta property="og:title" content="软件开发模型入门：瀑布、迭代、螺旋和敏捷到底怎么选 | 风迁夏回">
+  <meta property="og:description" content="从做一间奶茶店小程序的例子出发，理解常见软件开发模型的流程、优缺点和适用场景。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/software-development-models-beginner-guide.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20261006-10">
+  <script src="../posts-data.js?v=20261010-1" defer></script>
+  <script src="../related-posts-data.js?v=20261010-1" defer></script>
+  <script src="../taxonomy.js?v=20261006-8" defer></script>
+  <script src="../article-images.js?v=20261006-7" defer></script>
+  <script src="../article-reader.js?v=20261006-4" defer></script>
+  <script src="../learning-progress.js?v=20261006-4" defer></script>
+  <script src="../article-recommendations.js?v=20261006-4" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20261006-7" defer></script>
+  <script src="../music-playlist.js?v=20261006-10" defer></script>
+  <script src="../music-player.js?v=20261006-10" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"软件开发模型入门：瀑布、迭代、螺旋和敏捷到底怎么选","description":"用小白能听懂的例子解释常见软件开发模型，并纠正常见混淆。","url":"https://yezizhuang.top/posts/software-development-models-beginner-guide.html","datePublished":"2026-10-10","dateModified":"2026-10-10","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}</script>
+</head>
+<body class="article-page knn-article-page" data-post-id="software-development-models-beginner-guide">
+  <main class="article-shell">
+    <header class="article-toolbar"><a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页"><span class="article-site-brand-mark" aria-hidden="true"></span><span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span></a><div class="header-actions"><nav class="article-site-nav" aria-label="主导航"><a href="../index.html">主页</a><a href="../archive.html">归档</a><a href="../about.html">关于</a></nav></div></header>
+    <header class="article-header"><p class="meta">2026.10.10 · 学习札记 · 约 18 分钟</p><h1>软件开发模型入门：<span class="article-title-topic">瀑布、迭代、螺旋和敏捷到底怎么选</span></h1><p class="article-deck">开发模型就是“我们打算怎样把一个想法变成可用软件”的路线图。</p></header>
+    <article class="article-body knn-guide">
+      <p class="article-lead">图片列出了瀑布模型、演化模型、增量模型、螺旋模型、快速原型模型、V模型、喷泉模型和基于构件的开发模型。第一次看到这些名词，很容易觉得它们都是一条条死记硬背的流程。其实它们都在回答同一个问题：需求怎么确认、软件怎么交付、变化和风险怎么处理。</p>
+      <aside class="knn-note"><strong>先记住一个判断框架：</strong>需求稳定就适合计划驱动；需求会变就要尽早拿出可运行版本；风险很大就把风险分析放进每一轮；能复用现成模块，就优先组装而不是从零写。</aside>
+      <div class="knn-at-a-glance" aria-label="本文内容"><p class="knn-eyebrow">读完这篇你应该能回答</p><ul><li>为什么瀑布模型不是“迭代模型”，而迭代可以出现在很多模型里</li><li>增量、演化、原型和敏捷到底差在哪里</li><li>V模型为什么总和测试放在一起讲</li><li>用同一个奶茶店小程序例子判断模型适用场景</li></ul></div>
+
+      <h2>一、先把“模型”理解成项目路线图</h2>
+      <p>把开发软件想成盖房子：你可以先画完整施工图，再一次盖完；也可以先交付一间能住的房子，再逐步加卧室；还可以每盖一层都检查地基风险。开发模型规定的就是这些工作如何排列、何时交付、怎样反馈。</p>
+      <p>这里有三个经常混在一起的词：</p>
+      <ul><li><strong>生命周期模型：</strong>描述需求、设计、编码、测试、交付之间怎样组织。</li><li><strong>开发方法：</strong>更强调团队怎样协作，例如敏捷、统一过程。</li><li><strong>技术或架构路线：</strong>强调软件怎样实现，例如基于构件、模型驱动、基于架构。</li></ul>
+      <p>因此，图片里的几组词不一定是“一一对应的同义词”。例如瀑布是一种生命周期模型，敏捷是一组开发方法；一个项目完全可以采用迭代生命周期，再用敏捷方法管理团队。</p>
+
+      <h2>二、瀑布模型：像填满检查表一样逐阶段推进</h2>
+      <p>瀑布模型通常按“需求分析 → 系统设计 → 详细设计 → 编码 → 测试 → 部署维护”顺序推进。上一阶段的文档和评审结果，是下一阶段的输入，阶段之间有清晰的交接。</p>
+      <p>例子：假设一个社保系统的建设项目，在立项时已有明确法规、预算和验收条款，且本期需求较稳定，团队可以先把需求和接口写得很详细，再按合同交付。行业名称本身并不能决定该用哪一种模型。</p>
+      <p><strong>优点：</strong>计划、文档、责任边界清晰，适合合规审查。<strong>缺点：</strong>用户往往到后期才能看到完整软件，早期需求理解错了，返工成本很高。</p>
+      <aside class="knn-note knn-note-warning"><strong>图片中的易错点：</strong>“瀑布模型：迭代模型/迭代开发方法”不是教科书里的标准定义。经典瀑布强调阶段顺序和一次性交付；它可以在现实中反复返工，但“允许返工”不等于“它本身就是迭代模型”。</aside>
+
+      <h2>三、演化模型：先做出能用的版本，再边用边长大</h2>
+      <p>演化模型假设：一开始不可能把需求全部说清楚。团队先做一个版本，让用户使用和反馈，再不断修改，软件像生物一样逐步演化。</p>
+      <p>例子：做一个校园二手交易小程序。第一版只有发布商品和搜索；学生提出需要聊天后，第二版加入私信；发现交易纠纷多，再加入举报和信用分。</p>
+      <p>它的重点是<strong>需求和产品一起成长</strong>。优点是更贴近真实需求，缺点是架构如果一直“打补丁”，后期可能变得难以维护。</p>
+
+      <h2>四、增量模型：把大目标切成一块块交付</h2>
+      <p>增量模型先规划整体，再把功能拆成多个“增量”分批交付。每个增量通常都能运行，后一个增量在前一个基础上增加能力。</p>
+      <p><strong>奶茶店小程序例子：</strong>第一增量完成菜单浏览，第二增量加入购物车，第三增量加入在线支付，第四增量加入会员积分。店主不用等所有功能完成，第一版就能开始展示菜单。</p>
+      <p>增量模型的关键词是<strong>分批交付功能</strong>。它和演化模型都可能多次发布，但增量模型通常更强调“整体需求已规划、按模块交付”；演化模型更强调“通过使用反馈改变需求本身”。</p>
+
+      <h2>五、快速原型模型：先做一个样品确认想法</h2>
+      <p>原型是为了学习和沟通而做的简化版本，不一定具备完整性能和安全性。它可以是纸面草图、可点击界面，也可以是只能完成一条流程的程序。</p>
+      <p>例子：客户说“做一个像外卖平台的页面”。与其直接写后端，不如先做三个可点击页面：选商品、确认订单、支付。客户一看就能指出“优惠券入口应该放这里”，需求误解会在编码前暴露。</p>
+      <p>原型有两种常见去向：<strong>抛弃式原型</strong>用来探索，确认需求后重写；<strong>演化式原型</strong>不断加功能，最终变成产品。原型不能直接当成正式系统，因为安全、性能和异常处理往往还没补齐。</p>
+
+      <h2>六、螺旋模型：每一圈都先处理最大风险</h2>
+      <p>螺旋模型把项目分成一圈圈循环，每一圈通常包含四步：确定目标和方案、识别并解决风险、开发和验证、评审后规划下一圈。</p>
+      <p>例子：开发自动驾驶控制系统时，最大的风险可能是传感器在雨天误判。团队可以先做雨天仿真和小规模验证，再决定是否扩大功能，而不是等系统全部写完才发现根本问题。</p>
+      <p>螺旋模型适合大型、高风险、需求复杂的项目，但风险分析和管理成本较高。它不是“边做边试”的随意开发，而是把风险评估明确写进每轮计划。</p>
+
+      <h2>七、V模型：每个开发阶段都有对应的测试活动</h2>
+      <p>V模型可以看成瀑布模型的强化版。左边是需求和设计逐层细化，右边是从单元测试、集成测试到系统测试、验收测试逐层验证。左边每个阶段，都要提前想好右边如何验收。</p>
+      <div class="knn-table-wrap" role="region" aria-label="V模型阶段对应关系" tabindex="0"><table class="knn-table"><thead><tr><th>开发阶段</th><th>对应测试</th><th>小白理解</th></tr></thead><tbody><tr><td>用户需求</td><td>验收测试</td><td>店主能否用小程序完成实际经营目标</td></tr><tr><td>系统需求分析</td><td>系统测试</td><td>完整小程序是否满足功能与性能规格</td></tr><tr><td>概要设计／架构设计</td><td>集成测试</td><td>订单、支付、库存模块连接后能否协作</td></tr><tr><td>详细设计／模块设计</td><td>单元测试</td><td>计算订单金额的小模块是否正确</td></tr></tbody></table></div>
+      <p>编码位于V形底部，上表展示的是常见对应方式，不同教材的阶段名称可能略有差异。测试计划和用例应在对应的需求、设计阶段开始准备。V模型的核心不是画出一个字母 V，而是<strong>测试前移、开发与测试对照进行</strong>。它适合需求清楚且质量要求高的场景，如医疗、航空和嵌入式系统。</p>
+
+      <h2>八、喷泉模型：允许活动重叠，适合面向对象开发</h2>
+      <p>喷泉模型把开发看成不断回流的过程：分析、设计、实现和测试可以重叠，上一阶段的成果也能反馈到前面。它不像瀑布那样必须等一层“干了”再进入下一层。</p>
+      <p>例子：设计一个游戏角色时，写代码的同时发现对象职责不合理，就回到设计阶段调整类；调整后马上补测试。水从喷泉底部向上回流，正是它想表达的灵活反馈。</p>
+      <p>喷泉模型的常见关键词是<strong>面向对象、迭代、无间隙</strong>。“无间隙”是说阶段之间没有严格的隔墙，允许活动交叠，并不是完全不做文档或计划。喷泉模型常和面向对象开发联系在一起，但它不是“模型驱动开发”的同义词。模型驱动开发强调用模型自动或半自动生成实现；喷泉模型强调开发活动可以重叠和反复。</p>
+
+      <h2>九、基于构件的开发：像搭积木一样复用模块</h2>
+      <p>构件可以理解为边界清晰、接口明确、能重复使用的软件模块，例如登录组件、支付 SDK、地图服务和日志库。基于构件的开发先寻找可复用构件，再做适配、组装和测试。</p>
+      <p>例子：做电商系统时，直接接入成熟的支付和短信服务，把精力放在商品和订单业务上。这样能减少重复开发，但必须检查构件的版本、授权、数据安全和接口兼容性。</p>
+      <p>它解决的是“哪些东西可以复用、怎样组装”的问题，所以常和增量、迭代结合使用。它通常经历需求分析、构件检索和评估、必要的需求调整、系统设计、构件适配与组装、系统测试。<strong>即使每个构件单独正确，也不代表拼起来就正确：</strong>例如支付接口重复通知两次，订单系统必须避免把同一订单记成两笔收入。图片最底部有字幕遮挡，不宜据此逐字还原完整定义。</p>
+
+      <h2>十、图片里提到的“统一过程、敏捷、模型驱动”怎么理解</h2>
+      <h3>1. 快速应用开发（RAD）</h3><p>RAD强调较短开发周期，常借助原型、可复用构件、开发工具以及用户持续参与，快速构建应用。比如用低代码工具先搭内部请假审批系统，再不断确认表单和审批流程。它与演化、原型和构件复用有交集，但<strong>“演化模型＝RAD”并不成立</strong>；快速开发也不能省略测试，复杂技术风险和紧密耦合的系统未必适合这样做。</p><h3>2. 其他几个开发方法</h3><div class="knn-table-wrap" role="region" aria-label="开发模型和方法对照" tabindex="0"><table class="knn-table"><thead><tr><th>概念</th><th>一句话</th><th>示例</th></tr></thead><tbody><tr><td>迭代开发</td><td>重复经历分析、设计、编码、测试，每轮变得更好</td><td>每两周发布一个可用版本</td></tr><tr><td>敏捷开发</td><td>以短周期交付、持续反馈和拥抱变化为重点的方法集合</td><td>Scrum、看板、用户故事</td></tr><tr><td>统一过程（UP/RUP）</td><td>风险驱动、用例驱动、架构为中心、迭代增量式过程框架</td><td>每轮都完善架构和用例</td></tr><tr><td>模型驱动开发</td><td>先建立高层模型，再由工具生成部分代码或配置</td><td>根据数据模型生成接口骨架</td></tr><tr><td>基于架构的开发</td><td>先确定稳定的系统骨架，再在骨架上扩展功能</td><td>先定分层、消息总线和插件接口</td></tr></tbody></table></div>
+      <h3>3. 图片中的对应关系应该怎样读</h3><div class="knn-table-wrap" role="region" aria-label="截图表述辨析" tabindex="0"><table class="knn-table"><thead><tr><th>截图表述</th><th>更准确的理解</th></tr></thead><tbody><tr><td>瀑布：迭代开发</td><td>经典瀑布以阶段顺序为主，迭代以多轮反馈为主，不能画等号。</td></tr><tr><td>演化：快速应用开发</td><td>演化强调产品随反馈成长；RAD强调快速构建，二者有交集。</td></tr><tr><td>增量：构件组装</td><td>增量按功能分批交付；构件开发强调复用与组装，交付方式和实现方式可以组合。</td></tr><tr><td>螺旋：统一过程</td><td>二者都关注风险，也可能采用迭代；螺旋是风险驱动的生命周期模型，UP是更完整的过程框架。</td></tr><tr><td>快速原型：敏捷</td><td>原型用于确认需求或探索方案；敏捷可以用原型，但也强调可工作的软件、持续合作与反馈。</td></tr><tr><td>V模型：基于架构</td><td>V模型的识别重点是开发阶段与测试阶段对应；架构驱动关注系统结构，不能互相替代。</td></tr><tr><td>喷泉：模型驱动</td><td>喷泉强调面向对象及活动重叠；模型驱动强调用模型指导、转换或生成实现。</td></tr></tbody></table></div><p>这些写法也可能来自课程中的比较列表，缺少完整讲解时无法判断讲者意图。学习时应以概念定义和题目情境为依据。</p><p>所以，图片中的箭头式记忆更适合当作课堂线索，不能当成严格的“等号”。例如统一过程确实是迭代增量式，敏捷也常采用迭代；但瀑布、V模型、喷泉、构件开发分别关注流程顺序、验证对应、活动重叠和复用方式。</p>
+
+      <h3>4. 迭代和增量可以同时发生吗？</h3><p><strong>迭代是“把已有能力做得更好”，增量是“让产品多一些能力”。</strong>先把下单页面改得更顺手、减少失败率，是迭代；新增会员积分，是增量。一个两周版本可以既改进下单体验，又增加积分，所以常听到“迭代增量开发”。但单纯延期后把同一批代码交一次，不算有计划的迭代。</p><h2>十一、用四个问题快速选模型</h2>
+      <ol class="knn-mistakes"><li><strong>需求稳定吗？</strong>稳定、法规明确，可考虑瀑布或V模型；不稳定，考虑迭代、演化或敏捷。</li><li><strong>能否先给用户一个小版本？</strong>能，就用增量或原型尽早验证。</li><li><strong>最大风险是什么？</strong>技术、资金或安全风险突出，就把风险分析放到每一轮，考虑螺旋。</li><li><strong>有没有成熟模块可复用？</strong>有，就采用基于构件的路线，并为接口和质量留出验证时间。</li></ol>
+      <blockquote class="knn-principle">记忆口诀：瀑布重计划，V模型重验证；原型先试想法，增量分批交付；演化靠反馈成长，螺旋每圈控风险；喷泉允许回流，构件负责复用。</blockquote>
+
+      <h2>十二、最后用一个完整场景串起来</h2>
+      <p>假设要做奶茶店小程序：如果店主已经把功能、页面和验收标准写死，选择瀑布或V模型比较自然；如果先做菜单和下单，再逐步加支付、积分，就是增量；如果店主自己也说不清页面怎么用，先做可点击原型；如果支付安全和高并发是最大风险，把风险验证放进螺旋；如果直接接入第三方支付、地图和短信服务，就是基于构件；如果两周一轮，根据顾客反馈持续调整，就是迭代开发，团队协作上还可以采用敏捷。</p>
+      <p>同一个项目可以同时使用多种思想。模型不是贴在项目上的标签，而是帮助团队提前约定：什么时候确认需求、什么时候交付、什么时候测试、什么时候面对风险。</p>
+    </article>
+    <nav class="article-pagination" aria-label="文章导航"><a class="article-pagination-link article-pagination-link-prev" href="week12-mlp-regularization-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：隐藏层、过拟合与正则化</span></a><span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span></nav>
+  </main>
+</body>
+</html>

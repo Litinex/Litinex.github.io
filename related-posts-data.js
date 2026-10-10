@@ -1,6 +1,20 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "software-development-models-beginner-guide": [
+    {
+      "id": "software-designer-cryptography-cheatsheet",
+      "reason": "共同标签：软件设计师、软考"
+    },
+    {
+      "id": "software-design-patterns-cheatsheet",
+      "reason": "共同标签：软件设计师、软考"
+    },
+    {
+      "id": "week12-mlp-regularization-review",
+      "reason": "同属“学习札记”分类"
+    }
+  ],
   "week12-mlp-regularization-review": [
     {
       "id": "week11-linear-softmax-regression-review",
@@ -45,29 +59,29 @@
   ],
   "software-designer-cryptography-cheatsheet": [
     {
+      "id": "software-development-models-beginner-guide",
+      "reason": "共同标签：软件设计师、软考"
+    },
+    {
       "id": "software-design-patterns-cheatsheet",
       "reason": "共同标签：软件设计师、软考"
     },
     {
       "id": "week12-mlp-regularization-review",
       "reason": "同属“学习札记”分类"
-    },
-    {
-      "id": "pytorch-tensor-numpy-conversion",
-      "reason": "同属“学习札记”分类"
     }
   ],
   "software-design-patterns-cheatsheet": [
+    {
+      "id": "software-development-models-beginner-guide",
+      "reason": "共同标签：软件设计师、软考"
+    },
     {
       "id": "software-designer-cryptography-cheatsheet",
       "reason": "共同标签：软件设计师、软考"
     },
     {
       "id": "week12-mlp-regularization-review",
-      "reason": "同属“学习札记”分类"
-    },
-    {
-      "id": "pytorch-tensor-numpy-conversion",
       "reason": "同属“学习札记”分类"
     }
   ],
@@ -343,11 +357,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "week12-mlp-regularization-review",
+      "id": "software-development-models-beginner-guide",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "pytorch-tensor-numpy-conversion",
+      "id": "week12-mlp-regularization-review",
       "reason": "同属“学习札记”分类"
     }
   ],
