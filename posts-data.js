@@ -2,6 +2,18 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      id: "week13-backprop-initialization-house-price-review",
+      href: "posts/week13-backprop-initialization-house-price-review.html",
+      title: "第十三周学习复盘：反向传播、初始化与房价预测",
+      date: "2026-10-10",
+      updated: "2026-10-10",
+      category: "学习札记",
+      excerpt: "学习《动手学深度学习》第4章后半部分，手算反向传播梯度，观察数值稳定性与初始化，并完成房价预测基线和5折验证。",
+      tags: ["Python", "PyTorch", "深度学习", "反向传播", "参数初始化", "分布偏移", "房价预测", "周报"],
+      words: 4351,
+      readTime: 13,
+    },
+    {
       id: "software-development-models-beginner-guide",
       href: "posts/software-development-models-beginner-guide.html",
       title: "软件开发模型入门：瀑布、迭代、螺旋和敏捷到底怎么选",

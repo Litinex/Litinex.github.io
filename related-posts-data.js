@@ -1,6 +1,20 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
+  "week13-backprop-initialization-house-price-review": [
+    {
+      "id": "week12-mlp-regularization-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week11-linear-softmax-regression-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week10-pytorch-tensor-autograd-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    }
+  ],
   "software-development-models-beginner-guide": [
     {
       "id": "software-designer-cryptography-cheatsheet",
@@ -11,21 +25,21 @@
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "week12-mlp-regularization-review",
+      "id": "week13-backprop-initialization-house-price-review",
       "reason": "同属“学习札记”分类"
     }
   ],
   "week12-mlp-regularization-review": [
+    {
+      "id": "week13-backprop-initialization-house-price-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
     {
       "id": "week11-linear-softmax-regression-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
       "id": "week10-pytorch-tensor-autograd-review",
-      "reason": "共同标签：Python、PyTorch、深度学习"
-    },
-    {
-      "id": "pytorch-tensor-numpy-conversion",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -35,26 +49,26 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week12-mlp-regularization-review",
+      "id": "week13-backprop-initialization-house-price-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "week12-mlp-regularization-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
   "week11-linear-softmax-regression-review": [
     {
-      "id": "week12-mlp-regularization-review",
-      "reason": "共同标签：Python、PyTorch、深度学习"
-    },
-    {
-      "id": "week10-pytorch-tensor-autograd-review",
-      "reason": "共同标签：Python、PyTorch、深度学习"
-    },
-    {
       "id": "week6-regression-learning-review",
       "reason": "共同标签：Python、线性回归、周报"
+    },
+    {
+      "id": "week13-backprop-initialization-house-price-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week12-mlp-regularization-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
   "software-designer-cryptography-cheatsheet": [
@@ -67,7 +81,7 @@
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "week12-mlp-regularization-review",
+      "id": "week13-backprop-initialization-house-price-review",
       "reason": "同属“学习札记”分类"
     }
   ],
@@ -81,7 +95,7 @@
       "reason": "共同标签：软件设计师、软考"
     },
     {
-      "id": "week12-mlp-regularization-review",
+      "id": "week13-backprop-initialization-house-price-review",
       "reason": "同属“学习札记”分类"
     }
   ],
@@ -91,11 +105,11 @@
       "reason": "共同标签：Python、PyTorch、张量"
     },
     {
-      "id": "week12-mlp-regularization-review",
+      "id": "week13-backprop-initialization-house-price-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week11-linear-softmax-regression-review",
+      "id": "week12-mlp-regularization-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -357,11 +371,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "software-development-models-beginner-guide",
+      "id": "week13-backprop-initialization-house-price-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week12-mlp-regularization-review",
+      "id": "software-development-models-beginner-guide",
       "reason": "同属“学习札记”分类"
     }
   ],
