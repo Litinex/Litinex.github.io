@@ -17,8 +17,8 @@
         "软件质量",
         "软考"
       ],
-      "words": 4341,
-      "readTime": 14
+      "words": 5857,
+      "readTime": 20
     },
     {
       id: "week13-backprop-initialization-house-price-review",
