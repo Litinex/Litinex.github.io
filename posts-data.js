@@ -2,6 +2,25 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      "id": "software-testing-project-management-quality-guide",
+      "href": "posts/software-testing-project-management-quality-guide.html",
+      "title": "软件工程入门：测试怎么做、项目怎么管、质量怎么衡量",
+      "date": "2026-10-12",
+      "updated": "2026-10-12",
+      "category": "学习札记",
+      "excerpt": "根据软考课程第18集，用奶茶店小程序讲清黑盒与白盒测试、覆盖标准、甘特图与PERT、风险管理、软件质量和McCabe环路复杂度。",
+      "tags": [
+        "软件设计师",
+        "软件工程",
+        "软件测试",
+        "项目管理",
+        "软件质量",
+        "软考"
+      ],
+      "words": 4341,
+      "readTime": 14
+    },
+    {
       id: "week13-backprop-initialization-house-price-review",
       href: "posts/week13-backprop-initialization-house-price-review.html",
       title: "第十三周学习复盘：反向传播、初始化与房价预测",

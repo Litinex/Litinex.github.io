@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>软件工程入门：测试怎么做、项目怎么管、质量怎么衡量 | 风迁夏回</title>
+  <meta name="description" content="根据软考课程第18集，用奶茶店小程序讲清黑盒与白盒测试、覆盖标准、甘特图与PERT、风险管理、软件质量和McCabe环路复杂度。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/software-testing-project-management-quality-guide.html">
+  <meta property="og:title" content="软件工程入门：测试怎么做、项目怎么管、质量怎么衡量 | 风迁夏回">
+  <meta property="og:description" content="根据软考课程第18集，用奶茶店小程序讲清黑盒与白盒测试、覆盖标准、甘特图与PERT、风险管理、软件质量和McCabe环路复杂度。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/software-testing-project-management-quality-guide.html">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=20261006-10">
+  <script src="../posts-data.js?v=20261012-1" defer></script>
+  <script src="../related-posts-data.js?v=20261012-1" defer></script>
+  <script src="../taxonomy.js?v=20261006-8" defer></script>
+  <script src="../article-images.js?v=20261006-7" defer></script>
+  <script src="../article-reader.js?v=20261006-4" defer></script>
+  <script src="../learning-progress.js?v=20261006-4" defer></script>
+  <script src="../article-recommendations.js?v=20261006-4" defer></script>
+  <script src="../code-blocks.js?v=20260428-3" defer></script>
+  <script src="../ambient-background.js?v=20261006-7" defer></script>
+  <script src="../music-playlist.js?v=20261006-10" defer></script>
+  <script src="../music-player.js?v=20261006-10" defer></script>
+  <script src="../views.js?v=20260427-1" defer></script>
+  <script src="../theme-toggle.js?v=20261006-3" defer></script>
+  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "软件工程入门：测试怎么做、项目怎么管、质量怎么衡量", "description": "根据软考课程第18集，用奶茶店小程序讲清黑盒与白盒测试、覆盖标准、甘特图与PERT、风险管理、软件质量和McCabe环路复杂度。", "url": "https://yezizhuang.top/posts/software-testing-project-management-quality-guide.html", "datePublished": "2026-10-12", "dateModified": "2026-10-12", "inLanguage": "zh-CN", "author": {"@type": "Person", "name": "风迁夏回"}, "publisher": {"@type": "Person", "name": "风迁夏回"}, "isBasedOn": "https://www.bilibili.com/video/BV1rc411t71D/?p=18"}</script>
+</head>
+<body class="article-page knn-article-page" data-post-id="software-testing-project-management-quality-guide">
+  <main class="article-shell">
+    <header class="article-toolbar"><a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页"><span class="article-site-brand-mark" aria-hidden="true"></span><span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span></a><div class="header-actions"><nav class="article-site-nav" aria-label="主导航"><a href="../index.html">主页</a><a href="../archive.html">归档</a><a href="../about.html">关于</a></nav></div></header>
+    <header class="article-header"><p class="meta">2026.10.12 · 学习札记 · 约 14 分钟</p><h1>软件工程入门：<span class="article-title-topic">测试怎么做、项目怎么管、质量怎么衡量</span></h1><p class="article-deck">用一个奶茶店小程序，把软考第18集的测试、进度、风险、质量与复杂度讲明白。</p></header>
+    <article class="article-body knn-guide">
+      <p class="article-lead">一个奶茶店小程序能成功下单，就算开发完成了吗？还不够。优惠券算错怎么办？支付成功却没有订单怎么办？计划两周上线，为什么拖成一个月？本篇把软件工程中的测试、项目管理、质量和度量串起来：测试负责找问题，管理负责组织交付，质量说明“好在哪里”，度量帮助我们用数字观察软件。</p>
+      <aside class="knn-note"><strong>视频来源：</strong>本文整理自学以致知Learning的《【2026软考中级-软件设计师】基础阶段｜考点理论精讲》第18集：<a href="https://www.bilibili.com/video/BV1rc411t71D/?p=18" target="_blank" rel="noopener noreferrer">8.2 测试、项目管理、软件度量和质量</a>（约21分53秒）。依据视频课件及画面中的讲解字幕整理；奶茶店示例、计算演示和易错说明为本文补充，不是逐字稿。</aside>
+      <div class="knn-at-a-glance" aria-label="阅读目标"><p class="knn-eyebrow">读完这篇，你应该能回答</p><ul><li>黑盒、白盒、静态、动态测试分别在区分什么？</li><li>单元、集成、确认、系统测试分别检查什么？</li><li>甘特图和PERT图怎么读，最早时间为什么要取最大值？</li><li>软件质量和代码复杂度怎样用具体问题来判断？</li></ul></div>
+      <h2>一、测试的目标：主动寻找问题</h2>
+      <p>测试不是为了演示“软件能跑”，而是有计划地寻找实际结果与预期结果之间的差异。例如原价20元、优惠券减5元，期望支付15元；如果系统扣了20元，测试就发现了缺陷。只有“页面打开了”这样的检查，很难发现业务错误。</p>
+      <p>视频强调：尽早并持续测试；有效和无效输入都要检查；修改后要做回归测试；尽量避免完全由作者独自验证自己的程序。作者熟悉代码，也容易沿着自己的假设检查，独立视角能补上盲区。这不妨碍开发者编写单元测试，只是提醒我们不能只靠自我验证。</p>
+      <p><strong>回归测试</strong>就是改完一个问题后，再确认原来正常的功能没有被破坏。修好优惠券计算后，既要检查优惠券订单，也要检查无券订单、退款和积分计算。它可以出现在任何测试阶段，并不是只在上线前做一次。</p>
+      <aside class="knn-note knn-note-warning"><strong>别把经验规律当成公式：</strong>课件提到“尚未发现的错误数量与已发现错误数量成正比”。更合适的理解是：缺陷多的模块值得继续重点检查，可能还有问题；不能据此精确推算剩余缺陷数量。测试通过也不等于证明软件绝对没有错误。</aside>
+      <h2>二、先分清两组测试方法</h2>
+      <h3>1. 静态与动态：程序有没有真正运行</h3>
+      <p><strong>静态测试</strong>不运行程序，直接检查需求、设计或代码。例如评审优惠券规则，发现“满20元”没有说明按优惠前还是优惠后的金额判断；用静态分析工具发现可能未初始化的变量，也属于这一类。</p>
+      <p><strong>动态测试</strong>运行程序，输入数据并观察结果。例如真的提交一笔订单，检查金额、库存、订单状态是否正确。视频将人工检测与计算机辅助静态检查放在静态一侧，将黑盒和白盒放在动态一侧讲解。</p>
+      <h3>2. 黑盒与白盒：设计用例时是否依据内部结构</h3>
+      <p><strong>黑盒测试</strong>把程序当成看不见内部的盒子，根据需求检查输入与输出。例如订单金额必须在1至200元之间，就测试正常金额、0元和201元；不需要先知道代码写了几个if。</p>
+      <p><strong>白盒测试</strong>依据代码内部的分支、循环和控制流设计用例。例如优惠券处理有“可用”和“不可用”两个分支，就检查两个分支是否都执行过。黑盒关注外部行为，白盒关注内部结构；两者互相补充。</p>
+      <h3>3. 黑盒常用方法：把输入选得有代表性</h3>
+      <div class="knn-table-wrap" role="region" aria-label="黑盒测试方法" tabindex="0"><table class="knn-table"><thead><tr><th>方法</th><th>通俗理解</th><th>奶茶店示例</th></tr></thead><tbody><tr><td>等价类划分</td><td>把处理方式相近的输入分组，各选代表</td><td>购买数量1至10为有效类；小于1、大于10分别为无效类</td></tr><tr><td>边界值分析</td><td>重点检查范围边缘及其附近</td><td>整数数量测试0、1、2、9、10、11</td></tr><tr><td>错误推测</td><td>根据经验寻找容易出错的情况</td><td>空输入、重复点击支付、断网后重试</td></tr><tr><td>因果图</td><td>梳理输入条件组合与输出之间的关系</td><td>是否会员、是否达起送金额、是否有券，共同决定优惠结果</td></tr></tbody></table></div>
+      <p>分组时别只写有效等价类。数量为空、含小数或不是数字，也要依据真实需求考虑；这些输入不能简单地全部归入“数量小于1”。</p>
+      <h2>三、白盒覆盖：走过一遍，不代表测得充分</h2>
+      <p>假设免费配送规则是：<strong>订单金额至少30元，并且是会员</strong>。代码中的一个判定包含两个条件：金额是否达标、用户是否为会员。下面几种覆盖，检查的对象不同。</p>
+      <div class="knn-table-wrap" role="region" aria-label="白盒覆盖标准" tabindex="0"><table class="knn-table"><thead><tr><th>覆盖标准</th><th>检查目标</th><th>容易误解的地方</th></tr></thead><tbody><tr><td>语句覆盖</td><td>每条可执行语句至少执行一次</td><td>执行过收费代码，不代表所有条件都检查过</td></tr><tr><td>判定覆盖／分支覆盖</td><td>每个判定的真、假结果都出现</td><td>整体真假都有，不代表内部每个条件真假都有</td></tr><tr><td>条件覆盖</td><td>每个基本条件的真、假结果都出现</td><td>不能保证整个判定也同时出现真、假</td></tr><tr><td>条件／判定覆盖</td><td>同时满足条件覆盖和判定覆盖</td><td>两类要求都要检查</td></tr><tr><td>修正的条件／判定覆盖（MC/DC）</td><td>证明每个条件能独立影响判定结果</td><td>需用成对用例隔离条件影响，还要注意短路求值</td></tr><tr><td>条件组合覆盖</td><td>检查基本条件的真假组合</td><td>条件多时组合数量增长很快</td></tr><tr><td>路径覆盖</td><td>检查控制流中的执行路径</td><td>循环可能产生大量甚至无穷多路径，完全覆盖通常不现实</td></tr></tbody></table></div>
+      <p>课件还列出点覆盖、边覆盖：它们从控制流图的节点和连接边观察执行情况。基本路径测试则选取一组线性独立路径；它不等于穷举所有路径。</p>
+      <p>用免费配送规则说明：30元会员得到“真”，20元会员得到“假”，能覆盖判定的两个结果，但“会员”条件一直为真。反过来，如果选30元非会员和20元会员，两个条件各有真假，整体却一直为假。这就说明<strong>条件覆盖与判定覆盖不能互相替代</strong>。若语言采用短路求值，前一条件为假时后一条件可能根本没有执行，统计条件覆盖时必须按实际执行判断。</p>
+      <h2>四、测试阶段：从零件到整套系统</h2>
+      <p>视频按单元测试、集成测试、确认测试、系统测试介绍测试阶段。把它想成组装一台机器，就比较好理解。</p>
+      <div class="knn-table-wrap" role="region" aria-label="测试阶段" tabindex="0"><table class="knn-table"><thead><tr><th>阶段</th><th>主要问题</th><th>例子</th></tr></thead><tbody><tr><td>单元测试／模块测试</td><td>一个小模块本身是否正确</td><td>计算20元订单减5元券，结果是否为15元</td></tr><tr><td>集成测试</td><td>模块接起来是否能协作</td><td>支付通知是否正确更新订单与库存</td></tr><tr><td>确认测试</td><td>完成的软件是否满足规定需求</td><td>检查选商品、下单、付款和退款是否满足需求说明</td></tr><tr><td>系统测试</td><td>软件与运行环境结合后是否符合要求</td><td>连上真实网络、数据库和支付服务，检查性能、恢复与整体行为</td></tr></tbody></table></div>
+      <p>单元都通过，集成仍可能失败：支付模块发送金额的单位是“分”，订单模块却按“元”处理，两个模块各自的计算可能都正确，接起来就错了。单元测试常用白盒思路，系统测试常用黑盒思路，但这不是禁止其他方法的硬性边界。</p>
+      <p>确认测试与用户验收都关注需求，但概念不应无条件画等号：用户验收还涉及客户按约定标准判断是否接受交付。实际项目也会反复进行这些测试，不一定只沿单向流程走一遍。</p>
+      <h2>五、甘特图：把任务摆在日历上</h2>
+      <p>甘特图的横轴是日期或时间，纵轴是任务，一条横条表示任务的计划开始、结束与持续时间；不同颜色或填充可以表示已完成进度。做奶茶店小程序时，可以画出“设计页面：第1至3天”“开发订单：第4至8天”“测试：第9至11天”。</p>
+      <p>它特别适合回答：谁在什么时间做什么？任务持续多久？今天应该做到哪里？哪些任务在时间上重叠？</p>
+      <aside class="knn-note"><strong>考试与工具要分清：</strong>视频强调普通甘特图难以清楚表达任务之间的依赖。只画横条确实如此；现代项目工具可以加依赖箭头，所以不能绝对地说“所有甘特图都不能表示依赖”。依赖分析题通常需要结合网络图来做。</aside>
+      <h2>六、PERT图：先做什么，后做什么</h2>
+      <p>视频使用的是<strong>箭线表示活动、节点表示事件</strong>的网络图。箭线上的数字是任务持续时间，节点表示某个时间点发生的事件。事件本身不消耗时间和资源；某个节点的前置任务都完成，后续任务才可以开始。其他教材和工具也可能用节点表示活动，读图前要先确认约定。</p>
+      <p>例如小程序上线前有四个任务：A确认需求2天；A后可以并行做B页面开发3天和C支付接入5天；B、C都结束后，D联调2天。时间线是：A在第2天结束，B在第5天结束，C在第7天结束，D最早第7天开始，第9天结束。</p>
+      <p><strong>汇合处要取最大值。</strong>因为联调需要页面和支付都准备好，不能看到页面完成就启动。沿网络前推时，一个事件的最早时间等于“各前驱事件的最早时间加对应活动工期”的最大值。</p>
+      <p><strong>关键路径</strong>是决定最短总工期的最长持续时间路径。本例A→C→D为2＋5＋2＝9天，A→B→D只有7天。按这个计划，B最多可以晚2天完成而不影响总工期；C在关键路径上，没有这样的余量。这里假设工期固定、资源够用，没有额外排班限制。</p>
+      <p>若再求最迟时间，则从项目终点向前倒推，在分叉处取“后继事件最迟时间减活动工期”的最小值。活动总时差可写成：后继事件最迟时间－前驱事件最早时间－活动工期。时差不是鼓励拖延，而是帮助判断哪里有调整余地。</p>
+      <aside class="knn-note knn-note-warning"><strong>关于“不能反映并行关系”：</strong>课件有这一表述，但不能照字面推广。PERT网络可以通过分叉和汇合表示哪些任务可并行、哪些必须等待；它不如甘特图直观展示任务在日历上的重叠时段。备考时要结合题目具体问的是依赖关系还是日历进度。</aside>
+      <p>视频练习中的“事件6最晚开始时间”，严格说是在问事件6的最迟发生时间，因为事件没有持续时间。课件给出的计算结果是10。记住做法比只记住这个数字更有用：先找总工期，再从终点倒推，遇到多个后继取最小值。</p>
+      <h2>七、风险管理：在问题发生前做准备</h2>
+      <p>风险是损失或伤害发生的可能性。支付接口下个月可能改版，是风险；今天已经无法付款，是问题。风险管理不是等事故发生才救火，而是提前决定怎么减少发生概率或损失。</p>
+      <ol><li><strong>风险识别：</strong>列出可能出问题的地方，例如第三方支付接口不稳定、关键开发者请假。</li><li><strong>风险预测：</strong>估计发生概率和可能影响，例如接口中断是否会导致大量订单无法支付。</li><li><strong>风险评估：</strong>比较风险，确定优先处理哪些，而不是每项平均用力。</li><li><strong>风险控制：</strong>制定预防、监控和应急方案，例如接入测试环境、记录失败订单、准备重试和人工处理流程。</li></ol>
+      <p>这些活动需要持续更新。项目开始时最大的风险可能是需求不清楚；临近上线时，可能变成容量、发布和数据恢复。本文中的应对例子是帮助理解四个步骤的补充。</p>
+      <h2>八、软件质量：能用之外，还要好用、稳定</h2>
+      <p>视频用“质量特性→质量子特性→度量指标”三层来组织知识。第一层是评价方向，例如可靠性；第二层继续细分，例如容错性；第三层再用可观察的数值评价，例如某类故障下服务成功率。这样才能把“系统很稳定”变成可以验证的要求。</p>
+      <p>这一集实际展开了功能性、可靠性、易使用性和效率，使用的是传统质量模型的术语体系。不同版本标准的分类会调整，例如较新的ISO/IEC 25010将安全性、兼容性单独列为顶层特性。学习时应先确认教材采用的标准，不能把不同版本的层级混在一起背。</p>
+      <div class="knn-table-wrap" role="region" aria-label="视频讲解的软件质量特性" tabindex="0"><table class="knn-table"><thead><tr><th>质量特性</th><th>视频中的子特性</th><th>怎么理解</th></tr></thead><tbody><tr><td>功能性</td><td>适合性、准确性、互用性、依从性、安全性</td><td>功能合适、结果正确、能与其他系统交互、符合要求、避免未授权访问</td></tr><tr><td>可靠性</td><td>成熟性、容错性、易恢复性</td><td>少出故障、出错时尽量继续工作、故障后能恢复服务与数据</td></tr><tr><td>易使用性</td><td>易理解性、易学性、易操作性</td><td>用户看得懂、学得会、操作方便</td></tr><tr><td>效率</td><td>时间特性、资源特性</td><td>响应足够快，CPU、内存等资源消耗合理</td></tr></tbody></table></div>
+      <p>小程序能下单，是功能性；支付网络偶尔超时仍能正确处理，是容错性；宕机后能恢复订单，是易恢复性；第一次使用就能找到退款入口，是易使用性；高峰期响应快且资源不过度消耗，是效率。这里没有补齐所有标准中的全部顶层特性，因为这一集并未逐项展开。</p>
+      <h2>九、McCabe环路复杂度：代码的“岔路”有多少</h2>
+      <p>视频最后讲McCabe度量，也叫环路复杂度。它依据控制流图，衡量程序控制结构有多复杂。分支和循环越多，需要理解和验证的路径通常越多；代码行数本身不能代替这个指标。</p>
+      <p>对于本课采用的单个连通控制流图，公式为<strong>V(G)＝E－N＋2</strong>，其中E是边数、N是节点数。视频用m表示边数、n表示节点数，写成m－n＋2，含义相同。课件例图有15条边、12个节点，因此V(G)＝15－12＋2＝5。</p>
+      <p>在常见的单入口、二分支判定结构下，也可以用“判定节点数＋1”辅助计算：顺序代码没有判定，复杂度为1；三个if判定通常得到4。但多路分支、复合条件和短路求值要根据真实控制流分析，不能简单地数源代码里出现了几个if。</p>
+      <p>复杂度为5，表示可以选取5条线性独立的基本路径。<strong>它不是说程序总共只有5条路径，也不是说写5个测试就必然没有缺陷。</strong>循环、数据边界、异常和业务规则仍可能需要额外用例。</p>
+      <p>把它用于维护也很直观：如果一个函数同时处理会员、满减、优惠券、配送和退款，控制流可能越来越复杂。此时应按清楚的业务职责拆分，并保留行为测试；为了让数字好看而随意分割函数，没有实际价值。</p>
+      <h2>十、把这一集串成一次小程序上线</h2>
+      <p>首先明确需求与质量目标，例如下单金额正确、支付失败能恢复；然后用甘特图安排开发时间，用网络图确认依赖和关键路径；提前识别支付、人员与上线风险；开发时检查小模块，组装后检查接口，再验证需求与完整环境。每次修改都跑相关回归测试，复杂分支则借助控制流图和覆盖标准检查盲区。</p>
+      <blockquote class="knn-principle">测试找差异，阶段看范围；甘特排日历，PERT看依赖；风险早准备，质量分维度；复杂度数岔路，回归防旧错。</blockquote>
+      <p>复习时可以用四个问题自测：两个条件都出现过真假，判定就一定真假都覆盖了吗？两条前置路径分别5天和7天，后续任务第几天能开始？系统恢复订单属于哪个质量方向？为什么复杂度为5不能证明5个用例就足够？能用自己的话解释这些问题，才比背名词更接近理解。</p>
+    </article>
+    <nav class="article-pagination" aria-label="文章导航"><a class="article-pagination-link article-pagination-link-prev" href="software-development-models-beginner-guide.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">延伸阅读：软件开发模型入门</span></a><a class="article-pagination-link article-pagination-link-next" href="../archive.html"><span class="article-pagination-link-text">全部文章</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></a></nav>
+  </main>
+</body>
+</html>
