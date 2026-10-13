@@ -3519,6 +3519,57 @@ html[data-theme="light"] .site-banner-content p:not(.eyebrow) {
   line-height: 1;
 }
 
+/* Home transition: let the sky settle into the page instead of stopping at a hard edge. */
+.home-page .home-banner {
+  min-height: clamp(460px, 58vw, 600px);
+  margin-bottom: -82px;
+  padding-bottom: 118px;
+  border-bottom: 0;
+}
+
+.home-page .home-banner::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  z-index: -1;
+  height: 150px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--bg) 26%, transparent) 28%,
+    color-mix(in srgb, var(--bg) 74%, transparent) 68%,
+    var(--bg) 100%
+  );
+}
+
+.home-page .home-banner + .page-main {
+  position: relative;
+  z-index: 1;
+  padding-top: 106px;
+}
+
+.home-page .home-banner + .page-main::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 92px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 0%, transparent) 100%);
+  opacity: 0.5;
+}
+
+html[data-theme="light"] .home-page .home-banner::after {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--bg) 28%, transparent) 28%,
+    color-mix(in srgb, var(--bg) 76%, transparent) 68%,
+    var(--bg) 100%
+  );
+}
+
 html[data-theme="light"] .hero-description {
   color: var(--muted-strong) !important;
 }
@@ -4357,6 +4408,24 @@ html[data-theme="dark"] .article-body {
     min-height: 350px;
     margin-top: 0;
     padding: 52px 16px 48px;
+  }
+
+  .home-page .home-banner {
+    min-height: 410px;
+    margin-bottom: -54px;
+    padding-bottom: 88px;
+  }
+
+  .home-page .home-banner::after {
+    height: 112px;
+  }
+
+  .home-page .home-banner + .page-main {
+    padding-top: 78px;
+  }
+
+  .home-page .home-banner + .page-main::before {
+    height: 66px;
   }
 
   .site-banner::before {
