@@ -3181,6 +3181,45 @@ html[data-theme="light"] body.article-page {
     var(--bg);
 }
 
+/* Quiet sky tones stay at the viewport edges as the homepage scrolls. */
+body.home-page::before,
+html[data-theme="light"] body.home-page::before {
+  display: block;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 34rem 46rem at -3% 32%, rgba(113, 156, 214, 0.17), transparent 72%),
+    radial-gradient(ellipse 32rem 42rem at 103% 76%, rgba(133, 153, 190, 0.13), transparent 72%);
+}
+
+body.home-page::after,
+html[data-theme="light"] body.home-page::after {
+  display: block;
+  z-index: 0;
+  background: url("assets/background-grain.svg") repeat;
+  opacity: 0.035;
+  mask-image: linear-gradient(90deg, #000, transparent 38%, transparent 62%, #000);
+}
+
+html[data-theme="light"] body.home-page::before {
+  opacity: 0.65;
+}
+
+html[data-theme="light"] body.home-page::after {
+  opacity: 0.025;
+}
+
+@media (max-width: 1040px) {
+  body.home-page::before,
+  html[data-theme="light"] body.home-page::before {
+    opacity: 0.4;
+  }
+
+  body.home-page::after,
+  html[data-theme="light"] body.home-page::after {
+    display: none;
+  }
+}
+
 .ambient-backdrop {
   position: fixed;
   inset: 0;
