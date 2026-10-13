@@ -1,7 +1,11 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
-  "software-testing-project-management-quality-guide": [
+  "structured-development-data-flow-diagram-guide": [
+    {
+      "id": "software-testing-project-management-quality-guide",
+      "reason": "共同标签：软件设计师、软件工程、软考"
+    },
     {
       "id": "software-development-models-beginner-guide",
       "reason": "共同标签：软件设计师、软件工程、软考"
@@ -9,9 +13,19 @@
     {
       "id": "software-designer-cryptography-cheatsheet",
       "reason": "共同标签：软件设计师、软考"
+    }
+  ],
+  "software-testing-project-management-quality-guide": [
+    {
+      "id": "structured-development-data-flow-diagram-guide",
+      "reason": "共同标签：软件设计师、软件工程、软考"
     },
     {
-      "id": "software-design-patterns-cheatsheet",
+      "id": "software-development-models-beginner-guide",
+      "reason": "共同标签：软件设计师、软件工程、软考"
+    },
+    {
+      "id": "software-designer-cryptography-cheatsheet",
       "reason": "共同标签：软件设计师、软考"
     }
   ],
@@ -31,15 +45,15 @@
   ],
   "software-development-models-beginner-guide": [
     {
+      "id": "structured-development-data-flow-diagram-guide",
+      "reason": "共同标签：软件设计师、软件工程、软考"
+    },
+    {
       "id": "software-testing-project-management-quality-guide",
       "reason": "共同标签：软件设计师、软件工程、软考"
     },
     {
       "id": "software-designer-cryptography-cheatsheet",
-      "reason": "共同标签：软件设计师、软考"
-    },
-    {
-      "id": "software-design-patterns-cheatsheet",
       "reason": "共同标签：软件设计师、软考"
     }
   ],
@@ -87,29 +101,29 @@
   ],
   "software-designer-cryptography-cheatsheet": [
     {
+      "id": "structured-development-data-flow-diagram-guide",
+      "reason": "共同标签：软件设计师、软考"
+    },
+    {
       "id": "software-testing-project-management-quality-guide",
       "reason": "共同标签：软件设计师、软考"
     },
     {
       "id": "software-development-models-beginner-guide",
-      "reason": "共同标签：软件设计师、软考"
-    },
-    {
-      "id": "software-design-patterns-cheatsheet",
       "reason": "共同标签：软件设计师、软考"
     }
   ],
   "software-design-patterns-cheatsheet": [
     {
+      "id": "structured-development-data-flow-diagram-guide",
+      "reason": "共同标签：软件设计师、软考"
+    },
+    {
       "id": "software-testing-project-management-quality-guide",
       "reason": "共同标签：软件设计师、软考"
     },
     {
       "id": "software-development-models-beginner-guide",
-      "reason": "共同标签：软件设计师、软考"
-    },
-    {
-      "id": "software-designer-cryptography-cheatsheet",
       "reason": "共同标签：软件设计师、软考"
     }
   ],
@@ -385,11 +399,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "software-testing-project-management-quality-guide",
+      "id": "structured-development-data-flow-diagram-guide",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week13-backprop-initialization-house-price-review",
+      "id": "software-testing-project-management-quality-guide",
       "reason": "同属“学习札记”分类"
     }
   ],

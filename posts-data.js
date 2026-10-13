@@ -2,6 +2,25 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      "id": "structured-development-data-flow-diagram-guide",
+      "href": "posts/structured-development-data-flow-diagram-guide.html",
+      "title": "结构化开发与数据流图：从看懂图到记住考点",
+      "date": "2026-10-13",
+      "updated": "2026-10-13",
+      "category": "学习札记",
+      "excerpt": "整理软考课程第19集，用奶茶店订单贯穿抽象、模块化、耦合与内聚、数据字典、DFD分层与平衡，附记忆表、示意图和自测题。",
+      "tags": [
+        "软件设计师",
+        "软件工程",
+        "结构化开发",
+        "数据流图",
+        "耦合与内聚",
+        "软考"
+      ],
+      "words": 6130,
+      "readTime": 20
+    },
+    {
       "id": "software-testing-project-management-quality-guide",
       "href": "posts/software-testing-project-management-quality-guide.html",
       "title": "软件工程入门：测试怎么做、项目怎么管、质量怎么衡量",
