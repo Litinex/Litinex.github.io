@@ -2,6 +2,27 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      "id": "week14-model-parameters-device-house-validation-review",
+      "href": "posts/week14-model-parameters-device-house-validation-review.html",
+      "title": "第十四周学习复盘：模型构造、参数管理与验证隔离",
+      "date": "2026-10-18",
+      "updated": "2026-10-18",
+      "category": "学习札记",
+      "excerpt": "复现《动手学深度学习》第5章的模型构造、参数管理、自定义层、模型读写和GPU迁移，并用逐折预处理比较房价基线参数。",
+      "tags": [
+        "Python",
+        "PyTorch",
+        "深度学习",
+        "参数管理",
+        "自定义层",
+        "GPU",
+        "房价预测",
+        "周报"
+      ],
+      "words": 4256,
+      "readTime": 13
+    },
+    {
       "id": "structured-development-data-flow-diagram-guide",
       "href": "posts/structured-development-data-flow-diagram-guide.html",
       "title": "结构化开发与数据流图：从看懂图到记住考点",
