@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+const crypto = require("node:crypto");
 
 const rootDir = path.resolve(__dirname, "..");
 const baseUrl = "https://yezizhuang.top";
@@ -285,6 +286,135 @@ function buildRelatedPostsScript(posts) {
   ].join("\n");
 }
 
+// ---------------------------------------------------------------------------
+// 公共片段（partials）
+// 页面里用一对注释标记位置：
+//   <!-- partial:site-header -->
+//   <!-- /partial:site-header -->
+// 构建时会把 partials/site-header.html 渲染后填到这对注释之间。
+// 片段里可用的占位符：
+//   {{root}}             到站点根目录的相对路径（根目录页面为空，posts/ 下为 "../"）
+//   {{current:xxx.html}} 当前页面是 xxx.html 时输出 aria-current="page"
+// ---------------------------------------------------------------------------
+
+const partialsDir = path.join(rootDir, "partials");
+const requiredArticlePartials = ["article-assets", "article-header"];
+
+function readPartial(name) {
+  const file = path.join(partialsDir, `${name}.html`);
+  if (!fs.existsSync(file)) {
+    throw new Error(`Partial not found: partials/${name}.html`);
+  }
+  return fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n").replace(/\n+$/, "");
+}
+
+function renderPartial(name, pageFile, indent) {
+  const relativeDir = path.relative(path.dirname(pageFile), rootDir).replace(/\\/g, "/");
+  const root = relativeDir ? `${relativeDir}/` : "";
+  const pageName = path.basename(pageFile);
+
+  return readPartial(name)
+    .replace(/\{\{root\}\}/g, root)
+    .replace(/\{\{current:([^}]+)\}\}/g, (_, target) =>
+      target.trim() === pageName ? ' aria-current="page"' : ""
+    )
+    .split("\n")
+    .map((line) => (line ? indent + line : line))
+    .join("\n");
+}
+
+function applyPartials(html, pageFile) {
+  const pattern = /^([ \t]*)<!-- partial:([a-z0-9-]+) -->\n[\s\S]*?^[ \t]*<!-- \/partial:\2 -->$/gm;
+  return html.replace(pattern, (_, indent, name) =>
+    [
+      `${indent}<!-- partial:${name} -->`,
+      renderPartial(name, pageFile, indent),
+      `${indent}<!-- /partial:${name} -->`,
+    ].join("\n")
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 静态资源版本号
+// 所有本地 .css / .js 引用（以及原本就带 ?v= 的本地资源）都会改成
+// ?v=<文件内容哈希前 8 位>。文件内容不变，版本号就不变；一改就自动刷新缓存。
+// ---------------------------------------------------------------------------
+
+const assetHashCache = new Map();
+
+function assetHash(absoluteFile) {
+  if (!assetHashCache.has(absoluteFile)) {
+    let content = fs.readFileSync(absoluteFile);
+    // 文本文件统一按 LF 计算，避免 Windows(CRLF) 和 GitHub(LF) 上算出不同的版本号。
+    if (/\.(?:css|js|svg|html|json)$/i.test(absoluteFile)) {
+      content = content.toString("utf8").replace(/\r\n/g, "\n");
+    }
+    const hash = crypto.createHash("sha256").update(content).digest("hex").slice(0, 8);
+    assetHashCache.set(absoluteFile, hash);
+  }
+  return assetHashCache.get(absoluteFile);
+}
+
+function stampAssetVersions(html, pageFile) {
+  return html.replace(/\b(src|href)="([^"#?]+)(\?v=[^"]*)?"/g, (match, attr, ref, version) => {
+    if (/^(?:[a-z]+:|\/\/|\/)/i.test(ref)) return match;
+    const isCodeAsset = /\.(?:css|js)$/i.test(ref);
+    if (!isCodeAsset && !version) return match;
+
+    const absoluteFile = path.join(path.dirname(pageFile), ref);
+    if (!fs.existsSync(absoluteFile)) {
+      if (isCodeAsset) {
+        throw new Error(`${path.relative(rootDir, pageFile)} references missing asset: ${ref}`);
+      }
+      return match;
+    }
+
+    return `${attr}="${ref}?v=${assetHash(absoluteFile)}"`;
+  });
+}
+
+function listHtmlPages() {
+  const rootPages = fs
+    .readdirSync(rootDir)
+    .filter((name) => name.endsWith(".html"))
+    .map((name) => path.join(rootDir, name));
+  const postPages = fs
+    .readdirSync(path.join(rootDir, "posts"))
+    .filter((name) => name.endsWith(".html"))
+    .map((name) => path.join(rootDir, "posts", name));
+  return [...rootPages, ...postPages].sort();
+}
+
+function buildHtmlPages() {
+  let changed = 0;
+  const pages = listHtmlPages();
+
+  pages.forEach((pageFile) => {
+    const raw = fs.readFileSync(pageFile, "utf8");
+    const usesCrlf = raw.includes("\r\n");
+    let html = raw.replace(/\r\n/g, "\n");
+
+    if (path.basename(path.dirname(pageFile)) === "posts") {
+      requiredArticlePartials.forEach((name) => {
+        if (!html.includes(`<!-- partial:${name} -->`)) {
+          throw new Error(
+            `${path.relative(rootDir, pageFile)} is missing <!-- partial:${name} --><!-- /partial:${name} --> markers.`
+          );
+        }
+      });
+    }
+
+    html = stampAssetVersions(applyPartials(html, pageFile), pageFile);
+    const output = usesCrlf ? html.replace(/\n/g, "\r\n") : html;
+    if (output !== raw) {
+      fs.writeFileSync(pageFile, output, "utf8");
+      changed += 1;
+    }
+  });
+
+  return { total: pages.length, changed };
+}
+
 function main() {
   const posts = readPostsData().map(normalizePost);
   validateUniquePostMetadata(posts);
@@ -296,6 +426,10 @@ function main() {
   fs.writeFileSync(sitemapPath, sitemap, "utf8");
   fs.writeFileSync(relatedPostsPath, buildRelatedPostsScript(posts), "utf8");
   console.log(`Generated sitemap.xml and related-posts-data.js from ${posts.length} posts.`);
+
+  // 必须放在 related-posts-data.js 写完之后，版本号才能反映最新内容。
+  const pages = buildHtmlPages();
+  console.log(`Rendered partials and asset versions for ${pages.total} pages (${pages.changed} updated).`);
 }
 
 main();
