@@ -5270,3 +5270,97 @@ html.image-viewer-open {
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   2026-10 移动端体验调整
+   --------------------------------------------------------------------------- */
+
+/* 代码块工具栏：按钮文字不换行，窄屏下隐藏装饰圆点、文件名过长时省略 */
+.code-editor-action,
+.code-editor-copy {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.code-editor-meta {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.code-editor-meta > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 560px) {
+  .code-editor-bar {
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .code-editor-dots {
+    display: none;
+  }
+
+  .code-editor-language {
+    display: none;
+  }
+
+  .code-editor-actions {
+    gap: 6px;
+  }
+
+  .code-editor-action,
+  .code-editor-copy {
+    min-height: 26px;
+    padding: 0 7px;
+  }
+}
+
+/* 单栏布局时首页先展示最新文章，个人信息和热力图放到后面 */
+@media (max-width: 1040px) {
+  .home-page .fuwari-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .home-page .content-column {
+    display: contents;
+  }
+
+  .home-page .content-column > .post-feed {
+    order: -2;
+  }
+
+  .home-page .profile-sidebar {
+    order: 1;
+  }
+
+  .home-page .content-column > #activity {
+    order: 2;
+  }
+}
+
+@media (max-width: 720px) {
+  .home-page .post-feed .section-heading {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  /* 悬浮音乐按钮在手机上更贴边、未播放时半透明，减少对正文的遮挡（保持 48px 触控尺寸） */
+  .music-dock {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  .music-dock.is-collapsed .music-collapsed-button {
+    opacity: 0.78;
+  }
+
+  .music-dock.is-collapsed .music-collapsed-button:hover,
+  .music-dock.is-collapsed .music-collapsed-button:focus-visible,
+  .music-dock.is-playing .music-collapsed-button {
+    opacity: 1;
+  }
+}
