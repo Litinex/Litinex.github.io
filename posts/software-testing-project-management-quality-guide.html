@@ -20,26 +20,42 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css?v=20261006-10">
-  <script src="../posts-data.js?v=20261012-2" defer></script>
-  <script src="../related-posts-data.js?v=20261012-2" defer></script>
-  <script src="../taxonomy.js?v=20261006-8" defer></script>
-  <script src="../article-images.js?v=20261006-7" defer></script>
-  <script src="../article-reader.js?v=20261006-4" defer></script>
-  <script src="../learning-progress.js?v=20261006-4" defer></script>
-  <script src="../article-recommendations.js?v=20261006-4" defer></script>
-  <script src="../code-blocks.js?v=20260428-3" defer></script>
-  <script src="../ambient-background.js?v=20261006-7" defer></script>
-  <script src="../music-playlist.js?v=20261006-10" defer></script>
-  <script src="../music-player.js?v=20261006-10" defer></script>
-  <script src="../views.js?v=20260427-1" defer></script>
-  <script src="../theme-toggle.js?v=20261006-3" defer></script>
-  <script src="../page-transitions.js?v=20260610-1" defer></script>
+  <!-- partial:article-assets -->
+  <link rel="stylesheet" href="../styles.css?v=6da593cb">
+  <script src="../posts-data.js?v=00bab5b6" defer></script>
+  <script src="../related-posts-data.js?v=7503a0db" defer></script>
+  <script src="../taxonomy.js?v=8a152b84" defer></script>
+  <script src="../article-images.js?v=2d5510b7" defer></script>
+  <script src="../article-reader.js?v=0fb906c3" defer></script>
+  <script src="../learning-progress.js?v=cc17f356" defer></script>
+  <script src="../article-recommendations.js?v=2b7a58a3" defer></script>
+  <script src="../code-blocks.js?v=74f8fbb6" defer></script>
+  <script src="../ambient-background.js?v=355ba8ac" defer></script>
+  <script src="../music-playlist.js?v=68a8de83" defer></script>
+  <script src="../music-player.js?v=3b103a53" defer></script>
+  <script src="../views.js?v=9ca75c39" defer></script>
+  <script src="../theme-toggle.js?v=eddeb769" defer></script>
+  <script src="../page-transitions.js?v=3fa185ee" defer></script>
+  <!-- /partial:article-assets -->
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "软件工程入门：测试怎么做、项目怎么管、质量怎么衡量", "description": "根据软考课程第18集，用奶茶店小程序讲清黑盒与白盒测试、覆盖标准、甘特图与PERT、风险管理、软件质量和McCabe环路复杂度。", "url": "https://yezizhuang.top/posts/software-testing-project-management-quality-guide.html", "datePublished": "2026-10-12", "dateModified": "2026-10-12", "inLanguage": "zh-CN", "author": {"@type": "Person", "name": "风迁夏回"}, "publisher": {"@type": "Person", "name": "风迁夏回"}, "isBasedOn": "https://www.bilibili.com/video/BV1rc411t71D/?p=18"}</script>
 </head>
 <body class="article-page knn-article-page" data-post-id="software-testing-project-management-quality-guide">
   <main class="article-shell">
-    <header class="article-toolbar"><a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页"><span class="article-site-brand-mark" aria-hidden="true"></span><span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span></a><div class="header-actions"><nav class="article-site-nav" aria-label="主导航"><a href="../index.html">主页</a><a href="../archive.html">归档</a><a href="../about.html">关于</a></nav></div></header>
+    <!-- partial:article-header -->
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
+    <!-- /partial:article-header -->
     <header class="article-header"><p class="meta">2026.10.12 · 学习札记 · 约 20 分钟</p><h1>软件工程入门：<span class="article-title-topic">测试怎么做、项目怎么管、质量怎么衡量</span></h1><p class="article-deck">用一个奶茶店小程序，把软考第18集的测试、进度、风险、质量与复杂度讲明白。</p></header>
     <article class="article-body knn-guide">
       <p class="article-lead">一个奶茶店小程序能成功下单，就算开发完成了吗？还不够。优惠券算错怎么办？支付成功却没有订单怎么办？计划两周上线，为什么拖成一个月？本篇把软件工程中的测试、项目管理、质量和度量串起来：测试负责找问题，管理负责组织交付，质量说明“好在哪里”，度量帮助我们用数字观察软件。</p>
