@@ -2,6 +2,26 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      "id": "week15-convolution-pooling-lenet-review",
+      "href": "posts/week15-convolution-pooling-lenet-review.html",
+      "title": "第十五周学习复盘：卷积、池化与LeNet",
+      "date": "2026-10-26",
+      "updated": "2026-10-26",
+      "category": "学习札记",
+      "excerpt": "学习《动手学深度学习》第6章，从零实现互相关、多通道与池化，在Fashion-MNIST上训练LeNet，并记录完整曲线和类别混淆。",
+      "tags": [
+        "Python",
+        "PyTorch",
+        "深度学习",
+        "卷积神经网络",
+        "LeNet",
+        "Fashion-MNIST",
+        "周报"
+      ],
+      "words": 3895,
+      "readTime": 12
+    },
+    {
       "id": "week14-model-parameters-device-house-validation-review",
       "href": "posts/week14-model-parameters-device-house-validation-review.html",
       "title": "第十四周学习复盘：模型构造、参数管理与验证隔离",

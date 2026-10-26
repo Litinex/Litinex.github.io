@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第十五周学习复盘：卷积、池化与LeNet | 风迁夏回</title>
+  <meta name="description" content="学习《动手学深度学习》第6章，从零实现互相关、多通道与池化，在Fashion-MNIST上训练LeNet，并记录完整曲线和类别混淆。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week15-convolution-pooling-lenet-review.html">
+  <meta property="og:title" content="第十五周学习复盘：卷积、池化与LeNet | 风迁夏回">
+  <meta property="og:description" content="学习《动手学深度学习》第6章，从零实现互相关、多通道与池化，在Fashion-MNIST上训练LeNet，并记录完整曲线和类别混淆。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week15-convolution-pooling-lenet-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/pytorch-week15-lenet-curves.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <!-- partial:article-assets -->
+  <link rel="stylesheet" href="../styles.css?v=6600b12e">
+  <script src="../posts-data.js?v=3c97cf01" defer></script>
+  <script src="../related-posts-data.js?v=c4d72a6b" defer></script>
+  <script src="../taxonomy.js?v=8a152b84" defer></script>
+  <script src="../article-images.js?v=2d5510b7" defer></script>
+  <script src="../article-reader.js?v=0fb906c3" defer></script>
+  <script src="../learning-progress.js?v=cc17f356" defer></script>
+  <script src="../article-recommendations.js?v=2b7a58a3" defer></script>
+  <script src="../code-blocks.js?v=74f8fbb6" defer></script>
+  <script src="../ambient-background.js?v=355ba8ac" defer></script>
+  <script src="../music-playlist.js?v=68a8de83" defer></script>
+  <script src="../music-player.js?v=3b103a53" defer></script>
+  <script src="../views.js?v=9ca75c39" defer></script>
+  <script src="../theme-toggle.js?v=eddeb769" defer></script>
+  <script src="../page-transitions.js?v=3fa185ee" defer></script>
+  <!-- /partial:article-assets -->
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十五周学习复盘：卷积、池化与LeNet","description":"学习《动手学深度学习》第6章，从零实现互相关、多通道与池化，在Fashion-MNIST上训练LeNet，并记录完整曲线和类别混淆。","image":"https://yezizhuang.top/assets/pytorch-week15-lenet-curves.png","url":"https://yezizhuang.top/posts/week15-convolution-pooling-lenet-review.html","datePublished":"2026-10-26","dateModified":"2026-10-26","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week15-convolution-pooling-lenet-review">
+  <main class="article-shell">
+    <!-- partial:article-header -->
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
+    <!-- /partial:article-header -->
+    <header class="article-header">
+      <p class="meta">2026.10.26 · 学习札记 · 约 12 分钟</p>
+      <h1>第十五周学习复盘：<span class="article-title-topic">卷积、池化与LeNet</span></h1>
+      <p class="article-deck">从一个检测边缘的小卷积核出发，把空间尺寸、通道和池化串成一条完整的图像分类流程。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">上周整理了模型构造、参数管理和设备迁移，本周开始《动手学深度学习》第6章。先从一个小矩阵的互相关和边缘检测出发，理解填充、步幅、多通道与池化，再把这些组件放进LeNet，在Fashion-MNIST上完成一次10轮训练。</p>
+      <aside class="knn-note"><strong>本周实际结果：</strong>8个独立示例运行成功，9项自动测试通过。教材版本LeNet有61706个可训练参数，在RTX 4060上训练10轮，最终训练准确率82.62%，测试准确率80.00%；训练曲线和混淆矩阵均来自本次运行。</aside>
+      <div class="knn-at-a-glance" aria-label="本文内容"><p class="knn-eyebrow">这篇复盘主要记录</p>
+        <ul><li>卷积为什么适合处理图像，以及互相关怎样检测边缘</li><li>填充、步幅、输入输出通道怎样决定张量形状</li><li>池化和1×1卷积分别做什么</li><li>LeNet逐层结构、实际训练曲线和类别混淆</li></ul>
+      </div>
+
+      <h2>一、为什么不直接把图片全部展平</h2>
+      <p>前面的多层感知机把28×28图片变成784维向量。这样仍然可以分类，但模型需要自己学到相邻像素之间的关系，而且每个位置都使用独立权重。卷积则通过局部连接，让一个小窗口先观察相邻区域，再让同一组权重滑过不同位置。</p>
+      <p><strong>局部连接</strong>限制每次观察的范围，<strong>权重共享</strong>让同一种局部模式可以在不同位置被识别。无偏置、单输入输出通道的3×3卷积只有9个权重，并不随图片面积增加而增加。</p>
+      <p>平移等变可以理解为输入中的模式移动时，特征响应也跟着移动；这不等于模型对所有平移都完全不变。边界填充、步幅、池化以及最后的分类层都会影响实际表现。</p>
+
+      <h2>二、先手算一次二维互相关</h2>
+      <p>深度学习框架里名为卷积的运算，通常实际计算的是互相关：核不翻转，直接在窗口里逐元素相乘再求和。数学卷积会先翻转核；对可学习的核来说，这不妨碍学习相应模式。</p>
+      <pre data-code-id="week15-corr2d-example"><code class="language-python">X = torch.tensor([[0., 1., 2.],
+                  [3., 4., 5.],
+                  [6., 7., 8.]])
+K = torch.tensor([[0., 1.], [2., 3.]])
+corr2d(X, K)
+# tensor([[19., 25.],
+#         [37., 43.]])</code></pre>
+      <p>左上角的19来自0×0＋1×1＋3×2＋4×3。窗口向右移动一格，就得到25。从零实现先计算每个窗口，再把标量结果堆叠起来；测试既对照了PyTorch输出，也对照了输入和核的梯度。</p>
+
+      <h2>三、用相邻像素差检测竖直边缘</h2>
+      <p>书中的示例把6×8图片中间几列置为0，两边保持1。核[1,−1]计算左像素减右像素：亮到暗的边界得到正响应，暗到亮的边界得到负响应，平坦区域响应为0。</p>
+      <figure class="knn-figure knn-figure-wide"><picture>
+          <source type="image/webp" srcset="../assets/pytorch-week15-edge-800.webp 800w, ../assets/pytorch-week15-edge.webp 1530w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/pytorch-week15-edge.png" alt="亮暗条带图片及互相关核1减1得到的正负边缘响应" width="1530" height="595" loading="lazy" decoding="async">
+        </picture>
+        <figcaption>图1：从零互相关得到的边缘响应。左右两条边界分别为+1和−1；该核检测水平方向的变化，对应竖直边缘。</figcaption>
+      </figure>
+      <p>把图片转置后，同一个核沿水平方向看到的值不再变化，本例输出全0。这说明核有方向性，并不是看到任何边缘都会响应。</p>
+      <p>下一步不直接指定[1,−1]，而是用Conv2d和目标边缘响应学习它。学习率0.03，训练10步，本次核变成[1.0487, -0.9277]；平方误差和从31.6313降到更新后的0.2215。它已接近目标，但没有精确等于目标核。</p>
+
+      <h2>四、填充与步幅决定输出尺寸</h2>
+      <p>不填充且每次移动一格时，高和宽都会因卷积核而缩小。填充在边缘补值；步幅决定每次移动多少格。以下公式假设dilation为1：</p>
+      <p class="knn-formula">输出尺寸 = floor((输入尺寸 + 2 × 每侧填充 − 核尺寸) / 步幅) + 1</p>
+      <div class="knn-table-wrap" role="region" aria-label="8乘8输入的卷积输出尺寸" tabindex="0"><table class="knn-table">
+        <thead><tr><th>核尺寸</th><th>每侧填充</th><th>步幅</th><th>输出高宽</th></tr></thead>
+        <tbody><tr><td>3×3</td><td>1×1</td><td>1×1</td><td>8×8</td></tr>
+        <tr><td>5×3</td><td>2×1</td><td>1×1</td><td>8×8</td></tr>
+        <tr><td>3×3</td><td>1×1</td><td>2×2</td><td>4×4</td></tr>
+        <tr><td>3×5</td><td>0×1</td><td>3×4</td><td>2×2</td></tr></tbody></table></div>
+      <p>表中的每一组都实际执行并核对了形状。PyTorch的padding=(1,1)表示高方向上下各补1、宽方向左右各补1，容易与教材公式里的总填充量混淆。</p>
+
+      <h2>五、输入通道求和 输出通道堆叠</h2>
+      <p>图像和特征图通常不止一个通道。一个输出通道需要分别处理所有输入通道，再把结果相加；需要多个输出通道时，就准备多组这样的核。</p>
+      <p class="knn-formula">卷积核形状 = 输出通道数 × 输入通道数 × 核高 × 核宽</p>
+      <pre data-code-id="week15-channel-shapes"><code class="language-python"># 一张图片，3个输入通道
+X.shape  # (1, 3, 5, 6)
+# 两个输出通道，每个都观察全部3个输入通道
+K.shape  # (2, 3, 2, 3)
+F.conv2d(X, K).shape  # (1, 2, 4, 4)</code></pre>
+      <p>本周从零实现了输入通道求和与输出通道堆叠，并与Conv2d对照。输入通道不匹配时明确报错，避免直接zip遍历时悄悄漏算通道。</p>
+
+      <h2>六、1×1卷积不是没有作用</h2>
+      <p>1×1核在空间上只看一个位置，但可以观察该位置的所有输入通道，并组合成新的输出通道。步幅为1且不填充时，它保持高宽不变，改变的是通道表示。</p>
+      <pre data-code-id="week15-one-by-one"><code class="language-python"># X: (输入通道, 高, 宽)，K: (输出通道, 输入通道, 1, 1)
+features = X.reshape(in_channels, height * width)
+weights = K.reshape(out_channels, in_channels)
+Y = (weights @ features).reshape(out_channels, height, width)</code></pre>
+      <p>这相当于在每个位置应用同一组跨通道线性变换，并不将整张图片展平后一次性连接所有空间位置。本次矩阵写法与直接互相关的结果在测试容差内一致。</p>
+
+      <h2>七、池化怎样缩小特征图</h2>
+      <p>最大池化取窗口内最大值，平均池化取均值。它们没有可学习权重，逐通道执行，通常用步幅降低空间尺寸。本周无填充、步幅1的从零实现，对输入0至8组成的3×3矩阵得到：</p>
+      <pre data-code-id="week15-pooling-example"><code class="language-code">2×2最大池化：[[4, 5], [7, 8]]
+2×2平均池化：[[2, 3], [5, 6]]</code></pre>
+      <p>这里特意使用步幅1与教材从零函数保持一致。PyTorch池化层默认步幅通常等于核尺寸；如果没有明确设置，拿两种实现直接比较就可能出现形状差异。测试还覆盖了负数输入和非正方形窗口。</p>
+      <p>池化可以减弱某些局部位置变化的影响，但不能保证整个模型对任何平移都不敏感。LeNet里使用的是平均池化，本次保持教材设置。</p>
+
+      <h2>八、LeNet从图片到十个类别</h2>
+      <p>本周复现的是教材适配Fashion-MNIST的LeNet版本：28×28单通道输入，两层卷积配合sigmoid与平均池化，接三层全连接。它不等同于历史原版LeNet的全部实现细节。</p>
+      <div class="knn-table-wrap" role="region" aria-label="LeNet逐层输出形状" tabindex="0"><table class="knn-table"><thead><tr><th>层</th><th>输出形状 批量为1</th></tr></thead><tbody><tr><td>输入</td><td>1 × 1 × 28 × 28</td></tr>
+<tr><td>Conv2d</td><td>1 × 6 × 28 × 28</td></tr>
+<tr><td>Sigmoid</td><td>1 × 6 × 28 × 28</td></tr>
+<tr><td>AvgPool2d</td><td>1 × 6 × 14 × 14</td></tr>
+<tr><td>Conv2d</td><td>1 × 16 × 10 × 10</td></tr>
+<tr><td>Sigmoid</td><td>1 × 16 × 10 × 10</td></tr>
+<tr><td>AvgPool2d</td><td>1 × 16 × 5 × 5</td></tr>
+<tr><td>Flatten</td><td>1 × 400</td></tr>
+<tr><td>Linear</td><td>1 × 120</td></tr>
+<tr><td>Sigmoid</td><td>1 × 120</td></tr>
+<tr><td>Linear</td><td>1 × 84</td></tr>
+<tr><td>Sigmoid</td><td>1 × 84</td></tr>
+<tr><td>Linear</td><td>1 × 10</td></tr></tbody></table></div>
+      <p>模型总共61706个可训练参数。最后输出的是10个类别分数，直接传给CrossEntropyLoss；训练时不用先做softmax。逐层打印形状，能解释为什么第一层全连接的输入是16×5×5=400。</p>
+
+      <h2>九、10轮实际训练记录</h2>
+      <p>数据使用原有Fashion-MNIST缓存，训练60000张、测试10000张。固定随机种子42，卷积和全连接权重使用Xavier均匀初始化，偏置保留PyTorch默认值；SGD学习率0.9，批量256，训练10轮，设备为RTX 4060 Laptop GPU。</p>
+      <figure class="knn-figure knn-figure-wide"><picture>
+          <source type="image/webp" srcset="../assets/pytorch-week15-lenet-curves-800.webp 800w, ../assets/pytorch-week15-lenet-curves.webp 1870w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/pytorch-week15-lenet-curves.png" alt="LeNet十轮训练交叉熵及训练测试准确率曲线，最后一轮测试准确率80%" width="1870" height="765" loading="lazy" decoding="async">
+        </picture>
+        <figcaption>图2：本次LeNet的训练交叉熵及训练、测试准确率。由实际逐轮JSON记录绘制，没有手工填写曲线数据。</figcaption>
+      </figure>
+      <div class="knn-table-wrap" role="region" aria-label="LeNet逐轮实际训练结果" tabindex="0"><table class="knn-table"><thead><tr><th>轮次</th><th>训练交叉熵</th><th>训练准确率</th><th>测试准确率</th></tr></thead><tbody><tr><td>1</td><td>2.3193</td><td>10.17%</td><td>10.00%</td></tr>
+<tr><td>2</td><td>1.8923</td><td>26.87%</td><td>49.23%</td></tr>
+<tr><td>3</td><td>0.9360</td><td>62.35%</td><td>66.35%</td></tr>
+<tr><td>4</td><td>0.7345</td><td>71.09%</td><td>71.75%</td></tr>
+<tr><td>5</td><td>0.6501</td><td>74.71%</td><td>74.91%</td></tr>
+<tr><td>6</td><td>0.5953</td><td>77.02%</td><td>77.32%</td></tr>
+<tr><td>7</td><td>0.5475</td><td>79.08%</td><td>75.03%</td></tr>
+<tr><td>8</td><td>0.5144</td><td>80.47%</td><td>80.04%</td></tr>
+<tr><td>9</td><td>0.4858</td><td>81.66%</td><td>81.83%</td></tr>
+<tr><td>10</td><td>0.4658</td><td>82.62%</td><td>80.00%</td></tr></tbody></table></div>
+      <p>第一轮测试准确率只有10%，第二轮升到49.23%，说明开始阶段还没有学好。最终训练交叉熵为0.4658，训练准确率82.62%，测试准确率80.00%。这里记录的是预先设定的第10轮结果，没有用测试集选最佳轮次。</p>
+      <p>早期学习慢可以作为后续研究初始化、激活函数和学习率的线索，但当前没有对照实验，不能单独断言某一因素就是原因。上周MLP训练结果来自不同结构和运行条件，也不能凭一次数字比较证明LeNet普遍更好。</p>
+
+      <h2>十、混淆矩阵里哪些类别更难</h2>
+      <figure class="knn-figure knn-figure-wide"><picture>
+          <source type="image/webp" srcset="../assets/pytorch-week15-lenet-confusion-800.webp 800w, ../assets/pytorch-week15-lenet-confusion.webp 1440w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)">
+          <img src="../assets/pytorch-week15-lenet-confusion.png" alt="LeNet最终测试混淆矩阵，行是真实类别列是预测类别" width="1440" height="1280" loading="lazy" decoding="async">
+        </picture>
+        <figcaption>图3：最终一轮测试混淆矩阵。行是真实类别，列是预测类别；对角线为预测正确的样本，每行有1000张测试图片。</figcaption>
+      </figure>
+      <p>本次召回率较低的是套头衫（43.6%）和外套（57.8%）。最大的单向类别混淆是套头衫被预测成衬衫，共442张。裤子、凉鞋、包和短靴的召回率均超过93%。</p>
+      <p>类别召回率表示某个真实类别被正确识别的比例，不是“预测成这个类别的图片有多准”。目前只做了类别层面的统计，没有逐张审查错误图片；对具体错因的判断还需要回到样本。</p>
+
+      <h2>十一、本周验证与下周安排</h2>
+      <p>9项自动测试检查了互相关数值与梯度、边缘符号、多通道、1×1卷积、池化、无效输入、自定义层参数更新、LeNet训练步骤和混淆矩阵计数。模型训练后保存state_dict，重新构建同结构模型并加载，对8张测试图片的恢复预测逐位一致。</p>
+      <p>代码继续按01至08拆成独立示例，数据加载复用第十二周函数；Windows使用num_workers=0。教材的d2l训练与绘图工具改成普通PyTorch和Matplotlib，参数更新使用优化器，原有学习目标和LeNet结构保持一致。</p>
+      <p>本次是一组固定超参数下的单次训练，测试集每轮用于记录表现，没有独立验证集、重复种子或系统调参。下周开始第7章现代卷积网络，先看AlexNet与VGG，再练习NiN和GoogLeNet里的1×1卷积与多分支结构；同时继续复习卷积尺寸、感受野和错误样本分析。</p>
+      <p class="knn-summary-words"><span>局部连接</span><span>权重共享</span><span>多通道</span><span>池化</span><span>LeNet</span></p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week14-model-parameters-device-house-validation-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：模型构造、参数管理与验证隔离</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>
