@@ -2,6 +2,10 @@
 
 Usage: python scripts/import-netease-playlist.py 2427750321
 Re-run after changing the source playlist, then publish the updated snapshot.
+
+Only songs that can be played through NetEase's public outer link are kept:
+VIP-only (fee=1), paid-album (fee=4) and no-copyright songs are skipped,
+because the blog player cannot play them for visitors anyway.
 """
 import argparse
 import json
@@ -32,6 +36,17 @@ def fetch_songs(song_ids):
     return result["songs"]
 
 
+PLAYABLE_FEES = {0, 8}
+
+
+def is_playable(song):
+    return (
+        song.get("fee") in PLAYABLE_FEES
+        and not song.get("noCopyrightRcmd")
+        and song.get("status", 0) >= 0
+    )
+
+
 def import_playlist(playlist_id):
     result = fetch_json("/api/v6/playlist/detail", {"id": playlist_id, "n": 1000})
     playlist = result["playlist"]
@@ -44,6 +59,10 @@ def import_playlist(playlist_id):
     missing = [song_id for song_id in song_ids if song_id not in songs]
     if missing:
         raise RuntimeError(f"Missing song details for {missing}; existing snapshot was not changed.")
+    playable_ids = [song_id for song_id in song_ids if is_playable(songs[song_id])]
+    if not playable_ids:
+        raise RuntimeError("No playable songs found; existing snapshot was not changed.")
+    print(f"Skipped {len(song_ids) - len(playable_ids)} VIP / paid / unavailable songs.")
     return {
         "id": playlist_id,
         "name": playlist["name"],
@@ -55,7 +74,7 @@ def import_playlist(playlist_id):
                 "artist": " / ".join(artist["name"] for artist in songs[song_id]["artists"]),
                 "cover": songs[song_id]["album"]["picUrl"],
             }
-            for song_id in song_ids
+            for song_id in playable_ids
         ],
     }
 

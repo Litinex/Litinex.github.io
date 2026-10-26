@@ -71,7 +71,7 @@ async function checkPlayer(page, origin, width) {
   const listToggle = page.locator(".music-list-toggle");
   await listToggle.click();
   const tracks = page.locator(".music-track");
-  assert.equal(await tracks.count(), 362);
+  assert.equal(await tracks.count(), await page.evaluate(() => window.BLOG_MUSIC_PLAYLIST.tracks.length));
   assert.equal(await page.locator(".music-playlist-source").getAttribute("href"), "https://music.163.com/playlist?id=2427750321");
   const lastTrack = tracks.last();
   const lastTitle = await lastTrack.locator(".music-track-title").innerText();
