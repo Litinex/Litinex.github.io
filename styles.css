@@ -3659,43 +3659,45 @@ html[data-theme="light"] .site-nav a[aria-current="page"] {
   background: color-mix(in srgb, var(--primary) 12%, transparent);
 }
 
-.theme-toggle {
-  width: 48px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--primary) 10%, transparent);
-}
+@media (max-width: 720px) {
+  .theme-toggle {
+    width: 48px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--primary) 10%, transparent);
+  }
 
-.theme-toggle-track {
-  width: 40px;
-  height: 24px;
-  border-color: var(--line-strong);
-}
+  .theme-toggle-track {
+    width: 40px;
+    height: 24px;
+    border-color: var(--line-strong);
+  }
 
-.theme-toggle-thumb {
-  width: 18px;
-  height: 18px;
-}
+  .theme-toggle-thumb {
+    width: 18px;
+    height: 18px;
+  }
 
-.theme-toggle-glyph {
-  width: 13px;
-  height: 13px;
-  background: radial-gradient(circle at 50% 50%, #111820 0 3px, transparent 3.4px);
-}
+  .theme-toggle-glyph {
+    width: 15px;
+    height: 15px;
+    background: radial-gradient(circle at 50% 50%, #111820 0 3.4px, transparent 3.8px);
+  }
 
-html[data-theme="dark"] .theme-toggle-thumb {
-  transform: translateX(16px);
-}
+  html[data-theme="dark"] .theme-toggle-thumb {
+    transform: translateX(16px);
+  }
 
-html[data-theme="dark"] .theme-toggle-glyph {
-  width: 13px;
-  height: 13px;
-  transform: translateX(3px);
-}
+  html[data-theme="dark"] .theme-toggle-glyph {
+    width: 15px;
+    height: 15px;
+    transform: translateX(3px);
+  }
 
-html[data-theme="dark"] .theme-toggle-glyph::before {
-  left: 4px;
-  width: 12px;
+  html[data-theme="dark"] .theme-toggle-glyph::before {
+    left: 8px;
+    width: 12px;
+  }
 }
 
 .site-banner {

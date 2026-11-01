@@ -99,7 +99,7 @@
     if (!label) return null;
     const link = document.createElement("a");
     link.className = "tag-chip";
-    link.href = `${hrefPrefix}${archiveHref}?q=${tagToQuery(label)}`;
+    link.href = `${hrefPrefix}${archiveHref}?tag=${tagToQuery(label)}`;
     link.textContent = label;
     link.setAttribute("data-tag", label);
     return link;

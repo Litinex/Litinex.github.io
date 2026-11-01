@@ -415,10 +415,103 @@ function buildHtmlPages() {
   return { total: pages.length, changed };
 }
 
+// ---------------------------------------------------------------------------
+// 内容一致性体检
+// posts-data.js 是站点唯一数据源，文章正文里手写的 <title>/<meta name="description">
+// 一旦和数据源分叉，列表、搜索、站点地图和 SEO 元信息就会互相打架。
+// 这里只打印报告，不阻断构建——摘要属于人工重写，天然不会逐字相同。
+// ---------------------------------------------------------------------------
+
+function normalizeText(text) {
+  return String(text || "")
+    .replace(/\s*[|｜]\s*风迁夏回\s*$/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function auditContentConsistency(posts) {
+  const postsDir = path.join(rootDir, "posts");
+  const registered = new Set(posts.map((post) => post.href));
+  const unregistered = fs
+    .readdirSync(postsDir)
+    .filter((name) => name.endsWith(".html"))
+    .map((name) => `posts/${name}`)
+    .filter((href) => !registered.has(href));
+
+  const titleDrift = [];
+  const headingDrift = [];
+  const descNotes = [];
+  const lazyMissing = [];
+
+  posts.forEach((post) => {
+    const html = fs.readFileSync(path.join(rootDir, post.href), "utf8");
+    const expected = normalizeText(post.title);
+    const title = normalizeText((html.match(/<title>([\s\S]*?)<\/title>/i) || [])[1]);
+    const heading = normalizeText(
+      ((html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1] || "").replace(/<[^>]+>/g, "")
+    );
+    const description = normalizeText((html.match(/<meta\s+name="description"\s+content="([^"]*)"/i) || [])[1]);
+
+    if (title !== expected) titleDrift.push(`${post.href}: <title>=${title} ≠ ${post.title}`);
+    if (heading && heading !== expected) headingDrift.push(`${post.href}: <h1>=${heading} ≠ ${post.title}`);
+    if (description !== normalizeText(post.excerpt)) {
+      descNotes.push(`${post.href}: <meta description> 与 posts-data.js 的 excerpt 不是同一句`);
+    }
+
+    const heavyImages = [...html.matchAll(/<img\b[^>]*>/g)].filter(
+      (match) => /assets\//.test(match[0]) && !/loading="lazy"/.test(match[0])
+    );
+    if (heavyImages.length > 0) {
+      lazyMissing.push(`${post.href}: ${heavyImages.length} 张内容图缺少 loading="lazy"`);
+    }
+  });
+
+  // 首页侧栏的统计数字是手写的，分类数或起始年份一变就会悄悄过期。
+  const statDrift = [];
+  const homeHtml = fs.readFileSync(path.join(rootDir, "index.html"), "utf8");
+  const categoryCount = new Set(posts.map((post) => post.category).filter(Boolean)).size;
+  const startYear = Math.min(
+    ...posts.map((post) => Number.parseInt(String(post.date || "").slice(0, 4), 10)).filter((year) => year > 0)
+  );
+  const homeCategoryCount = (homeHtml.match(/<strong>(\d+)<\/strong>\s*<small>分类<\/small>/) || [])[1];
+  const homeStartYear = (homeHtml.match(/<strong>(\d{4})<\/strong>\s*<small>开始<\/small>/) || [])[1];
+  if (homeCategoryCount && Number(homeCategoryCount) !== categoryCount) {
+    statDrift.push(`index.html: 侧栏写着 ${homeCategoryCount} 个分类，posts-data.js 里实际是 ${categoryCount} 个`);
+  }
+  if (homeStartYear && Number(homeStartYear) !== startYear) {
+    statDrift.push(`index.html: 侧栏起始年份写着 ${homeStartYear}，最早文章是 ${startYear} 年`);
+  }
+
+  // 统一用 console.log：PowerShell 会把 console.warn 当成错误记录，弄脏退出码。
+  const describe = (label, list, limit = 5) => {
+    if (list.length === 0) return;
+    console.log(`  - ${label} ${list.length} 处`);
+    list.slice(0, limit).forEach((line) => console.log(`      ${line}`));
+    if (list.length > limit) console.log(`      …另有 ${list.length - limit} 处`);
+  };
+
+  const issues = unregistered.length + titleDrift.length + headingDrift.length + lazyMissing.length + statDrift.length;
+  if (issues === 0) {
+    console.log(`Content audit: ${posts.length} posts consistent with posts-data.js.`);
+  } else {
+    console.log(`Content audit: ${issues} issue(s) found (warnings only, build continues).`);
+    describe("文章文件未登记进 posts-data.js", unregistered);
+    describe("<title> 与数据源标题不一致", titleDrift);
+    describe("<h1> 与数据源标题不一致", headingDrift);
+    describe('内容图缺少 loading="lazy"', lazyMissing);
+    describe("首页侧栏统计数字与实际数据不符", statDrift);
+  }
+
+  if (descNotes.length > 0) {
+    console.log(`  - 摘要差异 ${descNotes.length} 篇（<meta description> 为人工重写，属正常）`);
+  }
+}
+
 function main() {
   const posts = readPostsData().map(normalizePost);
   validateUniquePostMetadata(posts);
   validateArticleMarkup(posts);
+  auditContentConsistency(posts);
   const sitemap = buildSitemap(posts);
   const sitemapPath = path.join(rootDir, "sitemap.xml");
   const relatedPostsPath = path.join(rootDir, "related-posts-data.js");

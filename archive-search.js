@@ -115,6 +115,7 @@
 
       item.dataset.postHref = href;
       item.dataset.category = categoryText;
+      item.dataset.tags = JSON.stringify(tags);
       item.dataset.searchText = [
         titleText,
         normalizeDate(post.date),
@@ -189,7 +190,22 @@
   let currentTokens = [];
   let currentQuery = "";
   let currentCategory = "";
+  let currentTag = "";
   const categories = [...new Set(items.map((item) => safeText(item.dataset.category)).filter(Boolean))];
+  const itemTagLists = items.map((item) => {
+    try {
+      const parsed = JSON.parse(item.dataset.tags || "[]");
+      return Array.isArray(parsed) ? parsed.map((tag) => safeText(tag)).filter(Boolean) : [];
+    } catch (error) {
+      return [];
+    }
+  });
+  const itemTagKeys = itemTagLists.map((tags) => tags.map((tag) => tag.toLowerCase()));
+  const canonicalTags = new Map();
+  itemTagLists.flat().forEach((tag) => {
+    const key = tag.toLowerCase();
+    if (!canonicalTags.has(key)) canonicalTags.set(key, tag);
+  });
   const highlightFields = items.flatMap((item) => Array.from(
     item.querySelectorAll(".post-card-title, .post-card-excerpt, .post-meta-item > span:last-child, .post-tags .tag-chip"),
     (element) => ({ element, text: element.textContent })
@@ -238,6 +254,7 @@
       button.setAttribute("aria-pressed", String(category === currentCategory));
       button.addEventListener("click", () => {
         currentCategory = category;
+        currentTag = "";
         applyFilter(searchInput.value, { resetPage: true });
       });
       categoryFilters.appendChild(button);
@@ -265,6 +282,12 @@
         url.searchParams.set("category", currentCategory);
       } else {
         url.searchParams.delete("category");
+      }
+
+      if (currentTag) {
+        url.searchParams.set("tag", currentTag);
+      } else {
+        url.searchParams.delete("tag");
       }
 
       const normalizedPage = Number.isFinite(page) ? Math.max(1, Math.trunc(page)) : 1;
@@ -418,7 +441,11 @@
     }
 
     if (countElement) {
-      const filters = [currentCategory, currentQuery ? `搜索“${currentQuery}”` : ""].filter(Boolean);
+      const filters = [
+        currentCategory,
+        currentTag ? `标签“${currentTag}”` : "",
+        currentQuery ? `搜索“${currentQuery}”` : "",
+      ].filter(Boolean);
       let text = filters.length ? `${filters.join("，")}：找到 ${matchedCount} 篇文章` : `共 ${total} 篇文章`;
       if (totalPages > 1) {
         text = `${text} · 第 ${currentPage} / ${totalPages} 页`;
@@ -453,7 +480,8 @@
     items.forEach((item, index) => {
       const text = itemTexts[index] || "";
       const matchesCategory = !currentCategory || item.dataset.category === currentCategory;
-      const matched = matchesCategory && tokens.every((token) => text.includes(token));
+      const matchesTag = !currentTag || itemTagKeys[index].includes(currentTag.toLowerCase());
+      const matched = matchesCategory && matchesTag && tokens.every((token) => text.includes(token));
       matchedFlags[index] = matched;
       if (matched) {
         matchedCount += 1;
@@ -502,6 +530,7 @@
 
   resetButton?.addEventListener("click", () => {
     currentCategory = "";
+    currentTag = "";
     searchInput.value = "";
     applyFilter("", { resetPage: true });
     setFocus(searchInput);
@@ -524,6 +553,7 @@
     if (!tag) return;
 
     event.preventDefault();
+    currentTag = "";
     searchInput.value = tag;
     applyFilter(tag, { resetPage: true });
     setFocus(searchInput);
@@ -563,6 +593,11 @@
     const params = new URLSearchParams(window.location.search);
     const initialCategory = safeText(params.get("category"));
     if (categories.includes(initialCategory)) currentCategory = initialCategory;
+    const initialTag = safeText(params.get("tag"));
+    if (initialTag) {
+      const canonical = canonicalTags.get(initialTag.toLowerCase());
+      if (canonical) currentTag = canonical;
+    }
     const initialPage = Number.parseInt(params.get("p") || "", 10);
     if (Number.isFinite(initialPage) && initialPage > 1) {
       currentPage = initialPage;
