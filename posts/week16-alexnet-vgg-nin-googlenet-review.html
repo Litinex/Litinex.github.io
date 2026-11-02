@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第十六周学习复盘：AlexNet、VGG、NiN与GoogLeNet | 风迁夏回</title>
+  <meta name="description" content="学习现代卷积网络的可复用模块，核对AlexNet、VGG、NiN与Inception结构，并记录96×96教学变体的独立验证和最终测试结果。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week16-alexnet-vgg-nin-googlenet-review.html">
+  <meta property="og:title" content="第十六周学习复盘：AlexNet、VGG、NiN与GoogLeNet | 风迁夏回">
+  <meta property="og:description" content="学习现代卷积网络的可复用模块，核对AlexNet、VGG、NiN与Inception结构，并记录96×96教学变体的独立验证和最终测试结果。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week16-alexnet-vgg-nin-googlenet-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/pytorch-week16-alexnet-curves.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <!-- partial:article-assets -->
+  <link rel="stylesheet" href="../styles.css?v=0fc4ce03">
+  <script src="../posts-data.js?v=28ad5ad5" defer></script>
+  <script src="../related-posts-data.js?v=8cb175d7" defer></script>
+  <script src="../taxonomy.js?v=f6a8eb98" defer></script>
+  <script src="../article-images.js?v=2d5510b7" defer></script>
+  <script src="../article-reader.js?v=0fb906c3" defer></script>
+  <script src="../learning-progress.js?v=cc17f356" defer></script>
+  <script src="../article-recommendations.js?v=2b7a58a3" defer></script>
+  <script src="../code-blocks.js?v=74f8fbb6" defer></script>
+  <script src="../ambient-background.js?v=355ba8ac" defer></script>
+  <script src="../music-playlist.js?v=dd8fb6e2" defer></script>
+  <script src="../music-player.js?v=3bd0e03f" defer></script>
+  <script src="../views.js?v=9ca75c39" defer></script>
+  <script src="../theme-toggle.js?v=eddeb769" defer></script>
+  <script src="../page-transitions.js?v=3fa185ee" defer></script>
+  <!-- /partial:article-assets -->
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十六周学习复盘：AlexNet、VGG、NiN与GoogLeNet","description":"学习现代卷积网络的可复用模块，核对AlexNet、VGG、NiN与Inception结构，并记录96×96教学变体的独立验证和最终测试结果。","image":"https://yezizhuang.top/assets/pytorch-week16-alexnet-curves.png","url":"https://yezizhuang.top/posts/week16-alexnet-vgg-nin-googlenet-review.html","datePublished":"2026-11-02","dateModified":"2026-11-02","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week16-alexnet-vgg-nin-googlenet-review">
+  <main class="article-shell">
+    <!-- partial:article-header -->
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
+    <!-- /partial:article-header -->
+    <header class="article-header">
+      <p class="meta">2026.11.02 · 学习札记 · 约 12 分钟</p>
+      <h1>第十六周学习复盘：<span class="article-title-topic">AlexNet、VGG、NiN与GoogLeNet</span></h1>
+      <p class="article-deck">从加深卷积到复用模块，理解1×1卷积、多尺度分支和一次带独立验证的教学实验。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">上周从二维互相关、池化走到LeNet，本周继续学习《动手学深度学习》第7章7.1—7.4。问题从“卷积怎样计算”变成了“怎样把卷积组织成更深的网络”：AlexNet加深特征提取，VGG重复相同的块，NiN在每个像素位置混合通道，GoogLeNet则把不同尺度的分支组合起来。</p>
+      <p><b>本周实际完成：</b>8个编号示例运行成功，6项自动测试通过。四种网络完成结构与组件验证，其中AlexNet的96×96教学变体用12,000张图片训练5轮，最终验证准确率85.75%，官方测试集准确率86.09%。本周只对这一模型进行数据训练，其他三种结构尚未做相同预算的性能实验。</p>
+      <div class="knn-at-a-glance" aria-label="本文内容"><p class="knn-eyebrow">这篇复盘主要记录</p><ul><li>AlexNet与VGG怎样加深卷积网络</li><li>NiN的1×1卷积和全局平均池化</li><li>Inception如何降维并拼接多尺度分支</li><li>小规模训练、独立验证与最终测试的实际结果</li></ul></div>
+
+      <h2>一、AlexNet从LeNet继续向深处走</h2>
+      <p>AlexNet延续“卷积提取特征，再用分类头输出类别”的思路，但使用五层卷积、更多通道和更宽的全连接层。ReLU用分段线性激活替代LeNet示例中的sigmoid；Dropout放在全连接部分，在训练时随机屏蔽部分激活，减轻共同适应。Dropout在评估模式下关闭，所以训练与验证必须分别调用train()和eval()。</p>
+      <p>本周没有训练ImageNet，也没有直接使用教材224×224的训练设置。为了运行紧凑的教学实验，输入统一调整到96×96，AlexNet首层采用11×11核、步幅4且不填充。它经过卷积和池化后变成256×1×1，因此第一层线性映射应为256→4096。教材224×224、首层padding=1的示例则是6400→4096。输入分辨率变了，不能只修改读图尺寸。</p>
+      <pre data-code-id="week16-alexnet-head"><code class="language-python"># 本周96×96输入，末端特征为(batch, 256, 1, 1)
+nn.Flatten()
+nn.Linear(256, 4096)
+nn.ReLU()
+nn.Dropout(0.5)
+nn.Linear(4096, 4096)
+nn.ReLU()
+nn.Dropout(0.5)
+nn.Linear(4096, 10)</code></pre>
+      <p>模型仍保留五层卷积和两个4096宽度的隐藏层，但分类头输入维度发生变化。参数量统计和后面的实验结果，均对应这个明确的教学变体。</p>
+
+      <h2>二、VGG把重复的卷积组织成块</h2>
+      <p>VGG的重要思路是把“若干个3×3卷积与ReLU，再接一次最大池化”封装成一个块。每次卷积用padding=1保持空间尺寸，块末端的2×2、步幅2池化再把宽高减半。网络的深度和通道数通过配置表描述，结构更容易复用和核对。</p>
+      <pre data-code-id="week16-vgg-block"><code class="language-python">def vgg_block(num_convs, in_channels, out_channels):
+    layers = []
+    for _ in range(num_convs):
+        layers.extend([
+            nn.Conv2d(in_channels, out_channels, 3, padding=1),
+            nn.ReLU(),
+        ])
+        in_channels = out_channels
+    layers.append(nn.MaxPool2d(2, 2))
+    return nn.Sequential(*layers)</code></pre>
+      <p>VGG-11中的“11”按带参数的层计数：8层卷积加3层线性层，ReLU、池化和Dropout不计入这个数字。本周使用64、128、256、512、512的块输出通道，输入96×96经过五次池化后是3×3，分类头的输入因而为512×3×3。</p>
+      <p>两个步幅1的3×3卷积具有5×5的理论感受野，并在中间引入额外非线性。这不意味着它与单个5×5卷积完全等价，也不意味着任何通道配置下都一定更省参数。感受野、参数量与实际效果需要分别计算。</p>
+
+      <h2>三、NiN把通道混合留在特征图里</h2>
+      <p>1×1卷积虽然不扩大观察邻域，仍能把同一位置的多个通道重新组合。对每个像素位置，它等价于共享同一个线性映射；加入ReLU并重复堆叠后，就能做更丰富的非线性通道变换。</p>
+      <p>NiN块先用一个普通空间卷积提取局部特征，再接两个1×1卷积。它不在最后放巨大的全连接分类头，而是让最后一个块输出10个类别通道，再对每个通道的空间位置求平均，形成10个分类分数。</p>
+      <pre data-code-id="week16-global-average-pooling"><code class="language-python">features = torch.randn(2, 10, 3, 5)
+pooled = nn.AdaptiveAvgPool2d((1, 1))(features).flatten(1)
+expected = features.mean(dim=(2, 3))
+torch.testing.assert_close(pooled, expected)
+# 输出形状为(2, 10)</code></pre>
+      <p>自适应全局平均池化不需要手写最后特征图的宽高，但前面的卷积和池化仍需要足够大的输入。本周96×96的NiN末端空间图较小，代码主要用于观察结构，没有据此推断它在这一分辨率下的训练优势。</p>
+
+      <h2>四、Inception同时观察不同尺度</h2>
+      <p>Inception把四条路径并行放在一个模块里：1×1卷积、1×1后接3×3卷积、1×1后接5×5卷积，以及3×3池化后接1×1卷积。每条路径都保持相同的高和宽，在通道维度拼接，输出通道数为四个分支输出通道数之和。</p>
+      <p>以输入(batch,192,12,10)为例，四条路径的输出通道分别为64、128、32和32，最终输出就是(batch,256,12,10)。这里的拼接不是逐元素相加：它保留各分支的特征，只要求批量与空间尺寸一致，分支通道数可以不同。</p>
+      <p>在计算昂贵的3×3或5×5卷积前，先用1×1卷积减少输入通道，可以控制参数量。例如直接做192→32的5×5卷积，含偏置有153,632个参数；先192→16的1×1，再16→32的5×5，合计15,920个参数。这个数字对应本次特定配置，不能推广为任何瓶颈层都能节省同样比例。</p>
+      <p>各分支卷积后的ReLU也必须保留。只检查输出形状发现不了缺少激活的问题，所以本周额外用负、零、正偏置检查了四条真实分支的行为。GoogLeNet随后串联9个Inception块，在末端用全局平均池化和1024→10的线性层完成分类。这里采用教材简化版本，没有加入辅助分类器或批量规范化。</p>
+
+      <h2>五、四种教学结构的参数量</h2>
+      <p>下面的统计全部来自本次代码，统一采用单通道96×96输入和10类输出。AlexNet、VGG和NiN为适配该输入的教学结构；GoogLeNet沿用教材的96×96示例。</p>
+      <div class="knn-table-wrap" role="region" aria-label="四种教学模型参数量" tabindex="0"><table class="knn-table"><thead><tr><th>模型</th><th>参数量</th><th>卷积层</th><th>线性层</th></tr></thead><tbody><tr><td>AlexNet-96</td><td>21,598,922</td><td>5</td><td>3</td></tr>
+<tr><td>VGG-11-96</td><td>44,920,074</td><td>8</td><td>3</td></tr>
+<tr><td>NiN-96</td><td>1,992,166</td><td>12</td><td>0</td></tr>
+<tr><td>GoogLeNet</td><td>5,977,530</td><td>57</td><td>1</td></tr></tbody></table></div>
+      <figure><picture><source type="image/webp" srcset="../assets/pytorch-week16-model-parameters-800.webp 800w, ../assets/pytorch-week16-model-parameters.webp 1440w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week16-model-parameters.png" alt="96乘96输入的AlexNet、VGG、NiN和GoogLeNet教学模型参数量柱状图" width="1440" height="720" loading="lazy" decoding="async"></picture><figcaption>本次四种网络的参数量。该图比较模型存储规模，不表示速度或精度排名。</figcaption></figure>
+      <p>NiN和GoogLeNet的参数量较少，与减少大规模全连接层、使用1×1瓶颈等设计有关。但参数少不等于运算少，也不等于激活内存少。分支数量、特征图面积、算子实现和硬件都会影响运行表现，本周没有对这四个模型做延迟或吞吐量基准。</p>
+
+      <h2>六、先确定划分，再开始训练</h2>
+      <p>训练使用Fashion-MNIST。官方训练集有60,000张图片，本次固定seed=42，以randperm产生索引，抽取12,000张训练、2,400张独立验证；其余45,600张暂不使用。官方10,000张测试图片保持独立，只在预先指定的第5轮模型上评估一次。划分索引及其摘要已保存，便于之后使用相同样本继续实验。</p>
+      <p>图片先双线性插值到96×96，再转为张量，并按均值0.5、标准差0.5归一化，不做数据增强。优化器为Adam，学习率0.0003，weight decay为0.0005，batch size为128，使用PyTorch默认初始化，固定训练5轮。这些是本周教学实验的设置，与教材SGD配方不同。</p>
+      <div class="knn-table-wrap" role="region" aria-label="AlexNet教学实验逐轮记录" tabindex="0"><table class="knn-table"><thead><tr><th>轮次</th><th>训练交叉熵</th><th>训练准确率</th><th>验证准确率</th></tr></thead><tbody><tr><td>1</td><td>1.2442</td><td>49.72%</td><td>70.62%</td></tr>
+<tr><td>2</td><td>0.6302</td><td>75.42%</td><td>80.00%</td></tr>
+<tr><td>3</td><td>0.4923</td><td>81.83%</td><td>79.75%</td></tr>
+<tr><td>4</td><td>0.4252</td><td>84.41%</td><td>85.21%</td></tr>
+<tr><td>5</td><td>0.3634</td><td>86.75%</td><td>85.75%</td></tr></tbody></table></div>
+      <p><b>最终测试准确率为86.09%。</b>训练和评估总耗时约21.44秒，环境为PyTorch 2.8.0+cu126和RTX 4060 Laptop GPU。计时包含数据变换、训练和逐轮验证，不能作为纯GPU吞吐量。模型保存后重新创建相同结构，在CPU上抽查8张测试图片，恢复前后的logits逐位一致。</p>
+      <figure><picture><source type="image/webp" srcset="../assets/pytorch-week16-alexnet-curves-800.webp 800w, ../assets/pytorch-week16-alexnet-curves.webp 1980w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week16-alexnet-curves.png" alt="AlexNet教学变体五轮训练损失和训练验证准确率，最终测试准确率86.09%" width="1980" height="720" loading="lazy" decoding="async"></picture><figcaption>训练损失逐轮下降，验证准确率在第3轮略有回落。星形标记只表示第5轮模型的一次最终测试结果。</figcaption></figure>
+      <p>训练准确率汇总的是每批参数更新前、启用Dropout时的预测；验证与测试则使用轮末模型并关闭Dropout。它们不处在相同模型状态和计算模式下，不能仅凭这几个百分数的差值诊断过拟合。</p>
+
+      <h2>七、代码验证与结果边界</h2>
+      <p>8个编号示例覆盖结构记录、训练与绘图、VGG块、NiN通道混合、Inception分支、GoogLeNet和理论感受野。6项自动测试检查了批量为1和2时四种网络的完整输出，矩形特征图上的通道拼接、ReLU行为、VGG池化、NiN的真实参数更新，以及不等长批次的准确率汇总。</p>
+      <p>AlexNet分类头的维度错误和Inception分支末端遗漏激活，都先用失败测试复现，经过独立TDD与Clean Code检查后作最小修正。随后整理代码排版，并确认四种网络整理前后的相同权重输出逐位一致。</p>
+      <p>本次只有一个随机种子、一组训练设置，且只训练AlexNet教学变体。上周LeNet使用60,000张训练图片、28×28输入、不同优化器和10轮训练，所以不能把上周80.00%和本周86.09%当作公平的架构比较。四种网络谁更好，需要在统一数据划分、训练预算和评价规则下另做实验。</p>
+
+      <h2>八、下周继续批量规范化与跳跃连接</h2>
+      <p>下一步学习第7章7.5—7.7的批量规范化、ResNet和DenseNet，重点核对训练与评估模式的差别，以及残差相加、稠密拼接对通道和梯度传播的影响。在此之前，继续用手算和逐层输出来巩固尺寸变化，比只记网络名称更有帮助。</p>
+      <p>教材参考：<a href="https://zh.d2l.ai/chapter_convolutional-modern/alexnet.html">AlexNet</a>、<a href="https://zh.d2l.ai/chapter_convolutional-modern/vgg.html">VGG</a>、<a href="https://zh.d2l.ai/chapter_convolutional-modern/nin.html">NiN</a>、<a href="https://zh.d2l.ai/chapter_convolutional-modern/googlenet.html">GoogLeNet</a>。上周内容可回看<a href="week15-convolution-pooling-lenet-review.html">卷积、池化与LeNet复盘</a>。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week15-convolution-pooling-lenet-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：卷积、池化与LeNet</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

@@ -2,6 +2,28 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "href": "posts/week16-alexnet-vgg-nin-googlenet-review.html",
+      "title": "第十六周学习复盘：AlexNet、VGG、NiN与GoogLeNet",
+      "date": "2026-11-02",
+      "updated": "2026-11-02",
+      "category": "学习札记",
+      "excerpt": "学习现代卷积网络的可复用模块，核对AlexNet、VGG、NiN与Inception结构，并记录96×96教学变体的独立验证和最终测试结果。",
+      "tags": [
+        "Python",
+        "PyTorch",
+        "深度学习",
+        "卷积神经网络",
+        "AlexNet",
+        "VGG",
+        "NiN",
+        "GoogLeNet",
+        "周报"
+      ],
+      "words": 4100,
+      "readTime": 12
+    },
+    {
       "id": "week15-convolution-pooling-lenet-review",
       "href": "posts/week15-convolution-pooling-lenet-review.html",
       "title": "第十五周学习复盘：卷积、池化与LeNet",
