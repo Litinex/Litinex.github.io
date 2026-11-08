@@ -2,6 +2,26 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      "id": "week17-batchnorm-resnet-densenet-review",
+      "href": "posts/week17-batchnorm-resnet-densenet-review.html",
+      "title": "第十七周学习复盘：BatchNorm、ResNet与DenseNet",
+      "date": "2026-11-08",
+      "updated": "2026-11-08",
+      "category": "学习札记",
+      "excerpt": "学习批量规范化、残差网络和稠密网络，记录BatchNorm状态、残差捷径、DenseBlock通道增长与ResNet教学实验。",
+      "tags": [
+        "Python",
+        "PyTorch",
+        "深度学习",
+        "BatchNorm",
+        "ResNet",
+        "DenseNet",
+        "周报"
+      ],
+      "words": 3206,
+      "readTime": 10
+    },
+    {
       "id": "week16-alexnet-vgg-nin-googlenet-review",
       "href": "posts/week16-alexnet-vgg-nin-googlenet-review.html",
       "title": "第十六周学习复盘：AlexNet、VGG、NiN与GoogLeNet",

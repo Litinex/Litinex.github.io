@@ -1,7 +1,11 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
-  "week16-alexnet-vgg-nin-googlenet-review": [
+  "week17-batchnorm-resnet-densenet-review": [
+    {
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
     {
       "id": "week15-convolution-pooling-lenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
@@ -9,9 +13,19 @@
     {
       "id": "week14-model-parameters-device-house-validation-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
+    }
+  ],
+  "week16-alexnet-vgg-nin-googlenet-review": [
+    {
+      "id": "week15-convolution-pooling-lenet-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week13-backprop-initialization-house-price-review",
+      "id": "week17-batchnorm-resnet-densenet-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week14-model-parameters-device-house-validation-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -25,7 +39,7 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week14-model-parameters-device-house-validation-review",
+      "id": "week17-batchnorm-resnet-densenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -35,11 +49,11 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "id": "week17-batchnorm-resnet-densenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week15-convolution-pooling-lenet-review",
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -77,11 +91,11 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "id": "week17-batchnorm-resnet-densenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week15-convolution-pooling-lenet-review",
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -101,15 +115,15 @@
   ],
   "week12-mlp-regularization-review": [
     {
+      "id": "week17-batchnorm-resnet-densenet-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
       "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
       "id": "week15-convolution-pooling-lenet-review",
-      "reason": "共同标签：Python、PyTorch、深度学习"
-    },
-    {
-      "id": "week14-model-parameters-device-house-validation-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -119,11 +133,11 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "id": "week17-batchnorm-resnet-densenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week15-convolution-pooling-lenet-review",
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -137,7 +151,7 @@
       "reason": "共同标签：Python、线性回归、周报"
     },
     {
-      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "id": "week17-batchnorm-resnet-densenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -175,11 +189,11 @@
       "reason": "共同标签：Python、PyTorch、张量"
     },
     {
-      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "id": "week17-batchnorm-resnet-densenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week15-convolution-pooling-lenet-review",
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -441,11 +455,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "id": "week17-batchnorm-resnet-densenet-review",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week15-convolution-pooling-lenet-review",
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "同属“学习札记”分类"
     }
   ],

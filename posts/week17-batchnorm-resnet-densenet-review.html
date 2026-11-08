@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第十七周学习复盘：BatchNorm、ResNet与DenseNet | 风迁夏回</title>
+  <meta name="description" content="学习批量规范化、残差网络和稠密网络，记录BatchNorm状态、残差捷径、DenseBlock通道增长与ResNet教学实验。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week17-batchnorm-resnet-densenet-review.html">
+  <meta property="og:title" content="第十七周学习复盘：BatchNorm、ResNet与DenseNet | 风迁夏回">
+  <meta property="og:description" content="学习批量规范化、残差网络和稠密网络，记录BatchNorm状态、残差捷径、DenseBlock通道增长与ResNet教学实验。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week17-batchnorm-resnet-densenet-review.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/pytorch-week17-resnet-curves.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <!-- partial:article-assets -->
+  <link rel="stylesheet" href="../styles.css?v=0fc4ce03">
+  <script src="../posts-data.js?v=249c3af3" defer></script>
+  <script src="../related-posts-data.js?v=581734b5" defer></script>
+  <script src="../taxonomy.js?v=f6a8eb98" defer></script>
+  <script src="../article-images.js?v=2d5510b7" defer></script>
+  <script src="../article-reader.js?v=0fb906c3" defer></script>
+  <script src="../learning-progress.js?v=cc17f356" defer></script>
+  <script src="../article-recommendations.js?v=2b7a58a3" defer></script>
+  <script src="../code-blocks.js?v=74f8fbb6" defer></script>
+  <script src="../ambient-background.js?v=355ba8ac" defer></script>
+  <script src="../music-playlist.js?v=dd8fb6e2" defer></script>
+  <script src="../music-player.js?v=3bd0e03f" defer></script>
+  <script src="../views.js?v=9ca75c39" defer></script>
+  <script src="../theme-toggle.js?v=eddeb769" defer></script>
+  <script src="../page-transitions.js?v=3fa185ee" defer></script>
+  <!-- /partial:article-assets -->
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十七周学习复盘：BatchNorm、ResNet与DenseNet","description":"学习批量规范化、残差网络和稠密网络，记录BatchNorm状态、残差捷径、DenseBlock通道增长与ResNet教学实验。","image":"https://yezizhuang.top/assets/pytorch-week17-resnet-curves.png","url":"https://yezizhuang.top/posts/week17-batchnorm-resnet-densenet-review.html","datePublished":"2026-11-08","dateModified":"2026-11-08","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week17-batchnorm-resnet-densenet-review">
+  <main class="article-shell">
+    <!-- partial:article-header -->
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
+    <!-- /partial:article-header -->
+    <header class="article-header">
+      <p class="meta">2026.11.08 · 学习札记 · 约 10 分钟</p>
+      <h1>第十七周学习复盘：<span class="article-title-topic">BatchNorm、ResNet与DenseNet</span></h1>
+      <p class="article-deck">从BatchNorm的两个状态出发，理解残差相加、稠密拼接和一次可复核的ResNet教学实验。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">上周把现代卷积网络拆成AlexNet、VGG、NiN和GoogLeNet，本周继续学习第7章7.5—7.7。重点从“怎样组织卷积”转向“怎样让更深的网络稳定训练”：BatchNorm管理训练与推理的统计量，ResNet把输入沿捷径传到后面，DenseNet则把已有特征沿通道持续拼接。</p>
+      <p><b>本周实际完成：</b>8个编号示例运行成功，6项自动测试通过。ResNet-18教学变体使用与上周相同的12,000张训练图片、2,400张验证图片和96×96输入，固定训练5轮，最终验证准确率88.00%，官方测试集准确率87.91%。DenseNet完成结构和通道增长验证，暂未做同预算训练。</p>
+      <div class="knn-at-a-glance" aria-label="本文内容"><p class="knn-eyebrow">这篇复盘主要记录</p><ul><li>BatchNorm为什么要区分训练模式和推理模式</li><li>残差块怎样用恒等或1×1投影捷径对齐形状</li><li>DenseBlock为什么会让通道数逐层增加</li><li>ResNet教学实验的划分、曲线与结果边界</li></ul></div>
+
+      <h2>一、BatchNorm的两个状态</h2>
+      <p>BatchNorm先在一个小批量内计算均值和方差，把激活标准化，再用可学习的缩放参数γ和偏移参数β恢复模型需要的表达能力。它还维护running mean和running variance，供推理阶段使用。</p>
+      <p>训练模式下，当前批量的统计量参与前向计算，同时更新运行统计；推理模式下，层不再使用当前输入的统计量，也不再更新它们。代码中调用<code>model.train()</code>和<code>model.eval()</code>不是形式上的切换，而是会改变BatchNorm和Dropout的计算行为。</p>
+      <pre data-code-id="week17-batchnorm-state"><code class="language-python">layer = nn.BatchNorm2d(3)
+layer.train()
+train_output = layer(images)  # 当前批量统计量，并更新running statistics
+layer.eval()
+eval_output = layer(images)   # 使用running statistics</code></pre>
+      <p>本次用同一个批量观察到，训练输出的每通道均值接近0、标准差接近1；训练后running mean约为0.53、0.51和0.49，切换到eval后输出与训练输出的最大差异约为5.67。验证集和测试集必须在eval模式下计算，否则指标会混入当前批次统计波动。</p>
+
+      <h2>二、ResNet让输入有一条捷径</h2>
+      <p>普通深层网络要求连续层直接学习完整映射。ResNet把它改成<code>F(x) + x</code>：卷积分支学习残差，捷径分支保留输入。若输入和输出的通道数、空间尺寸相同，捷径就是恒等映射；若尺寸或通道改变，则用1×1卷积和相同步幅完成投影。</p>
+      <pre data-code-id="week17-residual-block"><code class="language-python">residual = self.shortcut(inputs)
+outputs = self.conv1(self.activation(self.bn1(inputs)))
+outputs = self.conv2(self.activation(self.bn2(outputs)))
+return outputs + residual</code></pre>
+      <p>本周的恒等残差块把(batch,8,12,10)保持为同样形状；投影残差块把(batch,16,24,20)变为(batch,32,12,10)。两种情况都沿完整前向路径反向传播，输入梯度没有断开。</p>
+      <p>ResNet-18教学结构有一个初始卷积、四个阶段，每个阶段包含两个残差块，共8个残差块；每个残差块由两层3×3卷积组成。与上一周的GoogLeNet一样，末端使用全局平均池化和线性分类层，不过ResNet的模块边界更简单。</p>
+
+      <h2>三、DenseNet把所有旧特征留下来</h2>
+      <p>DenseNet不把新特征与旧特征相加，而是在通道维拼接。一个DenseBlock中的第一个层接收输入，第二层接收输入和第一层输出，后续层继续接收此前所有特征。如果输入通道为24，有3层、增长率为8，输出通道就是24 + 3×8 = 48。</p>
+      <pre data-code-id="week17-dense-block"><code class="language-python">features = [inputs]
+for block in self.blocks:
+features.append(block(torch.cat(features, dim=1)))
+return torch.cat(features, dim=1)</code></pre>
+      <p>通道不断增加会带来内存和计算压力，所以DenseNet在块之间使用transition层：1×1卷积先压缩通道，再用平均池化缩小空间尺寸。本周DenseNet教学变体使用4个稠密块和每层增长16个通道，参数量只有79,226；这个数字不能直接说明它比ResNet更快，因为激活图和拼接成本也会影响运行。</p>
+
+      <h2>四、三种连接方式对应三种形状规则</h2>
+      <div class="knn-table-wrap" role="region" aria-label="ResNet与DenseNet结构记录" tabindex="0"><table class="knn-table"><thead><tr><th>模型</th><th>参数量</th><th>BatchNorm层</th><th>残差块</th><th>稠密块</th></tr></thead><tbody><tr><td>ResNet-18-96</td><td>11,172,682</td><td>17</td><td>8</td><td>0</td></tr>
+<tr><td>DenseNet-tiny-96</td><td>79,226</td><td>13</td><td>0</td><td>4</td></tr></tbody></table></div>
+      <p>残差相加要求两个分支的批量、通道、高和宽全部相同；通道拼接只要求批量、高和宽相同，通道数可以相加；transition层则主动改变通道和空间尺寸，为下一个块准备输入。把这三条规则写在代码旁边，比只记“ResNet相加、DenseNet拼接”更不容易出错。</p>
+      <figure><picture><source type="image/webp" srcset="../assets/pytorch-week17-model-parameters-800.webp 800w, ../assets/pytorch-week17-model-parameters.webp 1260w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week17-model-parameters.png" alt="ResNet-18与DenseNet教学变体参数量对比" width="1260" height="720" loading="lazy" decoding="async"></picture><figcaption>本次96×96教学变体的参数量统计。ResNet-18为11,172,682，DenseNet-tiny为79,226。</figcaption></figure>
+
+      <h2>五、固定划分后训练ResNet</h2>
+      <p>为了和上一周实验保持可读的对照，我继续使用Fashion-MNIST的固定设置：seed=42，从官方训练集固定抽取12,000张训练图片和2,400张验证图片，验证样本与训练样本不重叠；官方10,000张测试图片只在最后的第5轮模型上评估一次。图片调整到96×96并按0.5均值和标准差归一化，不使用数据增强。</p>
+      <p>优化器使用Adam，学习率0.0003，weight decay为0.0005，batch size为128，训练5轮。BatchNorm在训练阶段更新运行统计，验证和测试阶段使用eval模式。模型保存为ResNet-18教学变体，恢复到CPU后抽查8张测试图片，logits逐位一致。</p>
+      <div class="knn-table-wrap" role="region" aria-label="ResNet教学实验逐轮记录" tabindex="0"><table class="knn-table"><thead><tr><th>轮次</th><th>训练交叉熵</th><th>训练准确率</th><th>验证准确率</th></tr></thead><tbody><tr><td>1</td><td>0.7091</td><td>75.71%</td><td>79.83%</td></tr>
+<tr><td>2</td><td>0.3621</td><td>86.62%</td><td>86.46%</td></tr>
+<tr><td>3</td><td>0.2824</td><td>89.73%</td><td>87.29%</td></tr>
+<tr><td>4</td><td>0.2235</td><td>91.86%</td><td>87.04%</td></tr>
+<tr><td>5</td><td>0.1781</td><td>93.24%</td><td>88.00%</td></tr></tbody></table></div>
+      <p><b>最终测试准确率为87.91%。</b>训练准确率从75.71%升到93.24%，验证准确率从79.83%升到88.00%。训练和评估总耗时约83.28秒，包含数据变换和逐轮验证，不能作为纯GPU吞吐量基准。</p>
+      <figure><picture><source type="image/webp" srcset="../assets/pytorch-week17-resnet-curves-800.webp 800w, ../assets/pytorch-week17-resnet-curves.webp 1980w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week17-resnet-curves.png" alt="ResNet教学变体五轮训练损失、训练验证准确率和最终测试点" width="1980" height="720" loading="lazy" decoding="async"></picture><figcaption>ResNet训练损失持续下降，验证准确率在第5轮达到88.00%；星形标记是固定最后一轮模型的一次测试结果。</figcaption></figure>
+      <p>训练准确率来自每批参数更新前、启用BatchNorm训练状态下的预测；验证和测试在eval模式下计算，因此不能把三条曲线的差异简单解释成单一的过拟合指标。本次只有一个随机种子和一组训练预算，DenseNet没有进行同条件训练，不能据此比较两种架构的优劣。</p>
+
+      <h2>六、测试怎样覆盖结构行为</h2>
+      <p>6项自动测试覆盖了ResNet-18的batch为2前向输出、投影捷径的空间和通道变化、恒等块的梯度传播、DenseBlock的增长率、DenseNet中的BatchNorm层，以及真实训练步骤对参数的更新。另有不等长批次的评估测试，确保准确率按样本数汇总。</p>
+      <p>本周的示例还单独检查了BatchNorm的训练/推理输出差异、残差相加和DenseNet通道拼接。模型保存恢复测试使用同一批图片比较logits，避免把“文件能读取”误写成“模型恢复正确”。</p>
+
+      <h2>七、下周继续第7章实验</h2>
+      <p>下一步继续复习批量规范化、ResNet和DenseNet的细节，补充参数与运行统计的手算，并在统一数据划分、训练轮数和优化器设置下做一个小规模ResNet与DenseNet对照。之后再整理分类错误和训练曲线，观察连接方式对优化过程的影响。</p>
+      <p>教材参考：<a href="https://zh.d2l.ai/chapter_convolutional-modern/batch-norm.html">批量规范化</a>、<a href="https://zh.d2l.ai/chapter_convolutional-modern/resnet.html">ResNet</a>、<a href="https://zh.d2l.ai/chapter_convolutional-modern/densenet.html">DenseNet</a>。上周内容可回看<a href="week16-alexnet-vgg-nin-googlenet-review.html">AlexNet、VGG、NiN与GoogLeNet复盘</a>。</p>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week16-alexnet-vgg-nin-googlenet-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：AlexNet、VGG、NiN与GoogLeNet</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>
