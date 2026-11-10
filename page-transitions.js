@@ -42,7 +42,7 @@
   };
 
   document.addEventListener("click", (event) => {
-    if (!isPlainLeftClick(event)) return;
+    if (event.defaultPrevented || !isPlainLeftClick(event)) return;
 
     const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
     if (!shouldAnimateLink(link)) return;

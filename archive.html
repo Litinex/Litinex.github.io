@@ -20,16 +20,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;700;800&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=0fc4ce03">
+  <link rel="stylesheet" href="styles.css?v=8c7f59f5">
   <script src="ambient-background.js?v=355ba8ac" defer></script>
   <script src="music-playlist.js?v=dd8fb6e2" defer></script>
   <script src="music-player.js?v=3bd0e03f" defer></script>
   <script src="posts-data.js?v=249c3af3" defer></script>
-  <script src="archive-search.js?v=72b1193c" defer></script>
-  <script src="taxonomy.js?v=f6a8eb98" defer></script>
+  <script src="archive-search.js?v=01094abd" defer></script>
+  <script src="taxonomy.js?v=e3d35f98" defer></script>
   <script src="views.js?v=9ca75c39" defer></script>
   <script src="theme-toggle.js?v=eddeb769" defer></script>
-  <script src="page-transitions.js?v=3fa185ee" defer></script>
+  <script src="page-transitions.js?v=909c2440" defer></script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -102,6 +102,10 @@
             <p class="archive-search-hint">按 <kbd>/</kbd> 搜索，按 <kbd>Esc</kbd> 清空关键词</p>
             <p class="archive-search-count" data-archive-search-count role="status" aria-live="polite" aria-atomic="true"></p>
           </section>
+          <details class="archive-taxonomy-panel" data-archive-taxonomy-panel hidden>
+            <summary>更多筛选</summary>
+            <div class="archive-taxonomy-options"></div>
+          </details>
         </aside>
 
         <section class="archive-content content-column" aria-label="历史文章">

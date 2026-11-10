@@ -47,12 +47,6 @@
     return uniqueStrings(raw.map(normalizeTag));
   }
 
-  function tagToQuery(tag) {
-    // Keep it simple so it works with the existing archive search:
-    // we include tag chips as plain text inside list items.
-    return encodeURIComponent(normalizeTag(tag));
-  }
-
   function seriesMeta(post) {
     const raw = post?.series;
     if (!raw || typeof raw !== "object") return null;
@@ -94,12 +88,12 @@
     return file ? file : href;
   }
 
-  function buildTagChip(tag, { hrefPrefix = "" } = {}) {
+  function buildTagChip(tag) {
     const label = normalizeTag(tag);
     if (!label) return null;
     const link = document.createElement("a");
     link.className = "tag-chip";
-    link.href = `${hrefPrefix}${archiveHref}?tag=${tagToQuery(label)}`;
+    link.href = `${archiveHref}?tag=${encodeURIComponent(label)}`;
     link.textContent = label;
     link.setAttribute("data-tag", label);
     return link;
@@ -253,82 +247,10 @@
     }
   }
 
-  function renderArchiveTaxonomy() {
-    const list = document.querySelector("[data-archive-list]");
-    if (!list) return;
-
-    const items = Array.from(list.querySelectorAll("li"));
-    if (items.length === 0) return;
-
-    const byHref = new Map(posts.map((post) => [safeText(post.href), post]));
-
-    items.forEach((item) => {
-      const link = item.querySelector("a[href]");
-      if (!link) return;
-
-      const rawHref = safeText(link.getAttribute("href"));
-      if (!rawHref) return;
-
-      const key = rawHref.startsWith("posts/") ? rawHref : `posts/${rawHref.split("/").pop()}`;
-      const post = byHref.get(key);
-      if (!post) return;
-
-      const tags = postTags(post);
-      const series = seriesMeta(post);
-      if (!series && tags.length === 0) return;
-
-      const wrap = document.createElement("div");
-      wrap.className = "archive-taxonomy";
-
-      if (series) {
-        const seriesEl = document.createElement("span");
-        seriesEl.className = "archive-series";
-        seriesEl.textContent = `系列：${series.name}`;
-        wrap.appendChild(seriesEl);
-      }
-
-      if (tags.length > 0) {
-        const tagsEl = document.createElement("div");
-        tagsEl.className = "archive-tags tag-list";
-        tags.slice(0, 8).forEach((tag) => {
-          const chip = buildTagChip(tag, { hrefPrefix: "" });
-          if (chip) tagsEl.appendChild(chip);
-        });
-        wrap.appendChild(tagsEl);
-      }
-
-      item.appendChild(wrap);
-    });
-
-    // Let users click a tag chip to fill the search box (feels more "filter-like").
-    const searchInput = document.querySelector("[data-archive-search]");
-    if (searchInput) {
-      list.addEventListener("click", (event) => {
-        const target = event.target instanceof Element ? event.target.closest("a.tag-chip") : null;
-        if (!target) return;
-        const tag = safeText(target.getAttribute("data-tag"));
-        if (!tag) return;
-        event.preventDefault();
-        searchInput.value = tag;
-        searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-        try {
-          searchInput.focus({ preventScroll: true });
-        } catch (error) {
-          searchInput.focus();
-        }
-      });
-    }
-
-    renderArchiveSidebarPanel(searchInput);
-  }
-
-  function renderArchiveSidebarPanel(searchInput) {
-    const sidebar = document.querySelector(".archive-sidebar");
-    if (!sidebar) return;
-    if (sidebar.querySelector("[data-archive-taxonomy-panel]")) return;
-
-    const anchor = sidebar.querySelector(".archive-search");
-    if (!anchor) return;
+  function renderArchiveSidebarPanel() {
+    const panel = document.querySelector("[data-archive-taxonomy-panel]");
+    if (!panel) return;
+    const options = panel.querySelector(".archive-taxonomy-options");
 
     const tagCounts = new Map();
     const seriesCounts = new Map();
@@ -356,10 +278,6 @@
     );
 
     if (tagEntries.length === 0 && seriesEntries.length === 0) return;
-
-    const panel = document.createElement("div");
-    panel.className = "archive-taxonomy-panel";
-    panel.setAttribute("data-archive-taxonomy-panel", "");
 
     const buildBlock = (kicker, titleText) => {
       const block = document.createElement("div");
@@ -401,7 +319,7 @@
       });
 
       block.appendChild(list);
-      panel.appendChild(block);
+      options.appendChild(block);
     }
 
     if (tagEntries.length > 0) {
@@ -413,7 +331,7 @@
         const button = document.createElement("button");
         button.type = "button";
         button.className = "tag-chip tag-chip-button";
-        button.setAttribute("data-taxonomy-query", entry.tag);
+        button.dataset.tag = entry.tag;
 
         const text = document.createElement("span");
         text.className = "tag-chip-text";
@@ -428,27 +346,12 @@
       });
 
       block.appendChild(list);
-      panel.appendChild(block);
+      options.appendChild(block);
     }
 
-    panel.addEventListener("click", (event) => {
-      const target = event.target instanceof Element ? event.target.closest("[data-taxonomy-query]") : null;
-      if (!target) return;
-      const query = safeText(target.getAttribute("data-taxonomy-query"));
-      if (!query || !searchInput) return;
-      event.preventDefault();
-      searchInput.value = query;
-      searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-      try {
-        searchInput.focus({ preventScroll: true });
-      } catch (error) {
-        searchInput.focus();
-      }
-    });
-
-    anchor.insertAdjacentElement("afterend", panel);
+    panel.hidden = false;
   }
 
-  renderArchiveTaxonomy();
+  renderArchiveSidebarPanel();
   renderArticleTaxonomy();
 })();

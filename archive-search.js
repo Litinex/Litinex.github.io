@@ -9,6 +9,7 @@
   const paginationNext = document.querySelector("[data-archive-pagination-next]");
   const paginationPages = document.querySelector("[data-archive-pagination-pages]");
   const categoryFilters = document.querySelector("[data-archive-categories]");
+  const taxonomyPanel = document.querySelector("[data-archive-taxonomy-panel]");
   const resetButton = document.querySelector("[data-archive-reset]");
 
   if (!searchInput || !listElement) {
@@ -82,7 +83,7 @@
 
       const chip = document.createElement("a");
       chip.className = "tag-chip";
-      chip.href = `archive.html?q=${encodeURIComponent(label)}`;
+      chip.href = `archive.html?tag=${encodeURIComponent(label)}`;
       chip.textContent = label;
       chip.setAttribute("data-tag", label);
       wrap.appendChild(chip);
@@ -454,7 +455,7 @@
     }
 
     if (clearButton) {
-      clearButton.hidden = currentTokens.length === 0;
+      clearButton.hidden = currentTokens.length === 0 && !currentTag;
     }
 
     categoryFilters?.querySelectorAll("button[data-category]").forEach((button) => {
@@ -510,6 +511,7 @@
   if (clearButton) {
     clearButton.addEventListener("click", (event) => {
       event.preventDefault();
+      currentTag = "";
       searchInput.value = "";
       applyFilter("", { resetPage: true });
       setFocus(searchInput);
@@ -545,18 +547,31 @@
     applyFilter("", { resetPage: true });
   });
 
-  listElement.addEventListener("click", (event) => {
-    const target = event.target instanceof Element ? event.target.closest("a.tag-chip") : null;
-    if (!target) return;
+  const mobileLayout = window.matchMedia("(max-width: 720px)");
+  if (taxonomyPanel) {
+    const syncDisclosure = () => { taxonomyPanel.open = !mobileLayout.matches; };
+    syncDisclosure();
+    mobileLayout.addEventListener("change", syncDisclosure);
+  }
 
-    const tag = safeText(target.getAttribute("data-tag") || target.textContent);
-    if (!tag) return;
+  listElement.closest("main")?.addEventListener("click", (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    const target = event.target instanceof Element
+      ? event.target.closest("[data-archive-list] a[data-tag], [data-archive-taxonomy-panel] button")
+      : null;
+    const tag = canonicalTags.get(safeText(target?.dataset.tag).toLowerCase());
+    const seriesQuery = safeText(target?.dataset.taxonomyQuery);
+    if (!tag && !seriesQuery) return;
 
     event.preventDefault();
-    currentTag = "";
-    searchInput.value = tag;
-    applyFilter(tag, { resetPage: true });
+    if (tag) currentTag = tag;
+    if (seriesQuery) searchInput.value = seriesQuery;
+    applyFilter(searchInput.value, { resetPage: true });
     setFocus(searchInput);
+    if (mobileLayout.matches && taxonomyPanel?.contains(target)) {
+      taxonomyPanel.open = false;
+      searchInput.scrollIntoView({ block: "center", behavior: "instant" });
+    }
   });
 
   if (paginationPrev) {
