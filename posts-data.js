@@ -2,6 +2,26 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      "id": "week18-resnet-densenet-controlled-comparison",
+      "href": "posts/week18-resnet-densenet-controlled-comparison.html",
+      "title": "第十八周学习复盘：ResNet与DenseNet统一预算对照",
+      "date": "2026-11-17",
+      "updated": "2026-11-17",
+      "category": "学习札记",
+      "excerpt": "复习BatchNorm手算，统一数据划分和五轮训练预算，记录ResNet与DenseNet教学变体的准确率、耗时、混淆矩阵及实验边界。",
+      "tags": [
+        "Python",
+        "PyTorch",
+        "深度学习",
+        "BatchNorm",
+        "ResNet",
+        "DenseNet",
+        "周报"
+      ],
+      "words": 2463,
+      "readTime": 8
+    },
+    {
       "id": "week17-batchnorm-resnet-densenet-review",
       "href": "posts/week17-batchnorm-resnet-densenet-review.html",
       "title": "第十七周学习复盘：BatchNorm、ResNet与DenseNet",

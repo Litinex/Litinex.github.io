@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第十八周学习复盘：ResNet与DenseNet统一预算对照 | 风迁夏回</title>
+  <meta name="description" content="复习BatchNorm手算，统一数据划分和五轮训练预算，记录ResNet与DenseNet教学变体的准确率、耗时、混淆矩阵及实验边界。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week18-resnet-densenet-controlled-comparison.html">
+  <meta property="og:title" content="第十八周学习复盘：ResNet与DenseNet统一预算对照 | 风迁夏回">
+  <meta property="og:description" content="复习BatchNorm手算，统一数据划分和五轮训练预算，记录ResNet与DenseNet教学变体的准确率、耗时、混淆矩阵及实验边界。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week18-resnet-densenet-controlled-comparison.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/pytorch-week18-comparison.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Serif+SC:wght@500;600;700;900&amp;display=swap" rel="stylesheet">
+  <!-- partial:article-assets -->
+  <link rel="stylesheet" href="../styles.css?v=8c7f59f5">
+  <script src="../posts-data.js?v=aa00c873" defer></script>
+  <script src="../related-posts-data.js?v=90ee8672" defer></script>
+  <script src="../taxonomy.js?v=e3d35f98" defer></script>
+  <script src="../article-images.js?v=2d5510b7" defer></script>
+  <script src="../article-reader.js?v=0fb906c3" defer></script>
+  <script src="../learning-progress.js?v=cc17f356" defer></script>
+  <script src="../article-recommendations.js?v=2b7a58a3" defer></script>
+  <script src="../code-blocks.js?v=74f8fbb6" defer></script>
+  <script src="../ambient-background.js?v=355ba8ac" defer></script>
+  <script src="../music-playlist.js?v=dd8fb6e2" defer></script>
+  <script src="../music-player.js?v=3bd0e03f" defer></script>
+  <script src="../views.js?v=9ca75c39" defer></script>
+  <script src="../theme-toggle.js?v=eddeb769" defer></script>
+  <script src="../page-transitions.js?v=909c2440" defer></script>
+  <!-- /partial:article-assets -->
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十八周学习复盘：ResNet与DenseNet统一预算对照","description":"复习BatchNorm手算，统一数据划分和五轮训练预算，记录ResNet与DenseNet教学变体的准确率、耗时、混淆矩阵及实验边界。","image":"https://yezizhuang.top/assets/pytorch-week18-comparison.png","url":"https://yezizhuang.top/posts/week18-resnet-densenet-controlled-comparison.html","datePublished":"2026-11-17","dateModified":"2026-11-17","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week18-resnet-densenet-controlled-comparison">
+  <main class="article-shell">
+    <!-- partial:article-header -->
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
+    <!-- /partial:article-header -->
+    <header class="article-header">
+      <p class="meta">2026.11.17 · 学习札记 · 约 8 分钟</p>
+      <h1>第十八周学习复盘：<span class="article-title-topic">ResNet与DenseNet统一预算对照</span></h1>
+      <p class="article-deck">把两种教学网络放到相同数据和更新预算下，练习指标口径、曲线与错误类别分析。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">第17周完成了BatchNorm、ResNet和DenseNet的结构练习，但只实际训练了ResNet。本周按上一份周报的计划补齐DenseNet训练，并把两个模型放在相同数据划分和更新预算下观察。重点是学会控制实验条件、统一指标口径和解释错误类别。</p>
+      <p><b>实际完成：</b>8个示例、4项自动测试；两个模型均训练5轮并通过保存恢复一致性检查。固定最后一轮测试准确率分别为87.64%与85.77%。实验实际执行于2026年11月17日，周报按原有周次顺延为11月22日。</p>
+      <h2>一、先把BatchNorm手算清楚</h2>
+      <p>用三行两列输入[[1,2],[3,6],[5,10]]核对均值、方差、运行统计和推理输出。两列均值为[3,6]，训练前向使用有偏方差[8/3,32/3]；在momentum=0.1、初始运行均值为0、运行方差为1时，更新后的running mean为[0.3,0.6]、running variance为[1.3,2.5]。</p>
+      <p>训练前向和运行方差更新采用的估计方式需要分别理解；本例逐项与PyTorch输出核对。切换eval后使用运行统计，且统计量保持不变。最终训练集、验证集和测试集指标统一使用eval，逐轮在线训练准确率则单独保留。</p>
+      <h2>二、训练前固定实验条件</h2>
+      <p>两模型均使用Fashion-MNIST中相同的12,000张训练图、2,400张独立验证图；官方测试集10,000张。输入缩放到96×96并归一化，batch size为128，固定seed=42、Adam学习率0.0003、weight decay为0.0005、5轮训练，每模型共470次参数更新。每次创建相同种子的DataLoader，让索引划分和批次顺序一致。</p>
+      <p>方案在训练前保存到实验方案JSON，固定最后一轮作为报告模型，不按验证最高点或测试成绩更换轮次。测试准确率、类别召回率、混淆矩阵和前12个错误索引从同一次测试遍历收集。两份划分的SHA-256一致，训练集与验证集没有重叠。</p>
+      <h2>三、说明比较的具体网络</h2>
+      <p>代码直接复用第17周模块。ResNet是包含8个残差块的预激活式教学变体，块内为BN→ReLU→Conv，参数量11,172,682；它与教材展示的经典后激活块顺序不同。DenseNet-tiny使用4个稠密块，每块2层、growth rate为16，参数量79,226；过渡层用1×1卷积和平均池化控制通道与空间尺寸。</p>
+      <p>这两个具体模型在容量上差别很大。共同的学习率和训练轮数便于教学对照，但并不保证各自达到最佳状态，也不表示消耗相同算力。</p>
+      <h2>四、五轮结果与曲线</h2>
+      <div class="knn-table-wrap" role="region" aria-label="实验数据" tabindex="0"><table class="knn-table"><thead><tr><th>模型</th><th>参数量</th><th>训练准确率 eval</th><th>验证准确率</th><th>测试准确率</th><th>训练及验证秒数</th></tr></thead><tbody><tr><td>resnet18</td><td>11,172,682</td><td>93.88%</td><td>87.92%</td><td>87.64%</td><td>32.73</td></tr><tr><td>densenet_tiny</td><td>79,226</td><td>87.06%</td><td>85.88%</td><td>85.77%</td><td>19.57</td></tr></tbody></table></div>
+      <p>表中训练准确率来自训练结束后的eval评估。耗时为CUDA边界同步后记录的五轮训练加逐轮验证，不包含最终训练集与测试集评估、权重保存和恢复。训练顺序固定为ResNet再DenseNet，单次计时可能受到缓存和硬件状态影响。</p>
+      <figure class="knn-figure"><picture><source type="image/webp" srcset="../assets/pytorch-week18-comparison-800.webp 800w, ../assets/pytorch-week18-comparison.webp 2400w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week18-comparison.png" alt="两个教学模型的五轮训练损失、验证准确率、最终测试点及参数量" width="2400" height="720" loading="lazy" decoding="async"></picture></figure>
+      <h3>resnet18</h3><div class="knn-table-wrap" role="region" aria-label="实验数据" tabindex="0"><table class="knn-table"><thead><tr><th>轮次</th><th>在线训练损失</th><th>在线训练准确率</th><th>验证损失</th><th>验证准确率</th></tr></thead><tbody><tr><td>1</td><td>0.7097</td><td>75.58%</td><td>0.5199</td><td>79.88%</td></tr><tr><td>2</td><td>0.3593</td><td>86.73%</td><td>0.3680</td><td>86.25%</td></tr><tr><td>3</td><td>0.2807</td><td>89.77%</td><td>0.3379</td><td>88.12%</td></tr><tr><td>4</td><td>0.2237</td><td>91.67%</td><td>1.0984</td><td>72.58%</td></tr><tr><td>5</td><td>0.1831</td><td>93.00%</td><td>0.4273</td><td>87.92%</td></tr></tbody></table></div><h3>densenet_tiny</h3><div class="knn-table-wrap" role="region" aria-label="实验数据" tabindex="0"><table class="knn-table"><thead><tr><th>轮次</th><th>在线训练损失</th><th>在线训练准确率</th><th>验证损失</th><th>验证准确率</th></tr></thead><tbody><tr><td>1</td><td>1.4874</td><td>61.94%</td><td>1.0038</td><td>74.54%</td></tr><tr><td>2</td><td>0.8258</td><td>78.11%</td><td>0.7030</td><td>78.21%</td></tr><tr><td>3</td><td>0.6093</td><td>81.80%</td><td>0.6609</td><td>80.83%</td></tr><tr><td>4</td><td>0.4913</td><td>85.39%</td><td>0.6176</td><td>80.29%</td></tr><tr><td>5</td><td>0.4172</td><td>87.05%</td><td>0.4573</td><td>85.88%</td></tr></tbody></table></div>
+      <p>ResNet第4轮验证准确率出现明显下降，第5轮又回升；本次保留完整曲线并按预先约定报告第5轮。这里尚未验证波动原因，不能仅凭这条曲线归因于BatchNorm或某个具体组件。固定随机种子也不等于开启所有CUDA算子的确定性保证，因此本周ResNet与上周结果存在小幅差异。</p>
+      <h2>五、从混淆矩阵看错误</h2>
+      <figure class="knn-figure"><picture><source type="image/webp" srcset="../assets/pytorch-week18-confusion-800.webp 800w, ../assets/pytorch-week18-confusion.webp 2240w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week18-confusion.png" alt="ResNet与DenseNet测试混淆矩阵，数字为张数，颜色按真实类别归一化" width="2240" height="960" loading="lazy" decoding="async"></picture></figure>
+      <p><b>resnet18：</b>真实Shirt预测成T-shirt/top，151张；真实Shirt预测成Coat，134张；真实Pullover预测成Coat，102张。这些统计来自固定最后一轮的一次测试遍历。</p><p><b>densenet_tiny：</b>真实Shirt预测成T-shirt/top，227张；真实Coat预测成Shirt，182张；真实Pullover预测成Shirt，120张。这些统计来自固定最后一轮的一次测试遍历。</p>
+      <p>矩阵的行表示真实类别、列表示预测类别，格内数字是样本数，颜色按行归一化。衣物类别存在相似外形，错误计数可以帮助定位后续需要逐图观察的类别，但仅凭矩阵不能证明模型关注了哪个图像区域。</p>
+      <h2>六、代码验证与结论边界</h2>
+      <p>4项自动测试覆盖不整批样本的损失加权和错误索引、空评估的明确报错、eval不修改BatchNorm统计，以及两个真实网络的梯度更新。8个编号示例覆盖手算、划分、结构、训练、绘图、权重恢复和易混类别汇总。两个模型均在保存前后用8张验证图检查logits逐位一致。</p>
+      <p>本次只有一个种子和一种训练预算，没有搜索两模型各自最优超参数。相同轮数不等于相同计算成本，教学变体的差异也不能概括为两类架构的普遍优劣。官方测试集在往周教学中已经使用，本次成绩不是独立研究确认；后续不能一边据此调参，一边继续把它视作未见测试集。</p>
+      <h2>七、下一周安排与参考资料</h2>
+      <p>下周进入第8章8.1—8.3，先理解序列模型、文本预处理、词表与语言模型数据集，完成字符编码和随机/顺序采样检查，再为循环神经网络准备输入。卷积网络部分保留本次权重、曲线和实验记录，便于复习。</p>
+      <ul><li><a href="https://zh.d2l.ai/chapter_convolutional-modern/batch-norm.html">教材7.5 批量规范化</a></li><li><a href="https://zh.d2l.ai/chapter_convolutional-modern/resnet.html">教材7.6 残差网络</a></li><li><a href="https://zh.d2l.ai/chapter_convolutional-modern/densenet.html">教材7.7 稠密连接网络</a></li><li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.BatchNorm1d.html">PyTorch BatchNorm1d方差估计与运行统计</a></li></ul>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week17-batchnorm-resnet-densenet-review.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：BatchNorm、ResNet与DenseNet</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>
