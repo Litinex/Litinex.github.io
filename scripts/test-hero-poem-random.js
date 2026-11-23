@@ -23,8 +23,19 @@ async function run() {
 
     browser = await chromium.launch(launchOptions);
 
-    async function loadHomeWithPoem(poemFromApi) {
+    async function createPoemPage() {
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+      // Poetry behavior does not depend on external counters, artwork or fonts.
+      await page.route("**/*", (route) => {
+        const url = new URL(route.request().url());
+        return url.origin === `http://127.0.0.1:${port}` || url.hostname === "v1.jinrishici.com"
+          ? route.continue() : route.abort();
+      });
+      return page;
+    }
+
+    async function loadHomeWithPoem(poemFromApi) {
+      const page = await createPoemPage();
       await page.route("https://v1.jinrishici.com/all.json", async (route) => {
         await route.fulfill({
           status: 200,
@@ -33,7 +44,7 @@ async function run() {
         });
       });
 
-      await page.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: "networkidle" });
+      await page.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: "domcontentloaded" });
 
       const heroPoem = page.locator("[data-hero-poem]");
       await heroPoem.waitFor({ state: "visible", timeout: 1500 });
@@ -77,7 +88,7 @@ async function run() {
       }
     }
 
-    const fallbackPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const fallbackPage = await createPoemPage();
     await fallbackPage.route("https://v1.jinrishici.com/all.json", async (route) => {
       await route.fulfill({
         status: 503,
@@ -86,8 +97,12 @@ async function run() {
       });
     });
 
-    await fallbackPage.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: "networkidle" });
+    await fallbackPage.goto(`http://127.0.0.1:${port}/index.html`, { waitUntil: "domcontentloaded" });
     await fallbackPage.locator("[data-hero-poem]").waitFor({ state: "visible", timeout: 1500 });
+    await fallbackPage.waitForFunction(() => {
+      const poem = document.querySelector("[data-hero-poem]")?.textContent?.trim();
+      return poem && document.title.includes(poem);
+    }, null, { timeout: 3000 });
     const fallbackResult = await fallbackPage.evaluate(() => {
       const target = document.querySelector("[data-hero-poem]");
       return {

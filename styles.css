@@ -3351,10 +3351,10 @@ html.music-shell-loading * {
   --page-width: 1200px;
   --max-width: 1200px;
   --content-width: clamp(900px, 55vw, 1080px);
-  --font-sans: "Manrope", "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-  --font-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-sans: "Manrope", "Manrope Fallback", "Segoe UI", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-serif: "Noto Serif SC", "Noto Serif SC Fallback", "Songti SC", "SimSun", serif;
   --font-display: var(--font-serif);
-  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  --font-mono: "JetBrains Mono", "JetBrains Mono Fallback", "SFMono-Regular", Consolas, monospace;
 }
 
 html[data-theme="light"] {

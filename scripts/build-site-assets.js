@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 const crypto = require("node:crypto");
+const { buildFontAssets, renderFontAssets } = require("./build-font-assets");
 
 const rootDir = path.resolve(__dirname, "..");
 const baseUrl = "https://yezizhuang.top";
@@ -385,7 +386,7 @@ function listHtmlPages() {
   return [...rootPages, ...postPages].sort();
 }
 
-function buildHtmlPages() {
+function buildHtmlPages(fontAssets) {
   let changed = 0;
   const pages = listHtmlPages();
 
@@ -404,7 +405,8 @@ function buildHtmlPages() {
       });
     }
 
-    html = stampAssetVersions(applyPartials(html, pageFile), pageFile);
+    html = renderFontAssets(applyPartials(html, pageFile), pageFile, rootDir, fontAssets);
+    html = stampAssetVersions(html, pageFile);
     const output = usesCrlf ? html.replace(/\n/g, "\r\n") : html;
     if (output !== raw) {
       fs.writeFileSync(pageFile, output, "utf8");
@@ -507,7 +509,7 @@ function auditContentConsistency(posts) {
   }
 }
 
-function main() {
+async function main() {
   const posts = readPostsData().map(normalizePost);
   validateUniquePostMetadata(posts);
   validateArticleMarkup(posts);
@@ -521,8 +523,9 @@ function main() {
   console.log(`Generated sitemap.xml and related-posts-data.js from ${posts.length} posts.`);
 
   // 必须放在 related-posts-data.js 写完之后，版本号才能反映最新内容。
-  const pages = buildHtmlPages();
+  const fontAssets = await buildFontAssets(rootDir, listHtmlPages(), posts);
+  const pages = buildHtmlPages(fontAssets);
   console.log(`Rendered partials and asset versions for ${pages.total} pages (${pages.changed} updated).`);
 }
 
-main();
+main().catch((error) => { console.error(error.message); process.exitCode = 1; });

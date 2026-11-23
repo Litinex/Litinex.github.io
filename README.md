@@ -14,6 +14,8 @@
 - `scripts/build-site-assets.js`：构建脚本（见下）
 - `scripts/test-*.js`：浏览器测试（需要 Playwright）
 - `styles.css`：全站样式；其余 `*.js` 是各页面的功能脚本
+- `assets/fonts/`：本地 WOFF2 字体子集、字形缓存、生成的字体样式与 OFL 授权文本
+- `scripts/build-font-assets.js`：保留现有字体，生成公共字集与每篇文章的补充字集
 
 ## 日常流程
 
@@ -29,6 +31,12 @@ node scripts/build-site-assets.js
 2. 生成 `sitemap.xml` 和 `related-posts-data.js`
 3. 把 `partials/` 里的片段填进所有页面里 `<!-- partial:名字 -->` 和 `<!-- /partial:名字 -->` 之间（这两行注释之间的内容会被覆盖，不要手改）
 4. 把所有本地 `.css` / `.js` 引用的 `?v=` 改成文件内容哈希——文件改了版本号自动变，不需要再手动维护
+
+构建也会更新本地字体子集。常用界面、文章标题与备用诗句共享一份字集；文章正文按需补充缺少的字形，浏览器只加载当前页面用到的字体文件。字体仍为 Noto Serif SC、Manrope 和 JetBrains Mono，字号与排版规则保持原样。
+
+现有内容的字体文件和缓存已放在仓库中，重复构建可离线完成。新增内容引入新字形时，构建需要连接 Google Fonts 的字符子集 API；下载失败会明确报错，此时联网后重新运行构建即可，无需安装额外字体工具。不要手动编辑 `assets/fonts/` 中生成的 CSS、WOFF2 或 `catalog.json`。
+
+随机诗句等运行时文字若包含本地子集之外的字形，会按需从原字体的 Google 字体分片补齐，继续使用相同字族。本地字集覆盖的文字无需连接 Google 字体服务。字体暂时不可用时仍可回退到原有系统字库，不阻止阅读。字体授权见 `assets/fonts/*-OFL.txt`。
 
 脚本可以重复运行，内容没变时不会改动任何文件。
 

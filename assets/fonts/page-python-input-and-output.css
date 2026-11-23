@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url(./noto-serif-sc-c35ec59e5ce3fc1a.woff2) format('woff2');
+  unicode-range: U+4e24, U+4f59, U+5143, U+5269, U+5361, U+53d6, U+53f0, U+597d, U+59d3, U+5c06, U+5e74, U+5e76, U+60a8, U+6237, U+6267, U+63a7, U+667a, U+6839, U+683c, U+6bd5, U+73b0, U+793a, U+83b7, U+8bf7, U+91d1, U+94b1, U+94f6, U+9700, U+989d, U+9f84;
+}
