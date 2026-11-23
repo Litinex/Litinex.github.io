@@ -112,6 +112,28 @@ html[data-theme="dark"] .knn-figure figcaption {
   color: var(--muted);
 }
 
+/* 图表是白底导出图：暗色下给它一个明确的"纸面"外框，
+   避免一整块纯白矩形直接压在卡片上。
+   注意 code-blocks.js 把代码块也包成了 <figure class="code-editor">，必须排除。 */
+html[data-theme="dark"] .article-body figure:not(.code-editor),
+html[data-theme="dark"] .knn-figure {
+  margin: 34px 0;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  background: #f7f9fc;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+}
+
+html[data-theme="dark"] .article-body figure:not(.code-editor) img,
+html[data-theme="dark"] .knn-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0;
+  border-radius: 7px;
+}
+
 .knn-principle {
   margin: 34px 0;
   padding: 4px 0 4px 24px;
@@ -1647,28 +1669,15 @@ html[data-theme="light"] .archive-search-clear {
 
 .archive-list li {
   display: grid;
-  gap: 12px;
-  padding: 22px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--card-bg-solid);
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
 }
 
-.archive-list li:hover {
-  transform: translateY(-2px);
-  border-color: rgba(215, 180, 106, 0.3);
-  background: var(--card-bg-hover-solid);
-}
-
-html[data-theme="light"] .archive-list li,
 html[data-theme="light"] .archive-empty,
 html[data-theme="light"] .about-card {
   background: var(--card-bg-solid);
-}
-
-html[data-theme="light"] .archive-list li:hover {
-  background: var(--card-bg-hover-solid);
 }
 
 .archive-list .post-card-title {
@@ -3554,7 +3563,7 @@ html[data-theme="light"] body.home-page::after {
   width: 100%;
   min-height: 72px;
   margin: 0 auto;
-  padding: 10px max(16px, calc((100vw - var(--page-width)) / 2 + 16px));
+  padding: 10px max(16px, calc((100% - var(--page-width)) / 2));
   border: 0;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
@@ -3570,6 +3579,7 @@ html[data-theme="light"] body.home-page::after {
 
 .site-brand {
   min-height: 48px;
+  margin-inline-start: -10px;
   padding: 0 10px;
   border-radius: var(--radius-md);
   transition: background 180ms ease, transform 180ms ease;
@@ -3681,7 +3691,7 @@ html[data-theme="light"] .site-nav a[aria-current="page"] {
   align-items: end;
   min-height: 420px;
   margin-top: -72px;
-  padding: 112px max(16px, calc((100vw - var(--page-width)) / 2 + 16px)) 44px;
+  padding: 100px max(16px, calc((100% - var(--page-width)) / 2)) 44px;
   overflow: hidden;
   isolation: isolate;
 }
@@ -3793,8 +3803,8 @@ html[data-theme="light"] .site-banner-content p:not(.eyebrow) {
 
 /* Fade both visual layers to reveal the continuous page background beneath. */
 .home-page .home-banner {
-  min-height: clamp(460px, 58vw, 600px);
-  padding-bottom: 118px;
+  min-height: clamp(400px, 32vw, 460px);
+  padding-bottom: 84px;
   border-bottom: 0;
 }
 
@@ -4145,14 +4155,16 @@ html[data-theme="light"] .button-primary {
   border: 0;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
-  background: transparent;
+  /* 不透明底色：防止背景动效透到正文下面。 */
+  background: var(--card-bg-solid);
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
 .post-card:hover,
 .post-card:focus-within {
   border-color: color-mix(in srgb, var(--primary) 34%, var(--line));
-  background: color-mix(in srgb, var(--card-bg-hover-solid) 36%, transparent);
+  /* 悬停底色同样保持不透明，避免背景动效透出来。 */
+  background: color-mix(in srgb, var(--primary) 6%, var(--card-bg-solid));
   transform: translateY(-2px);
 }
 
@@ -4173,7 +4185,7 @@ html[data-theme="light"] .button-primary {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
   min-width: 0;
-  padding: 30px 16px 30px 4px;
+  padding: 30px 16px 30px 0;
   color: inherit;
 }
 
@@ -4225,9 +4237,17 @@ html[data-theme="light"] .button-primary {
 }
 
 .post-meta-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
   color: var(--primary);
   font-size: 0.72rem;
   line-height: 1;
+}
+
+.post-meta-icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 .post-card-excerpt,
@@ -5013,7 +5033,7 @@ html[data-theme="dark"] .article-body {
   min-height: 36px;
   padding: 4px 8px;
   border-color: var(--line);
-  border-radius: 4px;
+  border-radius: 999px;
   background: transparent;
   color: var(--muted);
   font-size: 0.78rem;
@@ -5409,11 +5429,10 @@ html.image-viewer-open {
   border: 0;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
-  background: transparent;
 }
 
 .archive-list .post-card-inner {
-  padding: 30px 16px 30px 4px;
+  padding: 30px 16px 30px 0;
 }
 
 .archive-list .post-card-title {
@@ -5608,14 +5627,15 @@ html.image-viewer-open {
 /* List metadata stays subordinate to the article title. */
 .post-tags .tag-chip,
 html[data-theme="light"] .post-tags .tag-chip {
-  min-height: 44px;
-  padding-inline: 7px;
-  border-color: transparent;
-  border-radius: 4px;
+  min-height: 28px;
+  padding: 4px 11px;
+  border-color: var(--line);
+  border-radius: 999px;
   background: transparent;
   color: var(--muted);
-  font-size: 0.76rem;
-  font-weight: 400;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .post-tags .tag-chip:hover,
@@ -5635,11 +5655,6 @@ html[data-theme="light"] .site-nav {
     max-height: max(12rem, calc(100svh - 360px));
     overflow-y: auto;
   }
-}
-
-html[data-theme="light"] .archive-list .post-card,
-html[data-theme="light"] .archive-list .post-card:hover {
-  background: transparent;
 }
 
 .article-page .article-header h1 {

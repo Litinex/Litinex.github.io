@@ -18,20 +18,20 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <!-- font-assets -->
-  <link rel="preload" href="assets/fonts/noto-serif-sc-d8f546377330c2a1.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/noto-serif-sc-37bf3ae7a1f8ae6d.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/fonts/fallback.css?v=dbc4f18c">
-  <link rel="stylesheet" href="assets/fonts/common.css?v=6a7d2133">
+  <link rel="stylesheet" href="assets/fonts/common.css?v=ab183a69">
   <!-- /font-assets -->
   <link rel="preload" as="image" type="image/webp" href="assets/hero-sky-1920.webp" imagesrcset="assets/hero-sky-1280-640.webp 640w, assets/hero-sky-1280.webp 1280w, assets/hero-sky-1920.webp 1920w, assets/hero-sky-2560.webp 2560w" imagesizes="100vw">
-  <link rel="stylesheet" href="styles.css?v=3e53e830">
+  <link rel="stylesheet" href="styles.css?v=f2378094">
   <link rel="stylesheet" href="writing-heatmap.css?v=23cb4788">
   <script src="ambient-background.js?v=355ba8ac" defer></script>
   <script src="music-playlist.js?v=dd8fb6e2" defer></script>
   <script src="music-player.js?v=3bd0e03f" defer></script>
   <script src="posts-data.js?v=aa00c873" defer></script>
   <script src="hero-poem.js?v=28fea704" defer></script>
-  <script src="home-essays.js?v=544d0130" defer></script>
-  <script src="learning-progress.js?v=cc17f356" defer></script>
+  <script src="home-essays.js?v=0fdd6ee5" defer></script>
+  <script src="learning-progress.js?v=3ed53dd0" defer></script>
   <script src="writing-heatmap.js?v=d4eb918c" defer></script>
   <script src="views.js?v=9ca75c39" defer></script>
   <script src="theme-toggle.js?v=eddeb769" defer></script>
@@ -158,6 +158,17 @@
         </aside>
 
         <div class="content-column">
+          <section class="post-feed" id="essays">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Latest Posts</p>
+                <h2>最新文章</h2>
+              </div>
+              <a class="text-link" href="archive.html">查看全部</a>
+            </div>
+            <ol class="essay-list" aria-label="最新文章列表" data-home-essays-max="6"></ol>
+          </section>
+
           <section class="content-card activity-card fuwari-card" id="activity">
             <div class="section-heading">
               <div>
@@ -186,17 +197,6 @@
 
               <div class="writing-heatmap-tooltip" data-writing-heatmap-tooltip hidden></div>
             </div>
-          </section>
-
-          <section class="post-feed" id="essays">
-            <div class="section-heading">
-              <div>
-                <p class="section-kicker">Latest Posts</p>
-                <h2>最新文章</h2>
-              </div>
-              <a class="text-link" href="archive.html">查看全部</a>
-            </div>
-            <ol class="essay-list" aria-label="最新文章列表" data-home-essays-max="6"></ol>
           </section>
         </div>
       </div>

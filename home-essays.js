@@ -61,19 +61,30 @@
     return;
   }
 
-  function appendMeta(parent, text, iconText) {
-    const item = document.createElement("span");
-    item.className = "post-meta-item";
+  // 图标用内联 SVG，避免 ▣ / ▤ / ◇ 这类字形在不同系统上被替换成方块或汉字。
+  const META_ICON_PATHS = {
+    calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    folder:
+      '<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  };
 
+  function createMetaIcon(name) {
     const icon = document.createElement("span");
     icon.className = "post-meta-icon";
     icon.setAttribute("aria-hidden", "true");
-    icon.textContent = iconText;
+    icon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false">${META_ICON_PATHS[name] || ""}</svg>`;
+    return icon;
+  }
+
+  function appendMeta(parent, text, iconName) {
+    const item = document.createElement("span");
+    item.className = "post-meta-item";
 
     const label = document.createElement("span");
     label.textContent = text;
 
-    item.append(icon, label);
+    item.append(createMetaIcon(iconName), label);
     parent.appendChild(item);
   }
 
@@ -114,14 +125,14 @@
 
     const meta = document.createElement("span");
     meta.className = "essay-meta post-meta";
-    appendMeta(meta, formatDate(post.date), "▣");
+    appendMeta(meta, formatDate(post.date), "calendar");
     if (safeText(post.category)) {
-      appendMeta(meta, safeText(post.category), "▤");
+      appendMeta(meta, safeText(post.category), "folder");
     }
     if (Number.isFinite(post.words) || Number.isFinite(post.readTime)) {
       const words = Number.isFinite(post.words) ? `${post.words} 字` : "";
       const readTime = Number.isFinite(post.readTime) ? `${post.readTime} 分钟` : "";
-      appendMeta(meta, [words, readTime].filter(Boolean).join(" / "), "◇");
+      appendMeta(meta, [words, readTime].filter(Boolean).join(" / "), "clock");
     }
 
     const excerpt = document.createElement("span");

@@ -224,15 +224,22 @@
 
   function renderHomepageContinueCard() {
     const content = document.querySelector(".home-page .content-column");
-    const anchor = content?.querySelector("#activity");
-    if (!content || !anchor || document.querySelector("[data-continue-learning]")) return;
+    if (!content || content.querySelector("[data-continue-learning]")) return;
 
     const state = readState();
     const candidates = posts
       .filter((post) => safeText(post.id) && post.series && state.posts[post.id])
       .sort((a, b) => safeText(state.posts[b.id].lastReadAt).localeCompare(safeText(state.posts[a.id].lastReadAt)));
+    const hasHistory = candidates.length > 0;
     const current = candidates[0] || posts.find((post) => post.series && Number(post.series.index) === 1);
     if (!current) return;
+
+    // 有阅读记录时把"继续阅读"放到主列最前面；没有记录时它只是系列入口，
+    // 放到文章列表之后，先让新访客看到文章本身。
+    const anchor = (hasHistory ? content.querySelector(".post-feed") : content.querySelector("#activity"))
+      || content.querySelector("#activity")
+      || content.querySelector(".post-feed");
+    if (!anchor) return;
 
     const items = seriesPosts(current);
     const done = completedCount(items, state);
@@ -246,24 +253,29 @@
     const copy = document.createElement("div");
     const kicker = document.createElement("p");
     kicker.className = "section-kicker";
-    kicker.textContent = candidates.length > 0 ? "Continue Learning" : "Start Learning";
+    kicker.textContent = hasHistory ? "Continue Learning" : "Start Learning";
     const title = document.createElement("h2");
     title.textContent = safeText(current.series.name);
     copy.append(kicker, title);
-    const count = document.createElement("strong");
-    count.textContent = `${done} / ${items.length}`;
-    heading.append(copy, count);
+    heading.append(copy);
+
+    // 0 / 13 这种进度读数只在真的开始读过以后才有意义。
+    if (hasHistory) {
+      const count = document.createElement("strong");
+      count.textContent = `${done} / ${items.length}`;
+      heading.append(count);
+    }
 
     const description = document.createElement("p");
     description.className = "continue-learning-description";
-    description.textContent = candidates.length > 0
+    description.textContent = hasHistory
       ? `继续阅读：${safeText(current.title)}${record.progress ? ` · ${Math.round(record.progress * 100)}%` : ""}`
       : `${items.length} 篇文章，从基础开始学习。`;
 
     const link = document.createElement("a");
     link.className = "button button-primary";
     link.href = postLinkFromCurrentPage(current);
-    link.textContent = candidates.length > 0 ? "继续阅读" : "开始学习";
+    link.textContent = hasHistory ? "继续阅读" : "开始学习";
     card.append(heading, description, link);
     anchor.insertAdjacentElement("beforebegin", card);
   }
