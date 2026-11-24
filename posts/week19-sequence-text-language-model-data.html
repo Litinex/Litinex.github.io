@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>第十九周学习复盘：序列模型、文本预处理与采样 | 风迁夏回</title>
+  <meta name="description" content="学习第8章8.1—8.3，记录自回归MLP的单步与递归预测、时间机器语料清洗、词表词频和随机顺序采样检查。">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#11161f">
+  <link rel="canonical" href="https://yezizhuang.top/posts/week19-sequence-text-language-model-data.html">
+  <meta property="og:title" content="第十九周学习复盘：序列模型、文本预处理与采样 | 风迁夏回">
+  <meta property="og:description" content="学习第8章8.1—8.3，记录自回归MLP的单步与递归预测、时间机器语料清洗、词表词频和随机顺序采样检查。">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yezizhuang.top/posts/week19-sequence-text-language-model-data.html">
+  <meta property="og:image" content="https://yezizhuang.top/assets/pytorch-week19-sequence-forecast.png">
+  <meta property="og:site_name" content="风迁夏回">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <!-- font-assets -->
+  <link rel="preload" href="../assets/fonts/noto-serif-sc-00d2afbfa0837a4c.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/fonts/fallback.css?v=dbc4f18c">
+  <link rel="stylesheet" href="../assets/fonts/common.css?v=0aeed854">
+  <link rel="stylesheet" href="../assets/fonts/page-week19-sequence-text-language-model-data.css?v=511b4984">
+  <!-- /font-assets -->
+  <!-- partial:article-assets -->
+  <link rel="stylesheet" href="../styles.css?v=f2378094">
+  <script src="../posts-data.js?v=20e88c27" defer></script>
+  <script src="../related-posts-data.js?v=6a880de8" defer></script>
+  <script src="../taxonomy.js?v=e3d35f98" defer></script>
+  <script src="../article-images.js?v=2d5510b7" defer></script>
+  <script src="../article-reader.js?v=0fb906c3" defer></script>
+  <script src="../learning-progress.js?v=3ed53dd0" defer></script>
+  <script src="../article-recommendations.js?v=2b7a58a3" defer></script>
+  <script src="../code-blocks.js?v=74f8fbb6" defer></script>
+  <script src="../ambient-background.js?v=355ba8ac" defer></script>
+  <script src="../music-playlist.js?v=dd8fb6e2" defer></script>
+  <script src="../music-player.js?v=3bd0e03f" defer></script>
+  <script src="../views.js?v=9ca75c39" defer></script>
+  <script src="../theme-toggle.js?v=eddeb769" defer></script>
+  <script src="../page-transitions.js?v=909c2440" defer></script>
+  <!-- /partial:article-assets -->
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BlogPosting","headline":"第十九周学习复盘：序列模型、文本预处理与采样","description":"学习第8章8.1—8.3，记录自回归MLP的单步与递归预测、时间机器语料清洗、词表词频和随机顺序采样检查。","image":"https://yezizhuang.top/assets/pytorch-week19-sequence-forecast.png","url":"https://yezizhuang.top/posts/week19-sequence-text-language-model-data.html","datePublished":"2026-11-24","dateModified":"2026-11-24","inLanguage":"zh-CN","author":{"@type":"Person","name":"风迁夏回"},"publisher":{"@type":"Person","name":"风迁夏回"}}
+  </script>
+</head>
+<body class="article-page knn-article-page" data-post-id="week19-sequence-text-language-model-data">
+  <main class="article-shell">
+    <!-- partial:article-header -->
+    <header class="article-toolbar">
+      <a class="article-site-brand" href="../index.html" aria-label="风迁夏回首页">
+        <span class="article-site-brand-mark" aria-hidden="true"></span>
+        <span class="article-site-brand-copy"><strong>风迁夏回</strong><small>Personal Journal</small></span>
+      </a>
+      <div class="header-actions">
+        <nav class="article-site-nav" aria-label="主导航">
+          <a href="../index.html">主页</a>
+          <a href="../archive.html">归档</a>
+          <a href="../about.html">关于</a>
+        </nav>
+      </div>
+    </header>
+    <!-- /partial:article-header -->
+    <header class="article-header">
+      <p class="meta">2026.11.24 · 学习札记 · 约 9 分钟</p>
+      <h1>第十九周学习复盘：<span class="article-title-topic">序列模型、文本预处理与采样</span></h1>
+      <p class="article-deck">从数值序列的因果预测，走到文本词元、词表和两种批次采样。</p>
+    </header>
+
+    <article class="article-body knn-guide">
+      <p class="article-lead">第18周完成卷积网络对照后，本周按计划进入《动手学深度学习》第8章8.1—8.3。先用数值序列理解“根据过去预测未来”，再把文本变成词元索引和形状固定的批次，为后续循环神经网络训练准备输入。</p>
+      <p><b>本周完成：</b>8个编号示例和绘图脚本运行成功，9项自动测试通过。实际训练的是61个参数的自回归MLP，固定5轮；文本部分完成清洗、词表、词频和两类采样，本周尚未训练RNN语言模型。博客发布日期为2026年11月24日，周报按前一份顺延为11月29日。</p>
+      <h2>一、把时间序列变成监督学习窗口</h2>
+      <p>教材用带噪声的正弦序列说明自回归预测。本次固定seed=42，生成1000个观测，形式为sin(0.01t)加标准差0.2的高斯噪声。每次取前4个观测作为输入，预测紧接着的一个值，得到996个样本；模型没有直接使用生成序列的正弦公式。</p>
+      <pre data-code-id="week19-lagged-window"><code class="language-python"># 第t个目标只使用它之前的4个观测
+inputs = series[t - 4:t]
+target = series[t]</code></pre>
+      <p>按目标时刻顺序划分600个训练、200个验证和196个测试窗口。零基目标索引分别为4—603、604—803和804—999。窗口可以跨边界使用过去已到达的观测，但不同分区的目标时刻没有重叠；仅训练窗口内部打乱，完整时间序列没有随机划分。</p>
+      <h2>二、单步预测先与简单基线比较</h2>
+      <p>模型使用Linear(4,10)→ReLU→Linear(10,1)，共61个参数，线性层权重用Xavier初始化。CPU上运行5轮，batch size为16，Adam学习率0.01，以平均平方误差MSE训练。实验方案在训练前保存，报告固定第5轮，不按验证或测试成绩更换模型。</p>
+      <div class="knn-table-wrap" role="region" aria-label="固定最后一轮单步预测MSE" tabindex="0"><table class="knn-table"><thead><tr><th>评估对象</th><th>样本数</th><th>MSE</th></tr></thead><tbody><tr><td>训练集MLP</td><td>600</td><td>0.049199</td></tr><tr><td>验证集MLP</td><td>200</td><td>0.061283</td></tr><tr><td>测试集MLP</td><td>196</td><td>0.054745</td></tr><tr><td>测试集最近观测值基线</td><td>196</td><td>0.082490</td></tr></tbody></table></div>
+      <p>最近观测值基线直接用窗口最后一个真实值预测下一时刻，不需要训练。这个对照帮助判断小网络是否只做了类似“复制昨天”的事情。本次单步测试中MLP误差较低，但这仅是一条合成序列、一个随机种子的结果。</p>
+      <p>第4轮验证MSE约0.058926，第5轮约0.061283。完整历史保留这次回升，最终仍报告预先固定的第5轮。模型权重已保存，重新载入后在196个测试窗口上的预测逐位一致。</p>
+      <h2>三、递归预测为什么不能照搬单步成绩</h2>
+      <p>滚动单步预测在每个时刻都能接收刚到达的真实历史。递归预测则在起点之后没有新观测，必须把自己的输出送回下一次预测。这两种任务的信息条件不同，单步表现不能直接代表远期预测表现。</p>
+      <pre data-code-id="week19-recursive"><code class="language-python">predicted = model(windows)
+windows = torch.cat((windows[:, 1:], predicted), dim=1)</code></pre>
+      <p>多步实验统一使用测试区间的133个滚动起点，保证每个起点都有完整64步未来观测。每个起点只提供4个过去观测，递归期间不注入未来真值；基线在所有步长都沿用起点之前最后一个真实值。</p>
+      <div class="knn-table-wrap" role="region" aria-label="共同起点递归预测对照" tabindex="0"><table class="knn-table"><thead><tr><th>预测步长</th><th>共同起点数</th><th>递归MLP MSE</th><th>最近观测值基线MSE</th></tr></thead><tbody><tr><td>1</td><td>133</td><td>0.060383</td><td>0.090095</td></tr><tr><td>4</td><td>133</td><td>0.074637</td><td>0.095929</td></tr><tr><td>16</td><td>133</td><td>0.177318</td><td>0.091807</td></tr><tr><td>64</td><td>133</td><td>0.595572</td><td>0.365330</td></tr></tbody></table></div>
+      <figure class="knn-figure"><picture><source type="image/webp" srcset="../assets/pytorch-week19-sequence-forecast-800.webp 800w, ../assets/pytorch-week19-sequence-forecast.webp 2080w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week19-sequence-forecast.png" alt="按时间划分的序列、训练验证MSE、单步与递归预测、不同预测步长误差" width="2080" height="1200" loading="lazy" decoding="async"></picture><figcaption>左下图的滚动单步预测会接收新到达的真实历史观测，递归预测只使用初始窗口和自己的输出；右下图比较相同133个起点。点击图片可放大。</figcaption></figure>
+      <p>在本次记录中，MLP的1步和4步误差低于基线，16步和64步误差反而更高。图中一个起点的递归轨迹逐渐接近平坦值，说明单步拟合较好并不保证长距离变化也能被保留。133个起点存在重叠，误差不能当作133次独立实验；这组指标也与上节196个窗口的单步指标使用不同分母。</p>
+      <h2>四、把原始文本清洗成词元</h2>
+      <p>文本使用教材官方提供的《时间机器》语料。下载后核对教材给定的SHA-1：<code>090b5e7e70c295757f55df93cb0a180b9691891a</code>，并保存到本地data目录，后续可离线复用。</p>
+      <p>清洗步骤与教材一致：将非英文字母的连续片段变为空格，去首尾空白并转换为小写。单词分词使用空白切分；字符分词保留字母和行内空格。展平各行时没有额外加入换行符，原始行边界会消失，这也是后续解释文本片段时需要注意的预处理选择。</p>
+      <div class="knn-table-wrap" role="region" aria-label="Time Machine语料统计" tabindex="0"><table class="knn-table"><thead><tr><th>统计项</th><th>实际结果</th></tr></thead><tbody><tr><td>文本行数</td><td>3,221</td></tr><tr><td>清洗后单词数</td><td>32,775</td></tr><tr><td>不同单词数</td><td>4,579</td></tr><tr><td>单词词表（含未知词）</td><td>4,580</td></tr><tr><td>字符数</td><td>170,580</td></tr><tr><td>字符词表（含未知词）</td><td>28</td></tr><tr><td>不同二元词组</td><td>20,234</td></tr><tr><td>不同三元词组</td><td>29,882</td></tr></tbody></table></div>
+      <p>第一行清洗为<code>the time machine by h g wells</code>，单词与字符是两种不同粒度；本周后面的采样准备使用字符粒度，不能把单词词表大小与字符模型输出维数混在一起。</p>
+      <h2>五、词表编码与一元二元三元词频</h2>
+      <p>词表将词元映射成连续整数，未知词统一使用索引0。保留词元去重，低频词可以按min_freq过滤，反向映射可把已知词元索引还原成文本。本次字符词表有26个字母、1个空格及1个未知词，共28项。</p>
+      <p>清洗语料中最高频单词为the，共2261次；最高频二元词组为of the，共309次；最高频三元词组为the time traveller，共59次。词组统计跨越了展平后的原始行边界，不能再把这些边界解释为自然句子边界。</p>
+      <figure class="knn-figure"><picture><source type="image/webp" srcset="../assets/pytorch-week19-token-frequency-800.webp 800w, ../assets/pytorch-week19-token-frequency.webp 1920w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week19-token-frequency.png" alt="时间机器一元二元三元词频随排名的变化与最高频十个单词" width="1920" height="768" loading="lazy" decoding="async"></picture><figcaption>词频是完整清洗语料的描述统计。对数坐标便于观察长尾，不据此声称严格拟合某个分布定律。</figcaption></figure>
+      <p>完整语料的词频和词表在这里是描述统计，没有训练语言模型，也没有据此报告困惑度或文本生成质量。后续进入实际模型训练时，需要先明确训练与验证语料的划分和词表拟合范围。</p>
+      <h2>六、随机采样与顺序采样</h2>
+      <p>语言模型的输入X与标签Y长度相同，Y来自原语料后移一个位置。例子中X为[5,6,7,8,9]时，Y为[6,7,8,9,10]。真实语料的词元索引未必数值相邻，因此测试会对照原语料窗口，而不是断言“标签数值等于输入加1”。</p>
+      <p>随机采样先切出固定长度窗口，再打乱窗口顺序；相邻批次的同一行通常不相连。顺序采样先把连续语料分成若干行，再沿每行切出批次，因此同一行可以跨批次保持连续。这一差异会决定未来RNN隐状态应该重置还是延续。</p>
+      <figure class="knn-figure"><picture><source type="image/webp" srcset="../assets/pytorch-week19-sequence-sampling-800.webp 800w, ../assets/pytorch-week19-sequence-sampling.webp 1920w" sizes="(min-width: 1200px) 960px, (min-width: 720px) 840px, calc(100vw - 62px)"><img src="../assets/pytorch-week19-sequence-sampling.png" alt="35个位置序列中的随机与顺序批次，每格展示输入位置和后移一格的标签" width="1920" height="704" loading="lazy" decoding="async"></picture><figcaption>随机采样打乱窗口顺序，顺序采样保持每行跨批次连续。此例顺序采样只有两个完整批次，尾部不足整批的词元丢弃。</figcaption></figure>
+      <p>两种采样器都允许局部随机偏移，并丢弃不足一个完整批次的尾部。演示代码使用局部随机数生成器，不改变全局随机状态；相同seed可重现同一批次顺序。实际多轮训练应显式改变每轮seed，避免一直使用相同的随机排列。</p>
+      <h2>七、真实字符批次与自动检查</h2>
+      <p>取前10000个字符，设置batch size=32、num_steps=35。两种采样器各生成8个完整批次，即8960个输入词元；每批X、Y均为长整型的32×35张量，索引落在词表范围内。</p>
+      <div class="knn-table-wrap" role="region" aria-label="真实字符语料批次检查" tabindex="0"><table class="knn-table"><thead><tr><th>采样器</th><th>批次数</th><th>每批形状</th><th>输入词元数</th><th>检查结果</th></tr></thead><tbody><tr><td>random</td><td>8</td><td>32 × 35</td><td>8960</td><td>批内错位</td></tr><tr><td>sequential</td><td>8</td><td>32 × 35</td><td>8960</td><td>批内错位与跨批次同行连续</td></tr></tbody></table></div>
+      <p>批内验证<code>X[:,1:] == Y[:,:-1]</code>。顺序采样还验证上一批Y每行最后一项等于下一批X同一行第一项。9项自动测试另外覆盖因果滞后窗口、递归回填、不修改输入、未知词与低频过滤、空行、短语料、非法参数和随机状态隔离。</p>
+      <p>这些检查说明数据准备满足预期的形状与错位关系，不能替代未来模型的训练和验证。模型保存恢复、实验配置、逐轮结果、文本哈希和采样记录均已保留。</p>
+      <h2>八、下一周计划与教材链接</h2>
+      <p>第20周继续学习8.4—8.6，理解循环隐状态、独热编码和梯度裁剪，练习RNN从零实现与简洁实现。先核对输入、输出与隐状态形状，再在分清训练和验证语料后记录损失、困惑度和文本生成样例。</p>
+      <ul><li><a href="https://zh.d2l.ai/chapter_recurrent-neural-networks/sequence.html">8.1 序列模型</a></li><li><a href="https://zh.d2l.ai/chapter_recurrent-neural-networks/text-preprocessing.html">8.2 文本预处理</a></li><li><a href="https://zh.d2l.ai/chapter_recurrent-neural-networks/language-models-and-dataset.html">8.3 语言模型和数据集</a></li></ul>
+    </article>
+
+    <nav class="article-pagination" aria-label="文章导航">
+      <a class="article-pagination-link article-pagination-link-prev" href="week18-resnet-densenet-controlled-comparison.html"><span class="article-pagination-link-arrow" aria-hidden="true">←</span><span class="article-pagination-link-text">上一篇：ResNet与DenseNet统一预算对照</span></a>
+      <span class="article-pagination-link article-pagination-link-next is-disabled" aria-disabled="true"><span class="article-pagination-link-text">已经是最新一篇</span><span class="article-pagination-link-arrow" aria-hidden="true">→</span></span>
+    </nav>
+  </main>
+</body>
+</html>

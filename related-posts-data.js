@@ -1,7 +1,11 @@
 /* eslint-disable */
 (() => {
   window.__BLOG_RELATED_POSTS__ = {
-  "week18-resnet-densenet-controlled-comparison": [
+  "week19-sequence-text-language-model-data": [
+    {
+      "id": "week18-resnet-densenet-controlled-comparison",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
     {
       "id": "week17-batchnorm-resnet-densenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
@@ -9,9 +13,19 @@
     {
       "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
+    }
+  ],
+  "week18-resnet-densenet-controlled-comparison": [
+    {
+      "id": "week17-batchnorm-resnet-densenet-review",
+      "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week15-convolution-pooling-lenet-review",
+      "id": "week19-sequence-text-language-model-data",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -21,11 +35,11 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week16-alexnet-vgg-nin-googlenet-review",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week15-convolution-pooling-lenet-review",
+      "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -35,11 +49,11 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week18-resnet-densenet-controlled-comparison",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week17-batchnorm-resnet-densenet-review",
+      "id": "week18-resnet-densenet-controlled-comparison",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -53,7 +67,7 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week18-resnet-densenet-controlled-comparison",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -63,11 +77,11 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week18-resnet-densenet-controlled-comparison",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week17-batchnorm-resnet-densenet-review",
+      "id": "week18-resnet-densenet-controlled-comparison",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -105,11 +119,11 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week18-resnet-densenet-controlled-comparison",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week17-batchnorm-resnet-densenet-review",
+      "id": "week18-resnet-densenet-controlled-comparison",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -129,15 +143,15 @@
   ],
   "week12-mlp-regularization-review": [
     {
+      "id": "week19-sequence-text-language-model-data",
+      "reason": "共同标签：Python、PyTorch、深度学习"
+    },
+    {
       "id": "week18-resnet-densenet-controlled-comparison",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
       "id": "week17-batchnorm-resnet-densenet-review",
-      "reason": "共同标签：Python、PyTorch、深度学习"
-    },
-    {
-      "id": "week16-alexnet-vgg-nin-googlenet-review",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -147,11 +161,11 @@
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week18-resnet-densenet-controlled-comparison",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week17-batchnorm-resnet-densenet-review",
+      "id": "week18-resnet-densenet-controlled-comparison",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -165,7 +179,7 @@
       "reason": "共同标签：Python、线性回归、周报"
     },
     {
-      "id": "week18-resnet-densenet-controlled-comparison",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -203,11 +217,11 @@
       "reason": "共同标签：Python、PyTorch、张量"
     },
     {
-      "id": "week18-resnet-densenet-controlled-comparison",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "共同标签：Python、PyTorch、深度学习"
     },
     {
-      "id": "week17-batchnorm-resnet-densenet-review",
+      "id": "week18-resnet-densenet-controlled-comparison",
       "reason": "共同标签：Python、PyTorch、深度学习"
     }
   ],
@@ -469,11 +483,11 @@
       "reason": "共同标签：写作"
     },
     {
-      "id": "week18-resnet-densenet-controlled-comparison",
+      "id": "week19-sequence-text-language-model-data",
       "reason": "同属“学习札记”分类"
     },
     {
-      "id": "week17-batchnorm-resnet-densenet-review",
+      "id": "week18-resnet-densenet-controlled-comparison",
       "reason": "同属“学习札记”分类"
     }
   ],

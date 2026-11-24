@@ -2,6 +2,26 @@
 (() => {
   window.__BLOG_POSTS__ = [
     {
+      "id": "week19-sequence-text-language-model-data",
+      "href": "posts/week19-sequence-text-language-model-data.html",
+      "title": "第十九周学习复盘：序列模型、文本预处理与采样",
+      "date": "2026-11-24",
+      "updated": "2026-11-24",
+      "category": "学习札记",
+      "excerpt": "学习第8章8.1—8.3，记录自回归MLP的单步与递归预测、时间机器语料清洗、词表词频和随机顺序采样检查。",
+      "tags": [
+        "Python",
+        "PyTorch",
+        "深度学习",
+        "序列模型",
+        "文本预处理",
+        "语言模型",
+        "周报"
+      ],
+      "words": 3110,
+      "readTime": 9
+    },
+    {
       "id": "week18-resnet-densenet-controlled-comparison",
       "href": "posts/week18-resnet-densenet-controlled-comparison.html",
       "title": "第十八周学习复盘：ResNet与DenseNet统一预算对照",
