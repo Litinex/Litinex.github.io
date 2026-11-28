@@ -67,6 +67,15 @@ async function checkContinuousPlayback(page, origin) {
   assert.equal(await page.evaluate(() => window.testAudios[0].paused), false, "Music keeps playing across navigation");
   assert.equal(await page.title(), await content.title(), "Document title follows the visible page");
 
+  await content.locator("[data-theme-toggle]").click();
+  const frameTheme = await content.locator("html").getAttribute("data-theme");
+  await page.waitForFunction((theme) => document.documentElement.dataset.theme === theme, frameTheme);
+  assert.equal(await page.locator("[data-theme-toggle]").getAttribute("aria-pressed"), String(frameTheme === "light"),
+    "The original page's theme control follows changes inside the music shell");
+  assert.equal(await page.locator("[data-theme-toggle]").evaluate((button) =>
+    Number(button.style.getPropertyValue("--toggle-position"))), frameTheme === "light" ? 1 : 0,
+    "The hidden control's lens follows the synced theme without stale animation");
+
   // Navigating inside the shell keeps the player as well.
   await content.locator(".article-site-nav a[href$='archive.html']").click();
   await page.waitForFunction(() => location.pathname.endsWith("archive.html"));
@@ -78,6 +87,7 @@ async function checkContinuousPlayback(page, origin) {
   await page.goBack();
   await page.waitForFunction(() => !document.documentElement.classList.contains("music-shell-active"));
   assert.ok(await page.locator(".home-page .site-header").isVisible(), "Original page is shown again");
+  assert.equal(await page.locator("html").getAttribute("data-theme"), frameTheme, "Back navigation keeps the chosen theme");
   assert.equal(await page.evaluate(() => window.testAudios[0].paused), false, "Going back does not stop music");
 }
 
