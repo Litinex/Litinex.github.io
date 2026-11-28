@@ -4087,6 +4087,47 @@ html[data-theme="light"] .button-primary {
   list-style: none;
 }
 
+/* A continuous reading surface gives the homepage list a quiet, shared margin. */
+.home-page .essay-list {
+  --feed-inset: clamp(20px, 2.2vw, 28px);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
+  border-radius: var(--radius-md);
+  background: var(--card-bg-solid);
+}
+
+.home-page .essay-list .post-card {
+  border: 0;
+  background: transparent;
+  backdrop-filter: none;
+  transition: background-color 180ms ease;
+}
+
+.home-page .essay-list .post-card:hover,
+.home-page .essay-list .post-card:focus-within {
+  background: color-mix(in srgb, var(--primary) 4%, var(--card-bg-solid));
+  transform: none;
+}
+
+.home-page .essay-list .post-card-inner {
+  padding: 26px var(--feed-inset);
+}
+
+.home-page .essay-list .post-card:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset: auto var(--feed-inset) 0;
+  height: 1px;
+  background: var(--line);
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .home-page .essay-list {
+    --feed-inset: 18px;
+  }
+}
+
 .post-card {
   position: relative;
   overflow: hidden;
